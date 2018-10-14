@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Decision Tree | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="决策树模型 决策树是一种基本的分类与回归的方法 决策树由节点和有向边组成 节点分为内部节点和叶节点 决策树的学习其实就是特征选择的过程  决策树学习决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程 给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；">
+<meta name="keywords" content="machine learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Decision Tree">
+<meta property="og:url" content="atlantic8.github.io/2017/03/02/Decision-Tree/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="决策树模型 决策树是一种基本的分类与回归的方法 决策树由节点和有向边组成 节点分为内部节点和叶节点 决策树的学习其实就是特征选择的过程  决策树学习决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程 给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-05-02T14:59:59.582Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Decision Tree">
+<meta name="twitter:description" content="决策树模型 决策树是一种基本的分类与回归的方法 决策树由节点和有向边组成 节点分为内部节点和叶节点 决策树的学习其实就是特征选择的过程  决策树学习决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程 给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Decision-Tree" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Decision Tree
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/02/Decision-Tree/">
+            <time datetime="2017-03-02T01:39:28.000Z" itemprop="datePublished">2017-03-02</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="决策树模型"><a href="#决策树模型" class="headerlink" title="决策树模型"></a>决策树模型</h5><ul>
+<li>决策树是一种基本的分类与回归的方法</li>
+<li>决策树由节点和有向边组成</li>
+<li>节点分为内部节点和叶节点</li>
+<li><strong>决策树的学习其实就是特征选择的过程</strong></li>
+</ul>
+<h5 id="决策树学习"><a href="#决策树学习" class="headerlink" title="决策树学习"></a>决策树学习</h5><p><strong>决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程</strong></p>
+<p>给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；$y_i\in \lbrace 1,2,…,K \rbrace$为类标记。</p>
+<h6 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h6><p>统计学中，熵是随机变量不确定性的度量，即混乱程度。假设$X$是一个取有限个值的离散随机变量，其概率分布为$P(X=x_i)=p_i,i=1,..,N$，那么$X$的熵定义为<script type="math/tex">H(X)=-\sum_{i=1}^n p_i log p_i</script>条件熵$H(Y|X)$可以表示为已知随机变量$X$的条件下，随机变量$Y$的不确定性，也可以表示成<script type="math/tex">H(Y|X)=\sum_{i=1}^N p_iH(Y|X=x_i)</script>其中$p_i=P(X=x_i)$。<strong>当熵和条件熵中的概率由数据估计得到时，则分别称之为经验熵和条件经验熵</strong>，如果出现0概率，则令$0log0=0$。</p>
+<p><strong>信息增益表示在得知特征$X$的情况下而使得$Y$的不确定性减少的程度</strong>，形式化表述为：特征$A$对训练数据集$D$的信息增益$g(D,A)$，定义为<script type="math/tex">g(D,A)=H(D)-H(D|A)</script>这里的<strong>信息增益等价于训练数据集中类与特征的互信息</strong>。计算信息增益的算法如下：</p>
+<hr>
+<p>输入：数据集$D$和特征$A$</p>
+<hr>
+<p>1 计算数据集$D$的经验熵$H(D)=-\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$<br>2 计算特征$A$对数据集$D$的经验条件熵<script type="math/tex">H(D|A)=\sum_{i=1}^N \frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^N \frac{|D_i|}{|D|}\sum_{k=1}^K\frac{|D_{ik}|}{|D_i|}log_2\frac{|D_{ik}|}{|D_i|}</script><br>3 计算信息增益$g(D,A)=H(D)-H(D|A)$.</p>
+<hr>
+<p>输出信息增益</p>
+<hr>
+<h6 id="信息增益比"><a href="#信息增益比" class="headerlink" title="信息增益比"></a>信息增益比</h6><p><strong>以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题</strong>，使用信息增益比可以缓解这个问题。特征$A$对训练数据集$D$的信息增益比定义为其增益信息$g(D,A)$与训练数据集$D$关于特征$A$的值的熵$H_A(D)$之比，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+g_R(D,A)=\frac{g(D,A)}{H_A(D)}
+\end{aligned}</script><p>其中，$H_A(D)=-\sum_{i=1}^{A_n}\frac{|D_i|}{|D|}log_2\frac{|D_i|}{|D|}$，$A_n$是特征$A$取值的个数。</p>
+<h6 id="ID3"><a href="#ID3" class="headerlink" title="ID3"></a>ID3</h6><p>ID3算法采用<strong>自上而下递归式的算法构建决策树，它使用信息增益作为特征选择的标准</strong>。停止条件是节点所有特征的信息增益都很小（阈值$\epsilon$）或没有特征可以选择为止。</p>
+<hr>
+<p>输入：训练数据集$D$，特征集$A$，阈值$\epsilon$</p>
+<hr>
+<p>1 若$D$中所有实例属于同一类$C_k$，$T$为单节点树，$C_k$为该节点的类标记，返回$T$<br>2 若$A=\emptyset$则$T$为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>3 否则，分别计算$A$中各特征对$D$的信息增益，选择信息增益最大的特征$A_g$<br>4 如果$A_g&lt;\epsilon$，则置T为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>5 否则，对$A_g$的每一个可能值$a_i$，根据$A_g=a_i$将$D$分割成若干非空子集$D_i$，将$D_i$中实例数最大的类作为标记，构建子节点，由节点及其子节点构成树$T$，返回$T$<br>6 对每个子节点$i$，以$D_i$为训练集，以$A-A_g$为特征集，递归调用以上步骤</p>
+<hr>
+<p>输出：决策树$T$</p>
+<hr>
+<h6 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h6><p><strong>C4.5与ID3的差异在于C4.5使用信息增益比进行选择选择</strong></p>
+<h6 id="基尼指数"><a href="#基尼指数" class="headerlink" title="基尼指数"></a>基尼指数</h6><p><strong>基尼指数表示不确定程度，基尼指数越大，样本集的不确定程度就越大、纯度越低。</strong></p>
+<p>分类问题中，假设有$K$个类，样本点属于第$k$类的概率为$p_k$，则概率分布的基尼指数定义为<script type="math/tex">Gini(p)=1-\sum_{k=1}^K p_k^2</script>对于给定的样本集$D$，其基尼指数为<script type="math/tex">Gini(D)=1-\sum_{k=1}^K\left( \frac{|C_k|}{|D|} \right)^2</script>其中$C_k$表示第$k$类的样本子集。表示集合$D$的不确定性。</p>
+<p>假设样本集$D$根据特征$A$的不同取值被分成$A_n$个部分，则定义在特征$A$下集合$D$的基尼指数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+Gini(D,A)=\sum_{i=1}^{A_n} \frac{|D_i|}{|D|}Gini(D_i)
+\end{aligned}</script><h6 id="CART"><a href="#CART" class="headerlink" title="CART"></a>CART</h6><p><strong>CART分类树</strong><br>使用基尼指数作为划分属性的标准，每次选择基尼指数最小的属性。</p>
+<p><strong>CART回归模型</strong><br>假设已将输入空间划分为$M$个单元$R_1,…,R_M$，并且在每个单元$R_m$上有一个固定的输出值$c_m$，回归树模型可以表示为<script type="math/tex">f(x)=\sum_{m=1}^Mc_mI(x\in R_m)</script>当输入空间划分确定时，可以用平方误差$\sum_{x_i}(y_i-f(x_i))^2$表示训练误差,<strong> $c_m$输出值为对应$R_m$上所有样本输出值的均值</strong>。</p>
+<p>使用启发式的方法划分输入空间，遍历输入变量和可能的切分变量找到最优的切分变量$j$和切分点$s$，即找到切分后部分的误差最小：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&R_1(j,s)=\lbrace{x|x^{(j)}\le s\rbrace}  \\
+&R_2(j,s)=\lbrace x|x^{(j)}> s \rbrace  \\
+&\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]
+\end{aligned}</script><p>其中$c_1,c_2$是划分后部分中输出值的均值。最小二乘回归树算法描述如下：</p>
+<hr>
+<p>输入：训练集$D$</p>
+<hr>
+<ol>
+<li>选择最优切分变量$j$与最优切分点$s$，求解$\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]$</li>
+<li>用选定的对$(j,s)$划分区域并决定相应输出值：$R_1,R_2,c_1,c_2$</li>
+<li>继续对两个子区域调用步骤1、2直至满足停止条件</li>
+<li>将输入空间划分为$M$个区域$R_1,…,R_M$，生成CART树$f(x)=\sum_{m=1}^Mc_mI(x\in R_m)$</li>
+</ol>
+<hr>
+<p>输出：$f(x)$</p>
+<hr>
+<h5 id="决策树的剪枝"><a href="#决策树的剪枝" class="headerlink" title="决策树的剪枝"></a>决策树的剪枝</h5><p>以上方法可能会产生过拟合现象，适当剪枝会使得决策树的泛化效果变得更好<br>剪枝分为预剪枝和后剪枝两种，预剪枝指的是在决策树生成的过程中进行剪枝，后剪枝则是在生成决策树之后再进行剪枝。</p>
+<h6 id="预剪枝"><a href="#预剪枝" class="headerlink" title="预剪枝"></a>预剪枝</h6><p>大致过程描述：对于一个节点，考虑其剪枝或者不剪枝的情况，看这两种情况下哪种正确率高（一个节点的类别由其包含同类样本数最多的决定），由此决定是否剪枝。</p>
+<p><strong>预剪枝基于贪心本质禁止某些节点展开，而这些节点第一次展开效果可能不好，但后续表现可能显著提高，所以会带来欠拟合的风险</strong>。</p>
+<h6 id="后剪枝"><a href="#后剪枝" class="headerlink" title="后剪枝"></a>后剪枝</h6><p>大致过程描述：自下而上，叶节点不考虑，考虑其父节点F是否需要剪枝，可以仅仅通过父节点包含的样本，在剪枝和不剪枝的情况下分别计算准确率，然后确定是否需要剪枝。</p>
+<p>下面是令一种后剪枝的方法（我不是很了解）：<br>通过<strong>极小化决策树整体的损失函数来实现</strong>。设树的叶节点个数为$|T|$，$t$是树$T$的叶节点，此叶节点上有$N_t$个样本，属于类$C_k$的样本有$N_{tk}$个，$H_t(T)$为叶节点$t$上的经验熵，$\alpha \ge 0$为参数，则决策树学习的损失函数可以定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
+\end{aligned}</script><p>其中经验熵为$H_t(T)=-\sum_k \frac{N_{tk}}{N_t}log_2  \frac{N_{tk}}{N_t}$。$C(T)$表示模型对训练数据的预测误差，|T|表示模型的复杂度。剪枝算法描述如下：</p>
+<hr>
+<p>输入：决策树$T$，参数$\alpha$</p>
+<hr>
+<p>1 计算每个节点的经验熵<br>2 递归地从树的节点向上回溯，如果保留子节点的损失函数更大，剪枝以父节点作为叶子<br>3 返回2直到不能继续为止</p>
+<hr>
+<p>输出：修建后的决策树$T_{\alpha}$</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/02/Decision-Tree/" data-id="cjn8cdlg5001zvwphwn257m54" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/03/04/BM/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    BM
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/02/26/Bayesian-Classifier/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Bayesian Classifier</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>NumPy进阶 | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="数组重塑1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556import numpy as npfrom numpy.random import randn# reshape函数arr = np.arange(8)arr.reshape((4,">
+<meta name="keywords" content="numpy,python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NumPy进阶">
+<meta property="og:url" content="atlantic8.github.io/2016/08/15/NumPy进阶/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="数组重塑1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556import numpy as npfrom numpy.random import randn# reshape函数arr = np.arange(8)arr.reshape((4,">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-01-19T11:58:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NumPy进阶">
+<meta name="twitter:description" content="数组重塑1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556import numpy as npfrom numpy.random import randn# reshape函数arr = np.arange(8)arr.reshape((4,">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-NumPy进阶" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            NumPy进阶
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/08/15/NumPy进阶/">
+            <time datetime="2016-08-15T11:03:52.000Z" itemprop="datePublished">2016-08-15</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/numpy/">numpy</a>, <a class="tag-link" href="/tags/python/">python</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="数组重塑"><a href="#数组重塑" class="headerlink" title="数组重塑"></a>数组重塑</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numpy.random <span class="keyword">import</span> randn</span><br><span class="line"></span><br><span class="line"><span class="comment"># reshape函数</span></span><br><span class="line">arr = np.arange(<span class="number">8</span>)</span><br><span class="line">arr.reshape((<span class="number">4</span>, <span class="number">2</span>)).sahpe</span><br><span class="line">$-&gt; (4, 2)</span><br><span class="line">arr.reshape((<span class="number">5</span>,<span class="number">-1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 扁平化函数</span></span><br><span class="line"><span class="comment"># flatten函数返回数据副本，ravel则不是</span></span><br><span class="line"><span class="comment"># 这些函数可以带有指示顺序的参数：&#123;'C':行有限, 'F':列优先&#125;</span></span><br><span class="line">arr = np.arange(<span class="number">15</span>).reshape((<span class="number">5</span>, <span class="number">3</span>))</span><br><span class="line">arr.ravel()</span><br><span class="line">$-&gt; array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14])</span><br><span class="line">arr.flatten()</span><br><span class="line">$-&gt; array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14])</span><br><span class="line">arr.ravel(<span class="string">'F'</span>)</span><br><span class="line">$-&gt; array([ 0,  3,  6,  9, 12,  1,  4,  7, 10, 13,  2,  5,  8, 11, 14])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拆分合并</span></span><br><span class="line">arr1 = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>]])</span><br><span class="line">arr2 = np.array([[<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>],[<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>]])</span><br><span class="line">np.concatenate([arr1, arr2], axis=<span class="number">0</span>)</span><br><span class="line">$-&gt; array([[ 1,  2,  3],</span><br><span class="line">       	   [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>],</span><br><span class="line">           [ <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>],</span><br><span class="line">           [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br><span class="line"></span><br><span class="line">np.concatenate([arr1, arr2], axis=<span class="number">1</span>)</span><br><span class="line">$-&gt; array([[ 1,  2,  3,  7,  8,  9],</span><br><span class="line">           [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># vstack(垂直方向的连接), hstack(水平方向的连接)</span></span><br><span class="line"><span class="comment"># 里面的圆括号也可以换成方括号</span></span><br><span class="line">np.vstack((arr1, arr2))</span><br><span class="line">$-&gt; array([[ 1,  2,  3],</span><br><span class="line">           [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>],</span><br><span class="line">           [ <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>],</span><br><span class="line">           [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br><span class="line"></span><br><span class="line">np.hstack([arr1, arr2])</span><br><span class="line">$-&gt; array([[ 1,  2,  3,  7,  8,  9],</span><br><span class="line">           [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># split</span></span><br><span class="line">arr = randn(<span class="number">5</span>, <span class="number">2</span>)</span><br><span class="line">first, second, third = np.split(arr,[<span class="number">1</span>,<span class="number">3</span>])</span><br><span class="line">first</span><br><span class="line">$-&gt; array([[-0.28435497,  0.71298716]])</span><br><span class="line">second</span><br><span class="line">$-&gt; array([[ 0.48442513, -0.84460369],</span><br><span class="line">           [<span class="number">-0.38289692</span>, <span class="number">-1.11166995</span>]])</span><br><span class="line">third</span><br><span class="line">$-&gt; array([[-0.44724781,  0.52083756],</span><br><span class="line">           [<span class="number">-0.39584687</span>,  <span class="number">0.14325106</span>]])</span><br></pre></td></tr></table></figure>
+<center>数组连接函数</center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">method</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">concatenate</td>
+<td style="text-align:center">沿一条轴连接一组数组</td>
+</tr>
+<tr>
+<td style="text-align:center">vstack,hstack</td>
+<td style="text-align:center">垂直、水平连接</td>
+</tr>
+<tr>
+<td style="text-align:center">row_stack</td>
+<td style="text-align:center">按行连接，相当于vstack</td>
+</tr>
+<tr>
+<td style="text-align:center">column_stack</td>
+<td style="text-align:center">按列连接，相当于hstack</td>
+</tr>
+<tr>
+<td style="text-align:center">dstack</td>
+<td style="text-align:center">以面向‘深度’的方式堆叠，沿轴2</td>
+</tr>
+<tr>
+<td style="text-align:center">split</td>
+<td style="text-align:center">沿指定轴的指定位置拆分</td>
+</tr>
+<tr>
+<td style="text-align:center">hsplit,vsplit,dsplit</td>
+<td style="text-align:center">分别沿轴0、1、2切分</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>元素重复操作<br>tile and repeat函数<br>tile沿指定轴向堆叠数组的副本<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">arr = np.arange(<span class="number">3</span>)</span><br><span class="line">arr.repeat(<span class="number">3</span>)</span><br><span class="line">$-&gt; array([0, 0, 0, 1, 1, 1, 2, 2, 2])</span><br><span class="line">arr.repeat([<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>])</span><br><span class="line">$-&gt; array([0, 0, 1, 1, 1, 2, 2, 2, 2])</span><br><span class="line"></span><br><span class="line">arr = np.arange(<span class="number">4</span>).reshape((<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">arr.repeat([<span class="number">2</span>,<span class="number">3</span>], axis=<span class="number">0</span>)</span><br><span class="line">$-&gt; array([[0, 1],</span><br><span class="line">       	  [<span class="number">0</span>, <span class="number">1</span>],</span><br><span class="line">          [<span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">          [<span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">          [<span class="number">2</span>, <span class="number">3</span>]])</span><br><span class="line"></span><br><span class="line">np.tile(arr, <span class="number">2</span>)</span><br><span class="line">$-&gt; array([[0, 1, 0, 1],</span><br><span class="line">           [<span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">3</span>]])</span><br></pre></td></tr></table></figure></p>
+<h5 id="广播"><a href="#广播" class="headerlink" title="广播"></a>广播</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">np.arange(<span class="number">4</span>) + <span class="number">3</span></span><br><span class="line">$-&gt; array([3, 4, 5, 6])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每一行减去均值时，直接减</span></span><br><span class="line"><span class="comment"># 每一列减时需要维度变化</span></span><br><span class="line">arr = np.arange(<span class="number">12</span>).reshape((<span class="number">3</span>,<span class="number">4</span>))</span><br><span class="line"><span class="comment"># 参数为0计算每列的均值，1则计算每行的均值</span></span><br><span class="line">arr.mean(<span class="number">0</span>)</span><br><span class="line">$-&gt; array([ 4.,  5.,  6.,  7.])</span><br><span class="line"></span><br><span class="line">arr - arr.mean(<span class="number">0</span>)</span><br><span class="line">$-&gt; array([[-4., -4., -4., -4.],</span><br><span class="line">           [ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>],</span><br><span class="line">           [ <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># arr - arr.mean(1)报错</span></span><br><span class="line"><span class="comment"># 沿其他轴广播，较小数组的‘广播维’必须为1，所以需要reshape()，把n变成(n,1)</span></span><br><span class="line">arr - arr.mean(<span class="number">1</span>).reshape((<span class="number">4</span>,<span class="number">1</span>))</span><br><span class="line">$-&gt; array([[-1.5, -0.5,  0.5,  1.5],</span><br><span class="line">           [<span class="number">-1.5</span>, <span class="number">-0.5</span>,  <span class="number">0.5</span>,  <span class="number">1.5</span>],</span><br><span class="line">           [<span class="number">-1.5</span>, <span class="number">-0.5</span>,  <span class="number">0.5</span>,  <span class="number">1.5</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一般解决方法是：专门为广播添加一个新轴</span></span><br><span class="line"><span class="comment"># 通过np.newaxis属性及全切片完成</span></span><br><span class="line">arr = randn(<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">depth_mean = arr.mean(<span class="number">2</span>)</span><br><span class="line">demean = arr - depth_mean[:,np.newaxis,:]</span><br><span class="line">demean.mean(<span class="number">2</span>)</span><br><span class="line"><span class="comment"># 结果基本为0</span></span><br><span class="line">$-&gt; array([[  0.00000000e+00,  -2.22044605e-17,   1.11022302e-17,</span><br><span class="line">              <span class="number">8.88178420e-17</span>],</span><br><span class="line">           [ <span class="number">-2.22044605e-17</span>,  <span class="number">-1.11022302e-17</span>,  <span class="number">-7.77156117e-17</span>,</span><br><span class="line">              <span class="number">2.77555756e-17</span>],</span><br><span class="line">           [  <span class="number">2.22044605e-17</span>,  <span class="number">-5.55111512e-18</span>,  <span class="number">-3.33066907e-17</span>,</span><br><span class="line">             <span class="number">-6.66133815e-17</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过广播设置数组的值</span></span><br><span class="line">arr = randn(<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line">arr[:] = <span class="number">5</span></span><br><span class="line">arr $-&gt;</span><br><span class="line">array([[ <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>],</span><br><span class="line">       [ <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>],</span><br><span class="line">       [ <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>]])</span><br></pre></td></tr></table></figure>
+<h5 id="ufunc高级应用"><a href="#ufunc高级应用" class="headerlink" title="ufunc高级应用"></a>ufunc高级应用</h5><center>ufunc方法</center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">method</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">reduce(x)</td>
+<td style="text-align:center">通过连续执行原始运算的方式对值进行聚合</td>
+</tr>
+<tr>
+<td style="text-align:center">accumulate(x)</td>
+<td style="text-align:center">聚合值，保留所有局部聚合结果</td>
+</tr>
+<tr>
+<td style="text-align:center">reduceat(x,bin)</td>
+<td style="text-align:center">局部约简。约简数据的各个切片以产生聚合型数组</td>
+</tr>
+<tr>
+<td style="text-align:center">outer(x,y)</td>
+<td style="text-align:center">对x、y中的每个元素应用原始运算</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="自定义ufunc"><a href="#自定义ufunc" class="headerlink" title="自定义ufunc"></a>自定义ufunc</h6><ul>
+<li>numpy.frompyfunc()函数接受一个python函数，以及两个分别表示输入输出参数数量的整数</li>
+<li>numpy.vectorize()函数用法类似</li>
+<li>这两个函数速度较慢</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_elements</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x+y</span><br><span class="line"><span class="comment"># add_elements函数接受两个参数，返回一个参数</span></span><br><span class="line">add_them = np.frompyfunc(add_elements, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">add_them(np.arange(<span class="number">6</span>), np.arange(<span class="number">6</span>))</span><br><span class="line">$-&gt; array([0, 2, 4, 6, 8, 10], dtype=object)</span><br><span class="line"></span><br><span class="line">add_them = np.vectorize(add_elements)</span><br><span class="line">add_them(np.arange(<span class="number">6</span>), np.arange(<span class="number">6</span>))</span><br><span class="line">$-&gt; array([ 0,  2,  4,  6,  8, 10])</span><br></pre></td></tr></table></figure>
+<h5 id="更多的排序"><a href="#更多的排序" class="headerlink" title="更多的排序"></a>更多的排序</h5><ul>
+<li>ndarray的排序是就地排序</li>
+<li>numpy.sort产生一个排好序的副本</li>
+<li>两个函数都可以接受axis参数，0：对列排序，1：对行排序</li>
+</ul>
+<h6 id="间接排序"><a href="#间接排序" class="headerlink" title="间接排序"></a>间接排序</h6><p>对多个键排序时，可以使用这两个函数<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">values = np.array([<span class="number">5</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>])</span><br><span class="line">index = values.argsort()</span><br><span class="line">index</span><br><span class="line">$-&gt; array([1, 2, 4, 3, 0])</span><br><span class="line">values[index]</span><br><span class="line">$-&gt; array([0, 1, 2, 3, 5])</span><br><span class="line"></span><br><span class="line">first = np.array([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>])</span><br><span class="line">last = np.array([<span class="string">'z'</span>,<span class="string">'y'</span>,<span class="string">'x'</span>,<span class="string">'v'</span>,<span class="string">'u'</span>])</span><br><span class="line"><span class="comment"># 键的应用是从后往前，先last，再first</span></span><br><span class="line">sorter = np.lexsort((first, last))</span><br><span class="line">sorter $-&gt; array([4, 3, 2, 1, 0])</span><br><span class="line"></span><br><span class="line">zip(last[sorter], first[sorter])</span><br><span class="line">$-&gt; [('u', 'e'), ('v', 'd'), ('x', 'c'), ('y', 'b'), ('z', 'a')]</span><br></pre></td></tr></table></figure></p>
+<center>排序算法的kind参数</center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">param</th>
+<th style="text-align:center">speed</th>
+<th style="text-align:center">stability</th>
+<th style="text-align:center">space complexity</th>
+<th style="text-align:center">worst complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">quicksort</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">no</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">O(n^2)</td>
+</tr>
+<tr>
+<td style="text-align:center">mergesort</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">yes</td>
+<td style="text-align:center">n/2</td>
+<td style="text-align:center">O(nlogn)</td>
+</tr>
+<tr>
+<td style="text-align:center">heapsort</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">no</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">O(nlogn)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="numpy-searchsorted"><a href="#numpy-searchsorted" class="headerlink" title="numpy.searchsorted"></a>numpy.searchsorted</h6><ul>
+<li>有序数组中的查找，使用二分查找</li>
+<li>存在待查找的元素，返回其序号，否则返回插入该元素后该元素的序号</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">8</span>,<span class="number">9</span>])</span><br><span class="line">arr.searchsorted(<span class="number">5</span>)</span><br><span class="line">$-&gt; 3</span><br><span class="line">arr.searchsorted(<span class="number">7</span>)</span><br><span class="line">$-&gt; 5</span><br><span class="line"></span><br><span class="line">arr = np.array([<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>])</span><br><span class="line">arr.searchsorted([<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">$-&gt; array([0, 3])</span><br><span class="line"><span class="comment"># 从右边数</span></span><br><span class="line">arr.searchsorted([<span class="number">0</span>,<span class="number">1</span>], side=<span class="string">'right'</span>)</span><br><span class="line">$-&gt; array([3, 6])</span><br></pre></td></tr></table></figure>
+<h5 id="NumPy的matrix类"><a href="#NumPy的matrix类" class="headerlink" title="NumPy的matrix类"></a>NumPy的matrix类</h5><ul>
+<li>np.matrix()接受参数：二维数组，构建一个矩阵对象</li>
+<li>支持使用直接的 * 运算</li>
+<li>X.I返回矩阵X的逆</li>
+<li>可用X.asarray将其转化为正规的ndarray对象</li>
+</ul>
+<h5 id="输出输入"><a href="#输出输入" class="headerlink" title="输出输入"></a>输出输入</h5><h6 id="内存映像文件"><a href="#内存映像文件" class="headerlink" title="内存映像文件"></a>内存映像文件</h6><ul>
+<li>内存映像文件是一种将磁盘上的非常大的二进制文件当作文件中的数组进行处理的方式，实际上就是放在磁盘上的ndarray</li>
+<li>NumPy中的memmap对象允许将大文件分成小段进行读写</li>
+<li>np.memmap()函数接受(文件路径,数据类型,文件模式,模式)</li>
+<li>对memmap对象切片会返回磁盘上的数据视图，如果对这些视图赋值，数据会被存储在内存中，调用flush就可以写入磁盘</li>
+<li>如果某个内存映像超出作用域，他就会被垃圾回收器回收，之前的修改都会被写入磁盘</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mmap = memmap(<span class="string">'mymmap'</span>, dtype=<span class="string">'float64'</span>, mode=<span class="string">'w+'</span>, shape=(<span class="number">10000</span>,<span class="number">10000</span>))</span><br><span class="line">section = mmap[:<span class="number">5</span>]</span><br><span class="line">section[:] = randn(<span class="number">5</span>,<span class="number">10000</span>)</span><br><span class="line"></span><br><span class="line">mmap.flush()</span><br><span class="line"><span class="keyword">del</span> mmap</span><br></pre></td></tr></table></figure>
+<h6 id="HDF5"><a href="#HDF5" class="headerlink" title="HDF5"></a>HDF5</h6><ul>
+<li>PyTables和h5py用于处理高效、可压缩的HDF5格式的数据</li>
+<li>PyTables提供了一些用于结构化数组的高级查询功能</li>
+</ul>
+<h5 id="性能加速"><a href="#性能加速" class="headerlink" title="性能加速"></a>性能加速</h5><ul>
+<li>避免复制</li>
+<li>使用广播</li>
+<li>使用ufunc方法</li>
+<li>使用连续内存</li>
+<li>Cython加速</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr_c = np.ones((<span class="number">1000</span>,<span class="number">1000</span>), order=<span class="string">'C'</span>)</span><br><span class="line">arr_f = np.ones((<span class="number">1000</span>,<span class="number">1000</span>), order=<span class="string">'F'</span>)</span><br><span class="line"><span class="comment"># 对前者的操作要快于后者的操作，前者数据按照C语言的连续方式存储</span></span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/08/15/NumPy进阶/" data-id="cjn8cdlij0060vwphqcw8va9h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2016/08/15/python时间序列分析/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    python时间序列分析
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/07/19/Count-Complete-Tree-Nodes/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Count Complete Tree Nodes</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Boosting | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Boosting是集成学习中的典型代表之一，与随机森林的不同在于：Boosting中的个体学习器之间有着强依赖、必须串行生成。Boosting族最典型的算法是AdaBoost。AdaBoost每轮迭代尝试调整训练数据的分布以使得下一轮的基学习器能够修正现有学习器的一些错误。Boosting算法从“偏差-方差”的角度看更加专注于降低偏差。  AdaBoost 指数损失函数AdaBoost可以理解成基">
+<meta name="keywords" content="machine learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Boosting">
+<meta property="og:url" content="atlantic8.github.io/2017/01/13/Boosting/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="Boosting是集成学习中的典型代表之一，与随机森林的不同在于：Boosting中的个体学习器之间有着强依赖、必须串行生成。Boosting族最典型的算法是AdaBoost。AdaBoost每轮迭代尝试调整训练数据的分布以使得下一轮的基学习器能够修正现有学习器的一些错误。Boosting算法从“偏差-方差”的角度看更加专注于降低偏差。  AdaBoost 指数损失函数AdaBoost可以理解成基">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-05-02T14:58:54.426Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Boosting">
+<meta name="twitter:description" content="Boosting是集成学习中的典型代表之一，与随机森林的不同在于：Boosting中的个体学习器之间有着强依赖、必须串行生成。Boosting族最典型的算法是AdaBoost。AdaBoost每轮迭代尝试调整训练数据的分布以使得下一轮的基学习器能够修正现有学习器的一些错误。Boosting算法从“偏差-方差”的角度看更加专注于降低偏差。  AdaBoost 指数损失函数AdaBoost可以理解成基">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Boosting" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Boosting
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/01/13/Boosting/">
+            <time datetime="2017-01-13T11:50:41.000Z" itemprop="datePublished">2017-01-13</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>Boosting是集成学习中的典型代表之一，与随机森林的不同在于：Boosting中的个体学习器之间有着强依赖、必须串行生成。Boosting族最典型的算法是AdaBoost。<b>AdaBoost每轮迭代尝试调整训练数据的分布以使得下一轮的基学习器能够修正现有学习器的一些错误</b>。Boosting算法从“偏差-方差”的角度看更加专注于降低偏差。</p>
+<hr>
+<h5 id="AdaBoost"><a href="#AdaBoost" class="headerlink" title="AdaBoost"></a>AdaBoost</h5><hr>
+<h6 id="指数损失函数"><a href="#指数损失函数" class="headerlink" title="指数损失函数"></a>指数损失函数</h6><p>AdaBoost可以理解成基学习器的叠加，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+H(x)=\sum_{t=1}^T \alpha_th_t(x)
+\end{aligned}</script><p>来最小化损失函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l_{exp}(H|\mathcal{D})&=E_{x\sim D}[e^{-f(x)H(x)}] \\
+&= E_{x\sim D}[e^{-H(x)}P(f(x)=1|x) + e^{H(x)}P(f(x)=-1|x)]
+\end{aligned}</script><p>其中$\mathcal{D}$表示数据集$D$的分布，也就是每个样本出现的概率。要选取最佳的$H(x)$使得损失函数$l$最小。这里假设原始数据集的标签$y_i\in \lbrace -1,+1 \rbrace$，$f(x)$是真实函数。自然地考虑$l_{exp}(H|\mathcal{D})$对$H(x)$求偏导数并且设置为0</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial l_{exp}(H|\mathcal{D})}{\partial H(x)} &= -e^{-H(x)}P(f(x)=1|x) + e^{H(x)}P(f(x)=-1|x) = 0 \\
+H(x) &= \frac{1}{2} ln \frac{P(f(x)=1|x)}{P(f(x)=-1|x)}
+\end{aligned}</script><p>其中，$H(x)$与真实函数输出一致，那么$-f(x)H(x)$为-1；反之$-f(x)H(x)=1$，所以最小化上述损失函数的意义就是希望$H(x)$与真实函数$f(x)$输出尽量一致。最后，考虑到问题本质，$sign \left( \frac{1}{2} ln \frac {P(f(x)=1|x)} {P(f(x)=-1|x)}\right) $还需要</p>
+<script type="math/tex; mode=display">
+sign(H(x)) = sign \left( \frac{1}{2} ln \frac {P(f(x)=1|x)} {P(f(x)=-1|x)} \right) = \begin{cases}
+ 1 & {P(f(x)=1|x) \ge P(f(x)=-1|x)} \\
+-1 & {P(f(x)=1|x) < P(f(x)=-1|x)}
+\end{cases}</script><p>表明$sign(H(x))$达到了贝叶斯最优错误率，也就是：若指数损失函数最小化，那么分类错误率最小化。</p>
+<hr>
+<h6 id="权重更新"><a href="#权重更新" class="headerlink" title="权重更新"></a>权重更新</h6><p>AdaBoost中，第一个分类器$h_1$通过直接将基学习算法用于初始数据分布$\mathcal{D}$而得，此后迭代地生成$h_t,\alpha_t$。当基分类器$h_t$基于分布$\mathcal{D}_t$产生后，$h_t$对应的权重$\alpha_t$应该使得$\alpha_th_t$最小化指数损失函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l_{exp}(\alpha_th_t|\mathcal{D}_t) &= E_{x\sim \mathcal{D}_t} \left[ e^{-f(x)\alpha_th_t(x)} \right] \\
+&= E_{x\sim \mathcal{D}_t} \left[ e^{-\alpha_t}I(f(x)=h_t(x)) + e^{\alpha_t}I(f(x)\neq h_t(x)) \right] \\
+&= e^{-\alpha_t}P_{x\sim \mathcal{D}_t}(f(x)=h_t(x)) + e^{\alpha_t}P_{x\sim \mathcal{D}_t}(f(x)\neq h_t(x)) \\
+&= e^{-\alpha_t}(1-\epsilon_t) + e^{\alpha_t}\epsilon_t
+\end{aligned}</script><p>其中，$\epsilon_t=P_{x\sim \mathcal{D}_t}(f(x)\neq h_t(x))$。上式对$\alpha_t$求导并使之为0可得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha_t=\frac{1}{2} ln\left( \frac{1-\epsilon_t}{\epsilon_t} \right)
+\end{aligned}</script><hr>
+<h6 id="样本分布调整"><a href="#样本分布调整" class="headerlink" title="样本分布调整"></a>样本分布调整</h6><p>获取$H_{t-1}$之后将样本分布进行调整，使下一轮的基学习器$h_t$能纠正$H_{t-1}$的错误，依旧采用最小化指数损失函数的思想，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l_{exp}(H_{t-1}+h_t | \mathcal{D}) &= E_{x\sim \mathcal{D}} [e^{ -f(x) ( H_{t-1}(x)+h_t(x) ) }] \\
+&= E_{x\sim \mathcal{D}} [ e^{-f(x)H_{t-1}} e^{-f(x)h_t(x)} ] \\
+\end{aligned}</script><p>对上式中的$e^{-f(x)h_t(x)}$做二阶泰勒展开，近似为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l_{exp}(H_{t-1}+h_t|\mathcal{D}) &\simeq E_{x\sim \mathcal{D}}\left[e^{-f(x)H_{t-1}(x)} \left( 1-f(x)h_t(x)+\frac{f(x)^2h_t(x)^2}{2} \right) \right] \\
+&= E_{x\sim \mathcal{D}}\left[e^{-f(x)H_{t-1}(x)} \left( \frac{3}{2}-f(x)h_t(x) \right)\right] \\
+\end{aligned}</script><p>因为$\frac{3}{2}-f(x)h_t(x)&gt;0$并且$f(x)H_{t-1}(x)$也是确定的值，所以最小化上式也就是等价于下式，也可以做一点变化变体</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\to \arg\max_{h} E_{x\sim \mathcal{D}}\left[e^{-f(x)H_{t-1}(x)} f(x)h(x)\right] \\
+&\to \arg\max_{h} E_{x\sim \mathcal{D}}\left[\frac{e^{-f(x)H_{t-1}(x)}} {E_{x\sim \mathcal{D}} \left[ e^{-f(x)H_{t-1}(x) } \right] } f(x)h(x)\right]
+\end{aligned}</script><p>因为$E_{x\sim \mathcal{D}}e^{-f(x)H_{t-1}(x)}$是一个常数，令$\mathcal{D}_t$表示一个分布</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+D_t(x)=\mathcal{D}(x) \frac { e^{-f(x)H_{t-1}(x)} }  { E_{x\sim \mathcal{D}} \left[ e^{ -f(x)H_{t-1}(x) } \right] }
+\end{aligned}</script><p>根据数学期望的定义，这等价于令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+h_t(x) &= \arg\max_{h} E_{x\sim \mathcal{D}}\left[\frac{e^{-f(x)H_{t-1}(x)}} {E_{x\sim \mathcal{D}} [e^{-f(x)H_{t-1}(x)}]} f(x)h(x)\right] \\
+&= \arg\max_{h} E_{x\sim \mathcal{D}_t} [f(x)h(x)]
+\end{aligned}</script><p>由于$f(x),h(x)$都只能取$\lbrace -1,1 \rbrace$，所以上式中的优化问题也可以变成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+h_t(x) = \arg\min_{h} E_{x\sim \mathcal{D}_t} [I(f(x) \neq h(x))]
+\end{aligned}</script><p>所以理想的$h_t$将在分布$\mathcal{D}_t$下最小化分类误差，因此弱分类器将基于$\mathcal{D}_t$来训练，且针对$\mathcal{D}_t$的分类误差应该不小于0.5（二分类至少要比猜的强）。根据上面的推导，分布之间的关系应该是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{D}_{t+1}(x) &= \mathcal{D}(x) \frac{e^{-f(x)H_{t-1}(x)}} { E_{x\sim \mathcal{D}} [ e^{ -f(x) H_{t-1}(x) } ] } \\
+&= \mathcal{D}(x) \frac{ e^{-f(x)H_{t-1}(x)}  e^{-f(x) \alpha_t h_t(x)} } {E_{x\sim \mathcal{D}} [ e^{ -f(x) H_{t-1}(x) } ] } \\
+&= \mathcal{D}_{t}(x) e^{-f(x) \alpha_t h_t(x)} \frac{E_{x\sim \mathcal{D}} [ e^{-f(x)H_{t-1}(x)} ]} {E_{x\sim \mathcal{D}} [e^{-f(x)H_{t}(x)}]}
+\end{aligned}</script><p>至此，AdaBoost算法流程介绍完毕，下面是其算法描述</p>
+<hr>
+<p>输入：训练集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$；基学习算法$\gamma$；训练轮数$T$</p>
+<hr>
+<ol>
+<li>$\mathcal{D}_{1}(x)=\frac{1}{m}$. //初始为均匀分布</li>
+<li>$for\;t=1,…,T$</li>
+<li>$h_t=\gamma(D,\mathcal{D}_{t})$.</li>
+<li>$\epsilon_t=P_{x\sim \mathcal{D}_{t} }(h_t(x)\neq f(x))$.</li>
+<li>$if\;\epsilon_t&gt;0.5\;then\;break\;$. // 错误率大于0.5的不要，至少比随机猜测好</li>
+<li>$\alpha_t=\frac{1}{2}ln \frac {1-\epsilon_t}{\epsilon_t}$. //权重更新</li>
+<li>$\mathcal{D}_{t+1}=\mathcal{D}_{t} \frac{exp(-\alpha_t f(x) h_t(x))} {Z_t}$. //分布调整</li>
+</ol>
+<hr>
+<p>输出：$H(x)=sign\left( \sum_{t=1}^T \alpha_t h_t(x) \right)$</p>
+<hr>
+<p>由算法描述的第三行可以看出，基学习算法需要能够对特定的数据分布进行学习，可以通过两种方法实现：</p>
+<ul>
+<li>重赋权法：每一轮训练过程中，根据样本分布为每个样本重新赋予一个权重。也可以是在计算误差率的时候，为每个样本对应的项加上权重。</li>
+<li>重采样法：每一轮训练过程中，根据样本分布进行重采样，用采样的样本集训练数据。（特别用于样本无法接受权值的基算法场景，此方法还可以在基学习器错误率大于0.5时不用退出，创新采样开始）</li>
+</ul>
+<h5 id="Boosting-Tree"><a href="#Boosting-Tree" class="headerlink" title="Boosting Tree"></a>Boosting Tree</h5><ul>
+<li>提升树被认为是统计学习中性能最好的方法之一</li>
+<li>与RF类似，提升树也可以通过线性叠加基学习器的方法获得准确率的提升</li>
+<li>基学习器为二叉树，分为分类、回归两种</li>
+</ul>
+<h6 id="提升树"><a href="#提升树" class="headerlink" title="提升树"></a>提升树</h6><p>提升树的模型可以表示为<script type="math/tex">f_M(x)=\sum_{m=1}^MT(x;\theta_m)</script>其中，$M$为树的个数，$T(x;\theta_m)$表示决策树，$\theta_m$为决策树的参数。</p>
+<p>步骤：首先确定初始提升树$f_0(x)=0$，第$m$步的模型是<script type="math/tex">f_m(x)=f_{m-1}(x)+T(x;\theta_m)</script>，通过经验风险最小化确定参数$\theta_m$为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_m=\arg\min_{\theta_m^{\*}} \sum_{i=1}^N L \left (y_i,f_{m-1}(x_i)+T(x_i;\theta_m^{\*}) \right)
+\end{aligned}</script><p>即使<strong>输入数据与输出数据之间的关系很复杂，树的线性组合也可以很好地拟合训练数据</strong>。</p>
+<p>在回归问题中，考虑使用平方误差损失函数，所以损失变为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&L \left(y,f_{m-1}(x)+T(x;\theta_m^{\*})\right) \\
+&= \left(y-f_{m-1}(x)-T(x;\theta_m^{\*})\right)^2 \\
+&=  \left(r-T(x;\theta_m^{\*})\right)^2
+\end{aligned}</script><p>其中$r=y-f_{m-1}(x)$是当前模型拟合数据的残差，所以算法就是<strong>拟合当前模型的残差</strong>，描述如下：</p>
+<hr>
+<p>输入：训练数据集$D$</p>
+<hr>
+<ol>
+<li>初始化$f_0(x)=0$，迭代次数$M$</li>
+<li>对$m=1,…,M$<ul>
+<li>计算每个样本的残差$r_{mi}=y_i-f_{m-1}(x_i)$</li>
+<li>拟合残差$r_m$得到一个回归树$T(x;\theta_m)$</li>
+<li>计算$f_m(x)=f_{m-1}(x)+T(x;\theta_m)$</li>
+</ul>
+</li>
+<li>得到回归提升树$f_M(x)=\sum_{m=1}^MT(x;\theta_m)$</li>
+</ol>
+<hr>
+<p>输出：$F_M(x)$</p>
+<hr>
+<h6 id="梯度提升"><a href="#梯度提升" class="headerlink" title="梯度提升"></a>梯度提升</h6><ul>
+<li>损失函数是平方误差、指数损失函数时每一步优化比较明显；但一般损失函数就不那么容易了</li>
+<li>使用最速下降的近似方法</li>
+<li><strong>利用损失函数的负梯度在当前模型的值残差的近似值</strong>作为提升回归树的残差近似值</li>
+</ul>
+<p>下面是梯度提升回归树算法</p>
+<hr>
+<p>输入：数据集$D$，数量为$N$，迭代次数$M$</p>
+<hr>
+<ol>
+<li>初始化$f_0(x)=\arg\min_{c}\sum_{y=1}^NL(y_i,c)$</li>
+<li>对$m=1,…,M$<ul>
+<li>计算$r_{mi}=-\left[ \frac{\partial{L(y_i,f_{m-1}(x_i))}}{\partial{f_{m-1}(x_i)}} \right]$</li>
+<li>对$r_m$拟合一个回归树，对于它的每一个叶节点$R_{mj}$，确定节点的值为$c_{mj}=\arg\min_c\sum_{x_i\in R_{mj}}L(y_i,f_{m-1}(x_i)+c)$</li>
+<li>更新$f_m(x)=f_{m-1}(x)+\sum_{j=1}^Jc_{mj}I(x\in R_{mj})$</li>
+</ul>
+</li>
+<li>得到回归树$f_M(x)=\sum_{m=1}^M\sum_{j=1}^Jc_{mj}I(x\in R_{mj})$</li>
+</ol>
+<hr>
+<p>输出：$f_M(x)$</p>
+<hr>
+<p><code>GBDT(Gradient Boosting Decision Tree)</code>几乎可用于所有的回归问题</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjn8cdlfa000gvwph8knkwg39" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/01/17/Java-Thread-Pool/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Java Thread Pool
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/01/12/Ensemble-Learning/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Ensemble Learning</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

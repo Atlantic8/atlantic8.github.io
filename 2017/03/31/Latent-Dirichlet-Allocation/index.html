@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Latent Dirichlet Allocation | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="TF-IDF问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？ TF首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到词频(TF)这个标准 词频TF(t)就是关键词t在文档中出现的次数 IDF但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性">
+<meta name="keywords" content="machine learning,NLP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Latent Dirichlet Allocation">
+<meta property="og:url" content="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="TF-IDF问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？ TF首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到词频(TF)这个标准 词频TF(t)就是关键词t在文档中出现的次数 IDF但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1c0iuzclj20pb0ko788.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cpt0cu9j20j40iudgr.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cx1ll6gj205a02rwec.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1del7l22j207c02qt8m.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sf8anmrj20dm09ojsc.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a4qu9g3j20dq06sq2y.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sknkxg2j20dm09oq46.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a310d1rj20ic07tt9k.jpg">
+<meta property="og:updated_time" content="2017-05-02T15:02:52.594Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Latent Dirichlet Allocation">
+<meta name="twitter:description" content="TF-IDF问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？ TF首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到词频(TF)这个标准 词频TF(t)就是关键词t在文档中出现的次数 IDF但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1c0iuzclj20pb0ko788.jpg">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Latent-Dirichlet-Allocation" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Latent Dirichlet Allocation
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/31/Latent-Dirichlet-Allocation/">
+            <time datetime="2017-03-31T02:16:10.000Z" itemprop="datePublished">2017-03-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h5><p>问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？</p>
+<h6 id="TF"><a href="#TF" class="headerlink" title="TF"></a>TF</h6><p>首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到<strong><code>词频(TF)</code></strong>这个标准</p>
+<pre><code>词频TF(t)就是关键词t在文档中出现的次数
+</code></pre><h6 id="IDF"><a href="#IDF" class="headerlink" title="IDF"></a>IDF</h6><p>但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性，举个例子：在计算机科学类的paper中，出现算法和文学类paper中出现算法的重要性是不一样的，又或者“的”这个字在汉语中出现的次数相当大，一篇文档中没有“的”字的概率是很小的，此时仅仅按照关键词中的“的”判断文档排名显然是不准确的。于是，我们希望加大稀缺词的权重，所以定义了<strong><code>逆文档频率(IDF)</code></strong>，<code>IDF</code>的定义如下<script type="math/tex">IDF(t) = log\frac{N} {DF(t)}</script>其中，$N$为文档总数，$DF(t)$为所有文档中出现了关键词$t$的文档个数。所以，越是普遍的单词（“的”，“因此”等）<code>IDF</code>越小，而稀缺的单词（如文学paper中的“算法”）就对应着比较大的<code>IDF</code>。</p>
+<p>将TF和IDF结合到一起，得到TF-IDF的计算方法：<script type="math/tex">TF-IDF(t,d) = TF(t,d) * IDF(t)</script>所以，<strong>一篇文档和一条Query的相关度为Query中所有单词在这篇文档中的TF-IDF值之和</strong>。而<strong>两个文档间的相关度是文档向量的余弦值</strong>，余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似，这就叫”余弦相似性”。</p>
+<h6 id="TF-IDF的缺陷"><a href="#TF-IDF的缺陷" class="headerlink" title="TF-IDF的缺陷"></a>TF-IDF的缺陷</h6><ul>
+<li>单纯地认为文本频数小的单词就越重要，文本频数大的单词就越无用，并不是完全正确的</li>
+<li>不能有效地反映单词的重要程度和特征词的分布情况，TF-IDF的精度并不是很高</li>
+<li>没有体现出单词的位置信息，这也是空间向量模型的不足</li>
+</ul>
+<h4 id="主题模型"><a href="#主题模型" class="headerlink" title="主题模型"></a>主题模型</h4><p>TF-IDF模型中没有考虑文字背后的语义关联，即语义层面上的关联，可能在两个文档共同出现的单词很少甚至没有，但两个文档是相似的。判断文档相关性的时候需要考虑到文档的语义，而语义挖掘的利器是主题模型，LDA就是其中一种比较有效的模型。</p>
+<p>主题模型的思想源于生成模型，其思想如下：<strong>一篇文章的每个词都是通过：以一定概率选择了某个主题，并从这个主题中以一定概率选择某个词语</strong>，形式化表述为<script type="math/tex">p(word|doc)=\sum_{topic}p(word|topic)\times p(topic|doc)</script>，具体内容在下文中描述。</p>
+<p>能够发现文档-词语之间所蕴含的潜在语义关系（即主题）——将文档看成一组主题的混合分布，而主题又是词语的概率分布——从而<strong>将高维度的“文档-词语”向量空间映射到低维度的“文档-主题”和“主题-词语”空间</strong>，有效提高了文本信息处理的性能。</p>
+<h5 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h5><h6 id="二项分布（Binomial-distribution）"><a href="#二项分布（Binomial-distribution）" class="headerlink" title="二项分布（Binomial distribution）"></a>二项分布（Binomial distribution）</h6><p>$n$次重复伯努利试验，一次概率为$p$，$k$次试验概率函数为<script type="math/tex">P(K=k)=C_n^kp^k(1-p)^{n-k}</script>，二项分布计为$X\sim b(n,p)$。</p>
+<h6 id="多项式分布"><a href="#多项式分布" class="headerlink" title="多项式分布"></a>多项式分布</h6><p>每次试验可能有$k$种结果，每种结果的可能性是$p_i$，则$n$次试验各种结果出现次数分别为$x_1,…,x_k$的概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(x_1,...,x_k;n,p_1,...,p_k)=\frac{n!}{x_1!...x_k!}p_1^{x_1}...p_k^{x_k}
+\end{aligned}</script><p>是二项分布的扩展。</p>
+<h6 id="gamma函数"><a href="#gamma函数" class="headerlink" title="gamma函数"></a>gamma函数</h6><p>gamma函数形如<script type="math/tex">\Gamma(x)=\int_0^{\infty}t^{x-1}e^{-t}dt</script>这个函数有如下性质$\Gamma(x+1)=x\Gamma(x)$，因此gamma函数可以看作是阶乘在实数集上的延拓<script type="math/tex">\Gamma(n)=(n-1)!</script>此外，gamma函数还有如下性质</p>
+<ul>
+<li>对$x\in (0,1)$，$\Gamma(1-x)\Gamma(x)=\frac{\pi}{sin(\pi x)}$</li>
+<li>$\Gamma(\frac{1}{2})=\sqrt{\pi}$</li>
+</ul>
+<h6 id="共轭先验分布"><a href="#共轭先验分布" class="headerlink" title="共轭先验分布"></a>共轭先验分布</h6><p><strong>定义</strong><br>设$\theta$是总体分布中的参数，$p(\theta)$是$\theta$的先验密度函数，假如<strong>由抽样信息$x$算得的后验密度函数$p(\theta|x)$与$p(\theta)$有相同的函数形式(同一个分布簇)，则称$p(\theta)$是$p(\theta|x)$的(自然)共轭先验分布</strong>，称$p(\theta)$和$p(\theta|x)$为共轭分布。</p>
+<h6 id="Beta分布-二项分布的共轭先验分布"><a href="#Beta分布-二项分布的共轭先验分布" class="headerlink" title="Beta分布-二项分布的共轭先验分布"></a>Beta分布-二项分布的共轭先验分布</h6><p>给定参数$\alpha&gt;0,\beta&gt;0$，取值范围为$[0,1]$的随机变量$x$的概率密度函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(x;\alpha,\beta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1} \\
+&=\frac{1}{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1}
+\end{aligned}</script><p>则称$x$满足Beta分布，Beta分布的均值为$\frac{\alpha}{\alpha+\beta}$，方差为$\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$。参数$\alpha,\beta$共同控制Beta分布的函数的形状，见下图。</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1c0iuzclj20pb0ko788.jpg" alt=""></p>
+<p>假定先验分布$p(\theta)$和似然概率$p(x|\theta)$满足</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}\\&=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1} \\
+p(x|\theta)&=C_n^k\theta^k(1-\theta)^{n-k}
+\end{aligned}</script><p>那么，考虑到$p(x)$为常数项，可知后验概率</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta|x)&=\frac{p(x|\theta)p(\theta)}{p(x)} \\
+&= \frac{1}{Z}  \theta^{\alpha+k-1}(1-\theta)^{\beta+n-k-1}.
+\end{aligned}</script><p>所以，根据定义，$p(\theta)$和$p(\theta|x)$是共轭分布。</p>
+<h6 id="Dirichlet分布"><a href="#Dirichlet分布" class="headerlink" title="Dirichlet分布"></a>Dirichlet分布</h6><p>维度$k \ge 2$的狄利克雷分布在参数$\alpha_1, …, \alpha_k &gt; 0$上，其概率密度函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(\theta_1,..,\theta_k;\alpha_1,...,\alpha_k)&=\frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
+B(\alpha) &= \frac{\prod_{i=1}^k\Gamma(\alpha_i)}{\Gamma(\sum_{i=1}^k\alpha_i)}
+\end{aligned}</script><p>同上，假设$\theta=(\theta_1,…,\theta_k)$有先验分布和似然函数,可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta)&= \frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
+p(x|\theta)&= \frac{n!}{n_1!...n_k!}\theta_1^{n_1}...\theta_k^{n_k} \\
+p(\theta|x)&= \frac{1}{Z} \prod_{i=1}^k\theta_i^{\alpha_i+n_i-1}
+\end{aligned}</script><p>和Dirichlet分布形式一致。<br>Dirichlet分布的均值向量为$\left( \frac{\alpha_1}{\sum_i^k \alpha_i},…,\frac{\alpha_k}{\sum_i^k \alpha_i} \right)$。</p>
+<h5 id="铺垫模型"><a href="#铺垫模型" class="headerlink" title="铺垫模型"></a>铺垫模型</h5><p>定义：</p>
+<ul>
+<li>$w$表示词，$V$表示所有单词的个数（固定值）</li>
+<li>$z$表示主题，$k$是主题的个数（预先给定，固定值）</li>
+<li>$D=(d_1,…,d_M)$表示语料库，其中$M$是语料库中的文档数（固定值）</li>
+<li>$d=(w_1,…,w_N)$表示一个文档，其中$N$表示一个文档中的词数（随机变量）</li>
+</ul>
+<h6 id="Unigram-model"><a href="#Unigram-model" class="headerlink" title="Unigram model"></a>Unigram model</h6><p>对于文档$d=(w_1,…,w_N)$，用$p(w_n)$表示$w_n$的先验概率，生成文档$d$的概率为<script type="math/tex">p(d)=\prod_{n-1}^Np(w_n)</script>unigram model假设文本中的词服从Multinomial分布，而Multinomial分布的先验分布为Dirichlet分布。</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cpt0cu9j20j40iudgr.jpg" alt="Unigram model"></p>
+<p>上图中，$w_n$是在文本中观察到的第$n$个词，$p$和$α$是隐含未知变量,其中</p>
+<ul>
+<li>$p$是词服从的Multinomial分布的参数</li>
+<li>$\alpha$是Dirichlet分布（即Multinomial分布的先验分布）的参数</li>
+</ul>
+<p>一般$\alpha$由经验事先给定，$p$由观察到的文本中出现的词学习得到，表示文本中出现每个词的概率。</p>
+<h6 id="Mixture-of-unigrams-model"><a href="#Mixture-of-unigrams-model" class="headerlink" title="Mixture of unigrams model"></a>Mixture of unigrams model</h6><p>Mixture of unigrams model生成过程是：给某个文档先选择<strong>一个主题</strong>，再根据该主题生成文档，该文档中的所有词都来自一个主题。假设主题有$z_1,…,z_k$，生成文档$d$的概率为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(d)=\sum_zp(z) \prod_{n=1}^N p(w_n|z)
+\end{aligned}</script><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cx1ll6gj205a02rwec.jpg" alt="Mixture of unigrams model"></p>
+<p>如上图所示。</p>
+<h6 id="PLSA模型"><a href="#PLSA模型" class="headerlink" title="PLSA模型"></a>PLSA模型</h6><p>Mixture of unigrams model中假定一篇文档只由一个主题生成，可实际中，一篇文章往往有多个主题，只是这多个主题各自在文档中出现的概率大小不一样。PLSA是一种词袋模型，不关注词和词之间的出现顺序。</p>
+<p>假设一组共现(co-occurrence)词项关联着一个隐含的主题类别$z_k\in \lbrace z_1,…,z_K \rbrace$。同时定义</p>
+<ul>
+<li>$p(d_i)$表示海量文档中某篇文档被选中的概率</li>
+<li>$p(w_j|d_i)$表示词$w_j$在给定文档$d_i$中出现的概率</li>
+<li>$p(z_k|d_i)$表示具体某个主题$z_k$在给定文档$d_i$下出现的概率</li>
+<li>$p(w_j|z_k)$表示具体某个词$w_j$在给定主题$z_k$下出现的概率，与主题关系越密切的词，其条件概率越大</li>
+</ul>
+<hr>
+<p><strong>文档到词项的生成方法</strong></p>
+<ol>
+<li>按照概率$p(d_i)$选择一篇文档$d_i$</li>
+<li>选定文档$d_i$后，从主题分布中按照概率$p(z_k|d_i)$选择一个隐含的主题类别$z_k$</li>
+<li>选定$z_k$后，从词分布中按照概率$p(w_j|z_k)$选择一个词$w_j$</li>
+</ol>
+<p>整个过程便是：选定文档-&gt;生成主题-&gt;确定主题生成词。</p>
+<hr>
+<p><strong>发现文档集中的主题（分布）</strong></p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1del7l22j207c02qt8m.jpg" alt="PLSA"></p>
+<p>如上图所示，文档$d$和单词$w$是可被观察到的（样本），但主题$z$却是隐藏的。因为$p(w_j|d_i)$是已知的(统计文档词频)，根据大量已知的文档-词项信息可以训练出$p(z_k|d_i),p(w_j|z_k)$。文档中每个词的生成概率为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_j,d_i) &= p(d_i)p(w_j|d_i) \\
+&= p(d_i)\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)
+\end{aligned}</script><p>其中$p(d_i)$可事先计算求出，$p(z_k|d_i),p(w_j|z_k)$未知。</p>
+<p>考虑词和词($N$)之间、文档($M$)和文档之间的独立性，则整个语料库中词的分布为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w,D)=\prod_{i=1}^M\prod_{j=1}^Np(w_j,d_i)^{n(w_j,d_i)}
+\end{aligned}</script><p>其中$n(w_j,d_i)$表示词项$w_j$在文档$d_i$中出现的次数，$n(d_i)$表示文档$d_i$中词的总数，并且令$p(w_j|z_k)=\phi_{kj},p(z_k|d_i)=\theta_{ik}$将未知量矩阵化成$\Phi,\Theta$。所以得到对数似然函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\Phi,\Theta)&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\log p(w_j,d_i) \\
+&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\left(\log p(d_i)+\log\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)\right) \\
+&= \sum_{i=1}^Mn(d_i)\left( \log p(d_i)+ \sum_{j=1}^N \frac{n(w_j,d_i)}{n(d_i)} \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \right) \\
+&\propto \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \\
+& \ge \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \sum_{k=1}^K p(z_k|d_i,w_j) \log(\phi_{kj}\theta_{ik})
+\end{aligned}</script><p>含有隐含变量的优化可以使用EM算法求解，很复杂，不具体写了<br><strong>E步</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj}\theta_{ik}}{\sum_{l=1}^M\phi_{lj}\theta_{il}}
+\end{aligned}</script><p><strong>M步</strong><br>经过E步，还需考虑约束条件，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{j=1}^N\phi_{kj}&=1 \\
+\sum_{k=1}^K\theta_{ik}&=1
+\end{aligned}</script><p>用拉格朗日乘子法解得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\phi_{kj} &= \frac{\sum_{i=1}^M n(d_i,w_j)p(z_k|d_i,w_j)} {\sum_{i=1}^M\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j)} \\
+\theta_{ik} &= \frac{\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j) }{n(d_i)}
+\end{aligned}</script><p>这样就求解出了$\Phi,\Theta$。PLSA的模型示意如下图所示:</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sf8anmrj20dm09ojsc.jpg" alt="PLSA"></p>
+<h5 id="LDA-Latent-Dirichlet-Allocation"><a href="#LDA-Latent-Dirichlet-Allocation" class="headerlink" title="LDA(Latent Dirichlet Allocation)"></a>LDA(Latent Dirichlet Allocation)</h5><p><strong>LDA在pLSA的基础上加层贝叶斯框架</strong>，在贝叶斯框架下的LDA中，我们不再认为<strong>主题分布（各个主题在文档中出现的概率分布）和词分布（各个词语在某个主题下出现的概率分布）是唯一确定的（而是随机变量）</strong>。这体现了贝叶斯派的核心思想，<strong>把未知参数当作是随机变量，不再认为是某一个确定的值</strong>。即选主题和选词依然都是两个随机的过程。</p>
+<p>LDA需要两个Dirichlet先验参数，这个Dirichlet先验为某篇文档随机抽取出某个主题分布和词分布。</p>
+<h6 id="LDA模型中文档生成方式"><a href="#LDA模型中文档生成方式" class="headerlink" title="LDA模型中文档生成方式"></a>LDA模型中文档生成方式</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a4qu9g3j20dq06sq2y.jpg" alt=""></p>
+<p>$\alpha$是主题分布的先验分布，$\beta$是词分布的先验分布。</p>
+<ol>
+<li>按照先验概率$p(d_i)$选择一篇文档$d_i$</li>
+<li>从Dirichlet分布$\alpha$中取样生成文档$d_i$的主题分布$\theta_i$，换言之，主题分布$\theta_i$由超参数为$\alpha$的Dirichlet分布生成</li>
+<li>从主题的多项式分布$\theta_i$中取样生成文档$d_i$第$j$个词的主题$z_{ij}$</li>
+<li>从Dirichlet分布$\beta$中取样生成主题$z_{ij}$对应的词语分布$\phi_{z_{ij}}$，换言之，词语分布$\phi_{z_{ij}}$由参数为$\beta$的Dirichlet分布生成</li>
+<li>从词语的多项式分布$\phi_{z_{ij}}$中采样最终生成词语$w_{ij}$</li>
+</ol>
+<p>示意图如下:</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sknkxg2j20dm09oq46.jpg" alt="LDA"></p>
+<p>LDA在pLSA的基础上给这两参数$p(z_k|d_i),p(w_j|z_k)$加了两个先验分布的参数（贝叶斯化）：一个主题分布的先验分布Dirichlet分布$\alpha$，和一个词语分布的先验分布Dirichlet分布$\beta$。这里$\alpha,\beta$都是参数向量。</p>
+<p>LDA生成文档的过程中，先从dirichlet先验中“随机”抽取出主题分布，然后从主题分布中“随机”抽取出主题，最后从确定后的主题对应的词分布中“随机”抽取出词。虽说是随机取值，但是不同的参数$\alpha,\beta$导致可选值的分布是不一样的，如下图所示</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a310d1rj20ic07tt9k.jpg" alt="不同参数的dirichlet分布"></p>
+<h6 id="LDA发现文档集中的主题"><a href="#LDA发现文档集中的主题" class="headerlink" title="LDA发现文档集中的主题"></a>LDA发现文档集中的主题</h6><p>文档生成后，LDA把这两参数$p(z_k|d_i),p(w_j|z_k)$变成随机变量，且加入dirichlet先验。</p>
+<p>在pLSA中，我们使用EM算法去估计“主题-词项”矩阵和“文档-主题”矩阵：$\Phi,\Theta$，这两参数都是个固定的值。在LDA中，估计$\Phi,\Theta$这两未知参数可以用变分(Variational inference)-EM算法，也可以用gibbs采样，前者的思想是最大后验估计MAP（MAP与MLE类似，都把未知参数当作固定的值），后者的思想是贝叶斯估计。</p>
+<p><strong>Gibbs采样</strong><br>Gibbs抽样是马尔可夫链蒙特卡尔理论（MCMC）中用来获取一系列近似等于指定多维概率分布（比如2个或者多个随机变量的联合概率分布）观察样本的算法。</p>
+<p>给定一个文档集合，$w$是可以观察到的已知变量，$\alpha,\beta$和是根据经验给定的先验参数，其他的变量$z，\Theta和\Phi$都是未知变量。</p>
+<p>求解$\Theta,\Phi$的过程很复杂，最终求解的Dirichlet分布期望为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\phi_{kt}&=\frac{n_k^{t}+\beta_t} {\sum_{t=1}^V(n_k^{t}+\beta_t)} \\
+\theta_{mk}&=\frac{n_m^{k}+\alpha_k}{\sum_{k=1}^K(n_m^{k}+\alpha_k)}
+\end{aligned}</script><p>其中，$\phi_{kt}=p(w_t|z_k),\theta_{mk}=p(z_k|d_m)$，$n_t^k$是词$w_t$在主题$z_k$中出现的次数，$n_m^k$是主题$z_k$在文章$d_m$中出现的次数。</p>
+<p><strong>引用</strong><br>[1] <a href="https://cos.name/2013/01/lda-math-gamma-function/" target="_blank" rel="noopener">LDA-math-神奇的Gamma函数</a><br>[2] <a href="http://blog.csdn.net/u010945683/article/details/49149815" target="_blank" rel="noopener">共轭先验分布</a><br>[3] <a href="http://blog.csdn.net/yhao2014/article/details/51098037" target="_blank" rel="noopener">通俗理解LDA主题模型</a><br>[4] <a href="http://blog.163.com/zzz216@yeah/blog/static/162554684201381382117133/" target="_blank" rel="noopener">关于Beta分布、二项分布与Dirichlet分布、多项分布的关系</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/" data-id="cjn8cdlhd003yvwph7q3m6x3l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/03/31/word2vec/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    word2vec
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/03/18/Prime-Factor-Index-in-Factorial/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Prime Factor Index in Factorial</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

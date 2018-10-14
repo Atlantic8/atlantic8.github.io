@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>MultiThreads in Cpp | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="thread1#include &amp;lt;thread&amp;gt; 构造    用途 说明     创建一个空的 thread 执行对象 thread() noexcept;   创建一个 thread对象，该 thread对象可被 joinable，新产生的线程会调用 fn 函数，该函数的参数由 args 给出 template &amp;lt;class Fn, class... Args&amp;gt; expl">
+<meta name="keywords" content="Cpp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MultiThreads in Cpp">
+<meta property="og:url" content="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="thread1#include &amp;lt;thread&amp;gt; 构造    用途 说明     创建一个空的 thread 执行对象 thread() noexcept;   创建一个 thread对象，该 thread对象可被 joinable，新产生的线程会调用 fn 函数，该函数的参数由 args 给出 template &amp;lt;class Fn, class... Args&amp;gt; expl">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-06-13T02:55:40.595Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MultiThreads in Cpp">
+<meta name="twitter:description" content="thread1#include &amp;lt;thread&amp;gt; 构造    用途 说明     创建一个空的 thread 执行对象 thread() noexcept;   创建一个 thread对象，该 thread对象可被 joinable，新产生的线程会调用 fn 函数，该函数的参数由 args 给出 template &amp;lt;class Fn, class... Args&amp;gt; expl">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-MultiThreads-in-Cpp" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            MultiThreads in Cpp
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/06/12/MultiThreads-in-Cpp/">
+            <time datetime="2017-06-12T01:41:32.000Z" itemprop="datePublished">2017-06-12</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Cpp/">Cpp</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="thread"><a href="#thread" class="headerlink" title="thread"></a>thread</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;thread&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="构造"><a href="#构造" class="headerlink" title="构造"></a>构造</h6><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建一个空的 thread 执行对象</td>
+<td><code>thread() noexcept;</code></td>
+</tr>
+<tr>
+<td>创建一个 thread对象，该 thread对象可被 joinable，新产生的线程会调用 fn 函数，该函数的参数由 args 给出</td>
+<td><code>template &lt;class Fn, class... Args&gt; explicit thread (Fn&amp;&amp; fn, Args&amp;&amp;... args);</code></td>
+</tr>
+<tr>
+<td>copy [deleted]</td>
+<td><code>thread (const thread&amp;) = delete;</code></td>
+</tr>
+<tr>
+<td>调用成功之后 x 不代表任何 thread 执行对象</td>
+<td><code>thread (thread&amp;&amp; x) noexcept;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="其他成员"><a href="#其他成员" class="headerlink" title="其他成员"></a>其他成员</h6><ul>
+<li><code>get_id</code> : 获取线程 ID</li>
+<li><code>joinable</code> : 检查线程是否可被 join</li>
+<li><code>join</code> : 同步操作，线程所有的操作完成此函数才返回，阻塞调用此函数的线程。调用此函数后，对应thread对象变成<code>non-joinable</code>，并可以安全销毁</li>
+<li><code>detach</code> : 将目标线程与调用线程分离开，调用此函数后，对应thread对象变成<code>non-joinable</code>，并可以安全销毁（这里很奇怪—!）</li>
+<li><code>swap</code> : <code>void swap (thread&amp; x) noexcept</code>，与x互换状态</li>
+<li><code>native_handle</code> : 返回可以访问此线程详细实现信息的值</li>
+<li><code>hardware_concurrency [static]</code> :  返回硬件线程上下文的数量</li>
+</ul>
+<h5 id="mutex"><a href="#mutex" class="headerlink" title="mutex"></a>mutex</h5><p>Mutex 又称互斥量，C++ 11中与 Mutex 相关的类（包括锁类型）和函数都声明在 <mutex> 头文件中.</mutex></p>
+<h6 id="std-mutex"><a href="#std-mutex" class="headerlink" title="std::mutex"></a>std::mutex</h6><p>std::mutex 对象提供了独占所有权的特性——即不支持递归地对 std::mutex 对象上锁(重复上锁)，其相关函数如下：</p>
+<ul>
+<li>构造函数，std::mutex<strong>不允许拷贝构造，也不允许 move 拷贝</strong>，最初产生的 mutex 对象是处于 unlocked 状态的</li>
+<li><code>lock()</code>，调用线程将锁住该互斥量。线程调用该函数会发生下面 3 种情况：(1). 如果该互斥量当前没有被锁住，则调用线程将该互斥量锁住，直到调用 unlock之前，该线程一直拥有该锁。(2). <strong>如果当前互斥量被其他线程锁住，则当前的调用线程被阻塞住</strong>。(3). <strong>如果当前互斥量被当前调用线程锁住，则会产生死锁(deadlock)</strong></li>
+<li><code>unlock()</code>， 解锁，释放对互斥量的所有权</li>
+<li><code>try_lock()</code>，尝试锁住互斥量，如果互斥量被其他线程占有，则当前线程也不会被阻塞。线程调用该函数也会出现下面 3 种情况，(1). 如果当前互斥量没有被其他线程占有，则该线程锁住互斥量，直到该线程调用 unlock 释放互斥量。(2). <strong>如果当前互斥量被其他线程锁住，则当前调用线程返回 false，而并不会被阻塞掉</strong>。(3). 如果当前互斥量被当前调用线程锁住，则会产生死锁(deadlock)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">std::mutex mtx;</span><br><span class="line"><span class="function"><span class="keyword">volatile</span> <span class="keyword">int</span> <span class="title">counter</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10000</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mtx.try_lock()) &#123;   <span class="comment">// 没被上锁时才自增</span></span><br><span class="line">            ++counter;</span><br><span class="line">            mtx.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    std::thread threads[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; ++i)</span><br><span class="line">        threads[i] = std::thread(func);</span><br><span class="line">    <span class="keyword">for</span> (auto&amp; th : threads) th.join();</span><br><span class="line">    std::cout &lt;&lt; counter &lt;&lt; <span class="string">" successful increases of the counter.\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-recursive-mutex"><a href="#std-recursive-mutex" class="headerlink" title="std::recursive_mutex"></a>std::recursive_mutex</h6><p>recursive_mutex与mutex类似。但是和 std::mutex 不同的是，<strong>std::recursive_mutex 允许同一个线程对互斥量多次上锁（即递归上锁），来获得对互斥量对象的多层所有权</strong>，std::recursive_mutex 释放互斥量时需要调用与该锁层次深度相同次数的 unlock()，可理解为 lock() 次数和 unlock() 次数相同</p>
+<h6 id="std-time-mutex"><a href="#std-time-mutex" class="headerlink" title="std::time_mutex"></a>std::time_mutex</h6><p>定时Mutex类，有两个特殊函数：</p>
+<ul>
+<li><code>try_lock_for</code> : 接受一个时间范围，表示在这一段时间范围之内线程如果没有获得锁则被阻塞住，超时则返回false</li>
+<li><code>try_lock_until</code> : 接受一个时间点作为参数，在指定时间点未到来之前线程如果没有获得锁则被阻塞住，超时则返回false</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;chrono&gt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fireworks</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 等待获取锁，每200ms打印一个'-'</span></span><br><span class="line">  <span class="keyword">while</span> (!mtx.try_lock_for(std::chrono::milliseconds(<span class="number">200</span>))) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">"-"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 获取锁后休息1秒，然后打印'*'</span></span><br><span class="line">  std::this_thread::sleep_for(std::chrono::milliseconds(<span class="number">1000</span>));</span><br><span class="line">  std::cout &lt;&lt; <span class="string">"*\n"</span>;</span><br><span class="line">  mtx.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-recursive-timed-mutex"><a href="#std-recursive-timed-mutex" class="headerlink" title="std::recursive_timed_mutex"></a>std::recursive_timed_mutex</h6><p>std::recursive_timed_mutex之于std::timed_mutex如同std:recursive_mutex之于std::mutex，就是允许重复上锁。</p>
+<h6 id="std-lock-guard"><a href="#std-lock-guard" class="headerlink" title="std::lock_guard"></a>std::lock_guard</h6><p>方便线程对互斥量上锁，不用考虑销毁、异常时的解锁问题。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdexcept&gt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_even</span> <span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x%<span class="number">2</span> == <span class="number">0</span>) std::cout &lt;&lt; x &lt;&lt; <span class="string">" is even\n"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">throw</span> (std::logic_error(<span class="string">"not even"</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_thread_id</span> <span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 实用局部的lock_guard锁定mtx保证在销毁、异常中的解锁</span></span><br><span class="line">        std::lock_guard&lt;std::mutex&gt; lck (mtx);</span><br><span class="line">        print_even(id);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (std::logic_error&amp;) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"[exception caught]\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-unique-lock"><a href="#std-unique-lock" class="headerlink" title="std::unique_lock"></a>std::unique_lock</h6><p>方便线程对互斥量上锁，但提供了更好的上锁和解锁控制。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_block</span> <span class="params">(<span class="keyword">int</span> n, <span class="keyword">char</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 临界区 (lck生存周期内对std::cout的互斥访问权)</span></span><br><span class="line">    std::unique_lock&lt;std::mutex&gt; lck (mtx);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; ++i) &#123;</span><br><span class="line">        std::cout &lt;&lt; c;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="future"><a href="#future" class="headerlink" title="future"></a>future</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;future&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="std-future"><a href="#std-future" class="headerlink" title="std::future"></a>std::future</h6><p>从异步任务中获取结果，通过查询future的状态（future_status）可获取异步操作的结果。future_status有三种状态：</p>
+<ul>
+<li>deferred：异步操作还没开始</li>
+<li>ready：异步操作已经完成</li>
+<li>timeout：异步操作超时</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">std::future_status status;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        status = future.wait_for(std::chrono::seconds(<span class="number">1</span>));</span><br><span class="line">        <span class="keyword">if</span> (status == std::future_status::deferred) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"deferred\n"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == std::future_status::timeout) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"timeout\n"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == std::future_status::ready) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"ready!\n"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">while</span> (status != std::future_status::ready);</span><br></pre></td></tr></table></figure>
+<p>获取future结果有三种方式：get、wait、wait_for</p>
+<ul>
+<li>get等待异步操作结束并返回结果</li>
+<li>wait只是等待异步操作完成，没有返回值</li>
+<li>wait_for是超时等待返回结果。</li>
+</ul>
+<p><future> 头文件中包含了以下几个类和函数：</future></p>
+<ul>
+<li>Providers 类：std::promise, std::package_task</li>
+<li>Futures 类：std::future, shared_future</li>
+<li>Providers 函数：std::async()</li>
+<li>其他类型：std::future_error, std::future_errc, std::future_status, std::launch</li>
+</ul>
+<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		[] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">		std::ref(pr)</span><br><span class="line">	);</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>promise();</td>
+<td>默认构造函数，初始化一个空的共享状态</td>
+</tr>
+<tr>
+<td>template <class alloc=""> promise (allocator_arg_t aa, const Alloc&amp; alloc);</class></td>
+<td>带自定义内存分配器的构造函数，与默认构造函数类似，但是使用自定义分配器来分配共享状态</td>
+</tr>
+<tr>
+<td>promise (const promise&amp;) = delete;</td>
+<td>删除的拷贝构造函数</td>
+</tr>
+<tr>
+<td>promise (promise&amp;&amp; x) noexcept;</td>
+<td>移动构造函数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>promise 对象可以保存某一类型 T 的值，该值可被 future 对象读取（可能在另外一个线程中），因此 promise 也提供了一种线程同步的手段</li>
+<li>在 promise 对象构造时可以和一个共享状态（通常是std::future）相关联，并可以在相关联的共享状态(std::future)上保存一个类型为 T 的值。</li>
+<li>可以通过 <code>get_future</code> 来获取与该 promise 对象相关联的 future 对象，调用该函数之后，两个对象共享相同的共享状态<ul>
+<li>promise 对象是异步 Provider，它可以在某一时刻设置共享状态的值</li>
+<li>future 对象可以异步返回共享状态的值，或者在必要的情况下阻塞调用者并等待共享状态标志变为 ready，然后才能获取共享状态的值</li>
+</ul>
+</li>
+<li>promise对象可以通过<code>set_value</code>函数设置共享状态的值</li>
+<li><code>std::promise::set_value_at_thread_exit</code> : 设置共享状态的值，但是不将共享状态的标志设置为 ready，当线程退出时该 promise 对象会自动设置为 ready</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_int</span><span class="params">(std::future&lt;<span class="keyword">int</span>&gt;&amp; fut)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = fut.get(); <span class="comment">// 获取共享状态的值.</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"value: "</span> &lt;&lt; x &lt;&lt; <span class="string">'\n'</span>; <span class="comment">// 打印 value: 10.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="keyword">int</span>&gt; prom; <span class="comment">// 生成一个 std::promise&lt;int&gt; 对象.</span></span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; fut = prom.get_future(); <span class="comment">// 和 future 关联.</span></span><br><span class="line">    std::<span class="function">thread <span class="title">t</span><span class="params">(print_int, std::ref(fut)</span>)</span>; <span class="comment">// 将 future 交给另外一个线程t.</span></span><br><span class="line">    prom.set_value(<span class="number">10</span>); <span class="comment">// 设置共享状态的值, 此处和线程t保持同步.</span></span><br><span class="line">    t.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>std::promise::set_exception</code>为 promise 设置异常，此后 promise 的共享状态变标志变为 ready。下面程序的意义是：线程1从终端接收一个整数，线程2将该整数打印出来，如果线程1接收一个非整数，则为 promise 设置一个异常(failbit) ，线程2 在std::future::get 是抛出该异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_int</span><span class="params">(std::promise&lt;<span class="keyword">int</span>&gt;&amp; prom)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">"Please, enter an integer value: "</span>;</span><br><span class="line">    std::cin.exceptions (std::ios::failbit);   <span class="comment">// throw on failbit</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        std::cin &gt;&gt; x;                         <span class="comment">// sets failbit if input is not int</span></span><br><span class="line">        prom.set_value(x);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (std::exception&amp;) &#123;</span><br><span class="line">        prom.set_exception(std::current_exception());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_int</span><span class="params">(std::future&lt;<span class="keyword">int</span>&gt;&amp; fut)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> x = fut.get();</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"value: "</span> &lt;&lt; x &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (std::exception&amp; e) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"[exception caught: "</span> &lt;&lt; e.what() &lt;&lt; <span class="string">"]\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::promise&lt;<span class="keyword">int</span>&gt; prom;</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; fut = prom.get_future();</span><br><span class="line"></span><br><span class="line">    std::<span class="function">thread <span class="title">th1</span><span class="params">(get_int, std::ref(prom)</span>)</span>;</span><br><span class="line">    std::<span class="function">thread <span class="title">th2</span><span class="params">(print_int, std::ref(fut)</span>)</span>;</span><br><span class="line"></span><br><span class="line">    th1.join();</span><br><span class="line">    th2.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-packaged-task"><a href="#std-packaged-task" class="headerlink" title="std::packaged_task"></a>std::packaged_task</h6><p><code>std::packaged_task</code><strong>包装了一个可调用的目标</strong>（如function, lambda expression, bind expression, or another function object）,以便异步调用，它和promise在某种程度上有点像，promise保存了一个共享状态的值，而packaged_task保存的是一个函数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::packaged_task&lt;<span class="keyword">int</span>()&gt; task([]()&#123; <span class="keyword">return</span> <span class="number">7</span>; &#125;);</span><br><span class="line">std::<span class="function">thread <span class="title">t1</span><span class="params">(std::ref(task)</span>)</span>;</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = task.get_future();</span><br><span class="line">auto r1 = f1.get();</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-async"><a href="#std-async" class="headerlink" title="std::async"></a>std::async</h6><p><code>std::async</code>先将异步操作用<code>std::packaged_task</code>包装起来，然后将异步操作的结果放到<code>std::promise</code>中，这个过程就是创造未来的过程。外面再通过<code>future.get/wait</code>来获取这个未来的结果，<code>std::async</code>的原型<code>async(std::launch::async | std::launch::deferred, f, args...)</code>，<strong>第一个参数是线程的创建策略</strong>，有两种策略，默认的策略是立即创建线程：</p>
+<ul>
+<li><code>std::launch::async</code>：在调用<code>async</code>就开始创建线程</li>
+<li><code>std::launch::deferred</code>：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者wait时才创建线程</li>
+</ul>
+<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[]() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">	<span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h5 id="std-condition-variable"><a href="#std-condition-variable" class="headerlink" title="std::condition_variable"></a>std::condition_variable</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;condition_variable&gt;</span><br></pre></td></tr></table></figure>
+<p>std::condition_variable 是条件变量，其构造方法如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>condition_variable();</td>
+<td>默认构造函数</td>
+</tr>
+<tr>
+<td>condition_variable (const condition_variable&amp;) = delete;</td>
+<td>删除的拷贝函数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>当 <code>std::condition_variable</code> 对象的某个 wait 函数被调用的时候，它使用 <code>std::unique_lock</code>(通过 std::mutex) 来锁住当前线程。当前线程会一直被阻塞，直到另外一个线程在相同的 <code>std::condition_variable</code> 对象上调用了 <code>notify_one</code>或者’notify_all’ 函数来唤醒当前线程</strong>。</p>
+<p><code>wait</code>函数有两种形式：</p>
+<ul>
+<li><code>void wait( std::unique_lock&lt;std::mutex&gt;&amp; lock )</code> : 一直阻塞直到<code>notify_one</code>或者’notify_all’ 函数被调用。</li>
+<li><code>template&lt; class Predicate &gt; void wait( std::unique_lock&lt;std::mutex&gt;&amp; lock, Predicate pred )</code> : <strong>只有当谓词<code>pred()</code>不为真的时候才等待，否则直接跳过<code>wait</code></strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">std::mutex mtx; <span class="comment">// 全局互斥锁.</span></span><br><span class="line">std::condition_variable cv; <span class="comment">// 全局条件变量.</span></span><br><span class="line">bool ready = <span class="keyword">false</span>; <span class="comment">// 全局标志位.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_print_id</span><span class="params">(<span class="keyword">int</span> id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</span><br><span class="line">    <span class="keyword">while</span> (!ready) <span class="comment">// 如果标志位不为 true, 则等待...</span></span><br><span class="line">        cv.wait(lck); <span class="comment">// 当前线程被阻塞, 当全局标志位变为 true 之后,</span></span><br><span class="line">    <span class="comment">// 线程被唤醒, 继续往下执行打印线程编号id.</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"thread "</span> &lt;&lt; id &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">go</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</span><br><span class="line">    ready = <span class="keyword">true</span>; <span class="comment">// 设置全局标志位为 true.</span></span><br><span class="line">    cv.notify_all(); <span class="comment">// 唤醒所有线程.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::thread threads[<span class="number">10</span>];</span><br><span class="line">    <span class="comment">// spawn 10 threads:</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)</span><br><span class="line">        threads[i] = std::thread(do_print_id, i);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"10 threads ready to race...\n"</span>;</span><br><span class="line">    go(); <span class="comment">// go!</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (auto &amp; th:threads)</span><br><span class="line">        th.join();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>引用</strong><br>[1]. <a href="http://www.cnblogs.com/haippy/p/3236136.html" target="_blank" rel="noopener">C++11 并发指南二</a><br>[2]. <a href="http://www.cnblogs.com/haippy/p/3237213.html" target="_blank" rel="noopener">C++11 并发指南三</a><br>[3]. <a href="http://www.cnblogs.com/haippy/p/3239248.html" target="_blank" rel="noopener">C++11 并发指南</a><br>[4]. <a href="http://blog.csdn.net/watson2016/article/details/52861094" target="_blank" rel="noopener"> C++11 并发指南五</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjn8cdli9005kvwphlh28bwd9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/06/17/Sliding-Window-Median/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Sliding Window Median
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/05/18/Convex-Hull/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Convex Hull</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

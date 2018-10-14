@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>word2vec | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="统计语言模型自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。 对于一段文本序列$S=w_1,…,w_T$，它的概率是  \begin{aligned} P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1}) \end{aligned}问题变成了如何去预测这些条件概率. Ng">
+<meta name="keywords" content="machine learning,NLP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="word2vec">
+<meta property="og:url" content="atlantic8.github.io/2017/03/31/word2vec/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="统计语言模型自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。 对于一段文本序列$S=w_1,…,w_T$，它的概率是  \begin{aligned} P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1}) \end{aligned}问题变成了如何去预测这些条件概率. Ng">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe4l3rsmdtj20tm10gtee.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffjr31ab9aj213q0tt1hg.jpg">
+<meta property="og:updated_time" content="2017-05-13T09:22:33.302Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="word2vec">
+<meta name="twitter:description" content="统计语言模型自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。 对于一段文本序列$S=w_1,…,w_T$，它的概率是  \begin{aligned} P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1}) \end{aligned}问题变成了如何去预测这些条件概率. Ng">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/9bcfe727ly1fe4l3rsmdtj20tm10gtee.jpg">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-word2vec" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            word2vec
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/31/word2vec/">
+            <time datetime="2017-03-31T02:50:31.000Z" itemprop="datePublished">2017-03-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h5><p>自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。</p>
+<p>对于一段文本序列$S=w_1,…,w_T$，它的概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1})
+\end{aligned}</script><p>问题变成了如何去预测这些条件概率.</p>
+<h6 id="Ngram"><a href="#Ngram" class="headerlink" title="Ngram"></a>Ngram</h6><p>上述模型的参数空间巨大，一个改进方法是Ngram，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_t|w_1,...,w_{t-1}) \approx p(w_t|w_{t-n+1},...,w_{t-1})
+\end{aligned}</script><p>Ngram本质上是将词当做一个个孤立的原子单元去处理的，用<code>ont-hot</code>的方式向量化word，向量维度等于词典大小。<br>Ngram及其他gram模型仍有局限性：</p>
+<ul>
+<li>由于参数空间的爆炸式增长，它无法处理更长程的context</li>
+<li>没有考虑词与词之间内在的联系性</li>
+</ul>
+<h5 id="Distributed-Representation"><a href="#Distributed-Representation" class="headerlink" title="Distributed Representation"></a>Distributed Representation</h5><p>用<code>ont-hot</code>的方式向量化单词面临着维度灾难问题，能否用一个连续的稠密向量去刻画一个word的特征呢？这样不仅可以直接刻画词与词之间的相似度，还可以建立一个从向量到概率的平滑函数模型，使得相似的词向量可以映射到相近的概率空间上。这个稠密连续向量也被称为word的<code>distributed representation</code>.</p>
+<p>在信息检索领域里，这个概念被称为向量空间模型（<code>Vector Space Model</code>），VSM是基于一种<code>Statistical Semantics Hypothesis</code>，比较广为人知的两个版本是<code>Bag of Words Hypothesis</code>和<code>Distributional Hypothesis</code>，分别表示</p>
+<ul>
+<li><code>Bag of Words Hypothesis</code>：一篇文档的词频（而不是词序）代表了文档的主题</li>
+<li><code>Distributional Hypothesis</code>：上下文环境相似的两个词有着相近的语义</li>
+</ul>
+<p>基于<code>Bag of Words Hypothesis</code>，我们可以构造一个<code>term-document</code>矩阵$A$，矩阵里的元素$A_{ij}$代表着word $w_i$在文档$D_j$中出现的次数（或频率）。可以提取行向量做为word的语义向量。</p>
+<p>基于<code>Distributional Hypothesis</code>，我们可以构造一个<code>word-context</code>的矩阵$B$，矩阵里的元素$B_{ij}$代表着word $w_i$在context $C_j$中出现的次数（或频率）</p>
+<p>这种co-occurrence矩阵仍然存在着数据稀疏性和维度灾难的问题，解决方法是基于SVD的稀疏矩阵分解方法。</p>
+<h5 id="word2vec原理"><a href="#word2vec原理" class="headerlink" title="word2vec原理"></a>word2vec原理</h5><p>假设预料为$D=\lbrace w_1,…,w_V \rbrace$</p>
+<h6 id="CBoW模型（Continuous-Bag-of-Words-Model）"><a href="#CBoW模型（Continuous-Bag-of-Words-Model）" class="headerlink" title="CBoW模型（Continuous Bag-of-Words Model）"></a>CBoW模型（Continuous Bag-of-Words Model）</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe4l3rsmdtj20tm10gtee.jpg" alt="Continuous Bag-of-Words Model"></p>
+<p><strong>CBoW的描述</strong>(N对应图中的|V|)</p>
+<ul>
+<li>利用位置$t$前后的$2m$个words，以它们的<code>one-hot</code>编码$x_k$作为输入。通过一个共享的$n\times N$投影矩阵$V$，将每个输入投影成$n$维词向量，$N$是词典大小。$v_{t+j}=Vx_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$这里的$V$矩阵最终包含的就是我们要的结果。</li>
+<li>在PROJECTION层上，将$2m$个投影结果汇总（平均值，舍弃了位置信息）.$\hat{v_t}=\frac{1}{2m}\sum_{j}v_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$，通过矩阵$U_{Nn}(U^T=[u_1,…,u_N])$连接到输出层。</li>
+<li>最后是softmax层，$N$个节点，每个节点表示中心词是$w_i$的概率。输出层的输入向量为$z$，$z_i=u_i^T\hat{v_t}$，输出结果为$y$，$\hat{y_i}=softmax(z_i)$</li>
+</ul>
+<p>模型参数是两个词向量矩阵：$U,V$，对于中心词$w_t$，模型对它的损失函数为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J_t&=-logP(w_t|w_{t-m},...,w_{t-1},w_{t+1},...,w_{t+m}) \\
+ &=-log(softmax(z_t)) \\
+ &=-log\frac{e^{u_t^T\hat{v_t}}}{\sum_{k=1}^V e^{u_k^T\hat{v_t}}} \\
+ &=-z_t+log\sum_{k=1}^V e^{z_k}
+\end{aligned}</script><p>所以，整个模型的经验风险为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J&=\sum_{w_{t+m},w_{t-m}\in D} J_t
+\end{aligned}</script><p>风险$J$对$U,V$的导数为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial J}{\partial u_i} &= (\hat{y_i}-y_i)\hat{v_t} \\
+\frac{\partial J}{\partial U^T} &= \hat{v_t}(\hat{y_t}-y)^T \\
+\frac{\partial J}{\partial v_{t+j}} &= \frac{1}{2m}U^T(\hat{y}-y)
+\end{aligned}</script><p>采取sgd更新方式，梯度下降。</p>
+<h6 id="Skip-gram"><a href="#Skip-gram" class="headerlink" title="Skip-gram"></a>Skip-gram</h6><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffjr31ab9aj213q0tt1hg.jpg" alt="Skip-gram"></p>
+<p>Skip-gram以当前词为中心，预测window内的词语，细节图中描述的很清楚了。为了描述方便，不妨假设图中的矩阵$W,W{\’}$分别为$U,V$。</p>
+<p>由于输入向量$w_t$是<code>one-hot</code>向量(不妨假设第$k$行是1)，所以$Uw_t$就相当于$U$的第$k$列，在这里将其命名为$u_k$。经过$V$矩阵，得到$z=Vu_k,z_i=v_iu_k$，$v_i$是$V$的第$i$行。这里$V$也可以看成包含了所有单词对应向量的矩阵，$z$就表示了$u_k$和$V$中其他向量的相似度。最后对$z$做softmax归一化得到结果$y$(假设应该是$w_{t+1}$)，最大的对应输出。</p>
+<p>假设真实的输出为$\hat{y}$（<code>one-hot</code>，$p$行为1），损失函数使用交叉熵，则对这单个样例的损失函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(t,t+1)=-logy_p=-log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}
+\end{aligned}</script><p>所以一个句子的损失为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L=-\frac{1}{T}\sum_{t=1}^T\sum_{i=t-m}^{t+m}l(t,i)
+\end{aligned}</script><p>然后分别对$U,V$求导即可得到梯度。</p>
+<h6 id="Negative-Sampling"><a href="#Negative-Sampling" class="headerlink" title="Negative Sampling"></a>Negative Sampling</h6><p>继续<code>skip-gram</code>模型，在计算$l(t,i)$的时候，需要计算$w_t$对应的向量与每一个其他向量的相似程度$v_iu_k$，<code>softmax</code>对于特别大的词汇计算量很大。</p>
+<p>负采样的思想就是把这里计算其他所有词的相似度改成只计算一部分的相似度，具体地，将这里的类<code>softmax</code>分类的方法变成<code>logistic regression</code>的方法，当前词的context的词为正样本，然后采样一部分其余的词作为负样本。</p>
+<p>也就是将$log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}$变成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+log\;\sigma(v_iu_k)+\sum_{j=1}^n E_{w_i\sim p_{neg}(w_t)}[log\;\sigma(-v_ju_k)]
+\end{aligned}</script><p>其中，$n$是超参数，表示负采样的数量，一般地，对小的训练集$n\in [20,50]$；对大的数据集，$n$可能只有$[2,5]$之间。$ p_{neg}(w_t)$表示对$w_t$负采样的分布。启发式的采样方法可以如下：</p>
+<p>随机选取非正样本$w_i$，然后以一定的概率舍弃之，这个概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_i)=1-\sqrt{\frac{c}{f(w_i))}}
+\end{aligned}</script><p>其中，$f(w_i)$是词$w_i$的词频，$c$是常数，一般在$10^{-5}$左右。这样选择，会过滤掉词频小于$c$的词，并且保证词频大的词语被选中的概率更大。</p>
+<h6 id="层次Softmax"><a href="#层次Softmax" class="headerlink" title="层次Softmax"></a>层次Softmax</h6><p>由于原始的CBoW和skip-gram最后都有softmax层，导致复杂度能达到O(nN)，<strong>Hierarchical Softmax是一种对输出层进行优化的策略，输出层从原始模型的利用softmax计算概率值改为了利用<code>Huffman</code>树计算概率值</strong>。</p>
+<ul>
+<li>投影层的输出沿着<code>huffman</code>树不断进行logistic二分类，并修正各中间向量和词向量</li>
+<li>词表中的<strong>全部词作为叶子节点</strong>，<strong>词频作为节点的权</strong>，叶子结点包含word本身</li>
+<li>每一个非叶子结点都看作是一个logistic分类器，决定下一层的走向，它包含权值</li>
+<li>从根节点出发，到达指定叶子节点的路径是唯一的</li>
+<li>路过非叶子结点，修正logistic参数，并且<strong>累计误差，误差最后用来修正投影矩阵$V$</strong></li>
+<li><code>Hierarchical Softmax</code>正是利用这条唯一路径来计算指定词的概率</li>
+</ul>
+<p>实现过程中，可以</p>
+<ul>
+<li>不考虑投影矩阵，而是将每个词对应的向量（投影后的）设置为随机向量</li>
+<li>通过huffman的每一个节点时都计算累加误差，利用累计误差更新当前节点的LR参数</li>
+<li>累计误差将被用来调整词向量</li>
+</ul>
+<h5 id="word2vec的应用"><a href="#word2vec的应用" class="headerlink" title="word2vec的应用"></a>word2vec的应用</h5><h6 id="广告投放"><a href="#广告投放" class="headerlink" title="广告投放"></a>广告投放</h6><pre><code>U1  a1,a2,a3……
+U2  a2,a3,a5,……
+U3  a1,a3,a6,……
+</code></pre><p>公司A目前有很多用户的浏览数据，如用户u浏览了公司A的页面a1，a2，a3等。把每个用户的整体浏览记录当作一篇doc，每个记录就是一个word。利用word2vec算法，将每个记录转化为一个向量。向量化的页面就能够计算相似度，进而根据各种推荐规则进行推荐。</p>
+<h6 id="ctr预估模型"><a href="#ctr预估模型" class="headerlink" title="ctr预估模型"></a>ctr预估模型</h6><p>CTR（Click-Through-Rate）即点击通过率，是互联网广告常用的术语，指网络广告（图片广告/文字广告/关键词广告/排名广告/视频广告等）的点击到达率，即<strong>该广告的实际点击次数（严格的来说，可以是到达目标页面的数量）除以广告的展现量（Show content）</strong>。</p>
+<p>广告ctr计算存在<strong>冷启动</strong>的问题，冷启动问题就是一个广告是新上线的，之前没有任何的历史投放数据，这样的广告由于数据不足，点击率模型经常不怎么凑效。</p>
+<p>解决方法：<strong>使用同类型广告点击率来缓解</strong>，拿一个同行的广告的各种特征作为这个广告的特征，对这个新广告的点击率进行预估。<br>比如在媒体公司A上面有1000个广告主，它们的主页分别是a1、a2、……、a1000，运行word2vec得到每一个页面的向量，然后运行kmean或者其他聚类算法，把这1000个广告主聚成100个簇，然后每个簇里面的广告主看成是一个。</p>
+<p><strong>引用</strong><br>[1] <a href="http://www.cnblogs.com/iloveai/p/word2vec.html" target="_blank" rel="noopener">word2vec前世今生</a><br>[2] <a href="https://www.52ml.net/16951.html" target="_blank" rel="noopener">深度学习word2vec笔记之应用篇</a><br>[3] <a href="http://blog.csdn.net/u014595019/article/details/51884529" target="_blank" rel="noopener">自己动手写word2vec</a><br>[4] <a href="https://github.com/multiangle/pyword2vec" target="_blank" rel="noopener">word2vec的python实现</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/31/word2vec/" data-id="cjn8cdlkq00a1vwphtt3rcq5s" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/04/01/Remove-Boxes/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Remove Boxes
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/03/31/Latent-Dirichlet-Allocation/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Latent Dirichlet Allocation</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>python visualization | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="matplotlibmatplotlib配置 修改文件，位于.matplotlib目录中 使用rc方法,可以定义的有’figure’,’axes’,’xtick’,’ytick’,’grid’,’legend’等123456plt.rc(&apos;figure&apos;, figsize=(10,10)) # 设置图像默认大小# 也可以font_option = &amp;#123;&apos;family&apos;:&apos;monospace">
+<meta name="keywords" content="python,visualization">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python visualization">
+<meta property="og:url" content="atlantic8.github.io/2016/07/10/python-visualization/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="matplotlibmatplotlib配置 修改文件，位于.matplotlib目录中 使用rc方法,可以定义的有’figure’,’axes’,’xtick’,’ytick’,’grid’,’legend’等123456plt.rc(&apos;figure&apos;, figsize=(10,10)) # 设置图像默认大小# 也可以font_option = &amp;#123;&apos;family&apos;:&apos;monospace">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://pandas.pydata.org/pandas-docs/stable/_images/greens.png">
+<meta property="og:image" content="http://pandas.pydata.org/pandas-docs/stable/_images/line_plot_table_data.png">
+<meta property="og:updated_time" content="2017-01-19T11:58:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python visualization">
+<meta name="twitter:description" content="matplotlibmatplotlib配置 修改文件，位于.matplotlib目录中 使用rc方法,可以定义的有’figure’,’axes’,’xtick’,’ytick’,’grid’,’legend’等123456plt.rc(&apos;figure&apos;, figsize=(10,10)) # 设置图像默认大小# 也可以font_option = &amp;#123;&apos;family&apos;:&apos;monospace">
+<meta name="twitter:image" content="http://pandas.pydata.org/pandas-docs/stable/_images/greens.png">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-python-visualization" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            python visualization
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/07/10/python-visualization/">
+            <time datetime="2016-07-10T14:12:11.000Z" itemprop="datePublished">2016-07-10</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/python/">python</a>, <a class="tag-link" href="/tags/visualization/">visualization</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h2 id="matplotlib"><a href="#matplotlib" class="headerlink" title="matplotlib"></a>matplotlib</h2><h4 id="matplotlib配置"><a href="#matplotlib配置" class="headerlink" title="matplotlib配置"></a>matplotlib配置</h4><ul>
+<li>修改文件，位于.matplotlib目录中</li>
+<li>使用rc方法,可以定义的有’figure’,’axes’,’xtick’,’ytick’,’grid’,’legend’等<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">plt.rc(<span class="string">'figure'</span>, figsize=(<span class="number">10</span>,<span class="number">10</span>)) <span class="comment"># 设置图像默认大小</span></span><br><span class="line"><span class="comment"># 也可以</span></span><br><span class="line">font_option = &#123;<span class="string">'family'</span>:<span class="string">'monospace'</span>,</span><br><span class="line">               <span class="string">'weight'</span>:<span class="string">'bold'</span>,</span><br><span class="line">               <span class="string">'size'</span>:<span class="string">'small'</span>&#125;</span><br><span class="line">plt.rc(<span class="string">'font'</span>, **font_option)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="matplotlib使用"><a href="#matplotlib使用" class="headerlink" title="matplotlib使用"></a>matplotlib使用</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>创建一个新的figure，所有图像都位于Figure对象中<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fig = plt.figure(<span class="number">2</span>)  <span class="comment"># 图像编号为2</span></span><br></pre></td></tr></table></figure></p>
+<p>无法通过空的Figure绘图，必须用add_subplot()创建subplot<br>创建4个子图，2x2<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ax1 = fig.add_subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">ax2 = fig.add_subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">ax3 = fig.add_subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">fig.show() <span class="comment"># 显示</span></span><br></pre></td></tr></table></figure></p>
+<p>分别对每个sub_figure画图<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ax1.plot(...)</span><br><span class="line">ax2.scatter(...)</span><br><span class="line">ax2.bar(...)</span><br><span class="line">fig.show()</span><br></pre></td></tr></table></figure></p>
+<p>subplots，返回一个含有已创建subplot对象的numpy数组<br>axes可以使用axes[][]的形式访问<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fig, axes = plt.subplots(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">axes</span><br><span class="line">$-&gt; array([[&lt;matplotlib.axes._subplots.AxesSubplot object at 0x0A8B2EF0&gt;,</span><br><span class="line">            &lt;matplotlib.axes._subplots.AxesSubplot object at <span class="number">0x0AA5F5D0</span>&gt;,</span><br><span class="line">            &lt;matplotlib.axes._subplots.AxesSubplot object at <span class="number">0x0AA9DD90</span>&gt;],</span><br><span class="line">           [&lt;matplotlib.axes._subplots.AxesSubplot object at <span class="number">0x0AAD1E70</span>&gt;,</span><br><span class="line">            &lt;matplotlib.axes._subplots.AxesSubplot object at <span class="number">0x0AB1B810</span>&gt;,</span><br><span class="line">            &lt;matplotlib.axes._subplots.AxesSubplot object at <span class="number">0x0697C130</span>&gt;]], dtype=object)</span><br></pre></td></tr></table></figure></p>
+<p>subplots_adjust间距控制<br>wspace,hspace控制宽度和高度的百分比，可以用作subplot之间的距离<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.subplots_adjust(left=<span class="keyword">None</span>, bottom=<span class="keyword">None</span>, right=<span class="keyword">None</span>, top=<span class="keyword">None</span>, wspace=<span class="keyword">None</span>, hspace=<span class="keyword">None</span>)</span><br></pre></td></tr></table></figure></p>
+<center><b>pyplot.subplots的选项</b></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">parameter</th>
+<th style="text-align:center">explaination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">nrows</td>
+<td style="text-align:center">subplot的行数</td>
+</tr>
+<tr>
+<td style="text-align:center">ncols</td>
+<td style="text-align:center">subplot的列数</td>
+</tr>
+<tr>
+<td style="text-align:center">sharex</td>
+<td style="text-align:center">所有子图使用相同x轴刻度（xlim的影响）</td>
+</tr>
+<tr>
+<td style="text-align:center">sharey</td>
+<td style="text-align:center">所有子图使用相同y轴刻度（xlim的影响）</td>
+</tr>
+<tr>
+<td style="text-align:center">subplot_kw</td>
+<td style="text-align:center">用于创建各subplot的关键字字典</td>
+</tr>
+<tr>
+<td style="text-align:center">**fig_kw</td>
+<td style="text-align:center">创建fig时的其他关键字，如plt.subplot(2,2,figsize=(8,6))</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>设置x、y轴的刻度<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ticks = axe1.set_xticks([<span class="number">0</span>,<span class="number">200</span>,<span class="number">400</span>,<span class="number">600</span>,<span class="number">800</span>])</span><br><span class="line"><span class="comment"># 旋转45读，字体大小为9</span></span><br><span class="line">labels = axe1.set_xtickslabels([<span class="string">'one'</span>,<span class="string">'two'</span>,<span class="string">'three'</span>,<span class="string">'four'</span>,<span class="string">'five'</span>],rotation=<span class="number">45</span>,fontsize=<span class="number">9</span>)</span><br><span class="line"><span class="comment"># 将图例放在不错的位置，自动选择</span></span><br><span class="line">ax.legend(loc=<span class="string">'best'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>注解，显示在(x,y)位置<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ax.text(x, y, <span class="string">'hello world'</span>, family=<span class="string">'consola'</span>, fontsize=<span class="number">10</span>)</span><br><span class="line"><span class="comment"># annotate函数注解，既有箭头又有文字</span></span><br><span class="line"><span class="comment"># xy是箭头位置，xytext是注解位置，结果如下图：</span></span><br><span class="line">ax.annotate(<span class="string">'local max'</span>, xy=(<span class="number">2</span>, <span class="number">1</span>), xytext=(<span class="number">3</span>, <span class="number">1.5</span>),</span><br><span class="line">            arrowprops=dict(facecolor=<span class="string">'black'</span>, shrink=<span class="number">0.05</span>),</span><br><span class="line">            )</span><br></pre></td></tr></table></figure></p>
+<center>![](http://matplotlib.org/_images/annotation_basic.png)</center>
+
+<p>图形中放入块patch<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rect = plt.Rectangle((<span class="number">0.2</span>,<span class="number">0.75</span>), <span class="number">0.4</span>, <span class="number">0.15</span>, color=<span class="string">'r'</span>, alpha=<span class="number">0.3</span>)</span><br><span class="line">circ = plt.Circle((<span class="number">0.7</span>,<span class="number">0.2</span>), <span class="number">0.15</span>, color=<span class="string">'b'</span>, alpha=<span class="number">0.3</span>)</span><br><span class="line">pgon = plt.Polygon([[<span class="number">0.15</span>,<span class="number">0.15</span>],[<span class="number">0.35</span>,<span class="number">0.4</span>],[<span class="number">0.2</span>,<span class="number">0.6</span>]], color=<span class="string">'g'</span>, alpha=<span class="number">0.3</span>)</span><br><span class="line"></span><br><span class="line">ax.add_patch(rect)</span><br><span class="line">ax.add_patch(circ)</span><br><span class="line">ax.add_patch(pgon)</span><br></pre></td></tr></table></figure></p>
+<center><b>图形属性和说明</b></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">attribute</th>
+<th style="text-align:center">explaination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">color</td>
+<td style="text-align:center">color=’g’ 颜色，可以指定’#555555’</td>
+</tr>
+<tr>
+<td style="text-align:center">linestyle</td>
+<td style="text-align:center">linestyle=’—‘ 线性</td>
+</tr>
+<tr>
+<td style="text-align:center">marker</td>
+<td style="text-align:center">marker=’o’ 标记</td>
+</tr>
+<tr>
+<td style="text-align:center">label</td>
+<td style="text-align:center">label=’algorithm 1’ 图例</td>
+</tr>
+<tr>
+<td style="text-align:center">xlim,ylim</td>
+<td style="text-align:center">x轴、y轴的范围</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>保存文件，参数设置如下表<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.savefig()</span><br></pre></td></tr></table></figure></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">params</th>
+<th style="text-align:center">introduction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">fname</td>
+<td style="text-align:center">文件名</td>
+</tr>
+<tr>
+<td style="text-align:center">dpi</td>
+<td style="text-align:center">分辨率（每英寸点数），默认为100</td>
+</tr>
+<tr>
+<td style="text-align:center">facecolor、edgecolor</td>
+<td style="text-align:center">背景色，默认为白色</td>
+</tr>
+<tr>
+<td style="text-align:center">format</td>
+<td style="text-align:center">设置文件格式，png、pdf等</td>
+</tr>
+<tr>
+<td style="text-align:center">bbox_inches</td>
+<td style="text-align:center">图标需要保存的部分。设为tight则尝试剪掉图标周围的空白部分</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="Pandas中的可视化方法"><a href="#Pandas中的可视化方法" class="headerlink" title="Pandas中的可视化方法"></a>Pandas中的可视化方法</h3><h4 id="普通的plot"><a href="#普通的plot" class="headerlink" title="普通的plot"></a>普通的plot</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line">matplotlib.style.use(<span class="string">'ggplot'</span>)</span><br><span class="line"></span><br><span class="line">ts = pd.Series(np.random.randn(<span class="number">1000</span>), index=pd.date_range(<span class="string">'1/1/2000'</span>, periods=<span class="number">1000</span>))</span><br><span class="line">ts = ts.cumsum()</span><br><span class="line">ts.plot()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/series_plot_basic.png)</center>
+
+<p><b>On DataFrame, plot() is a convenience to plot all of the columns with labels</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame(np.random.randn(<span class="number">1000</span>, <span class="number">4</span>), index=ts.index, columns=list(<span class="string">'ABCD'</span>))</span><br><span class="line">df = df.cumsum()</span><br><span class="line">df.plot()</span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment"># 其他关键字 subplots=True将不同列的图分别画在子图中</span></span><br><span class="line"><span class="comment"># layout=(2, 3) 两行三列</span></span><br><span class="line"><span class="comment"># sharex=False，sharey=False -&gt; 不共享x、y轴</span></span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/frame_plot_basic.png)</center>
+
+<p><b>You can plot one column versus another using the x and y keywords in plot()</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df3 = pd.DataFrame(np.random.randn(<span class="number">1000</span>, <span class="number">2</span>), columns=[<span class="string">'B'</span>, <span class="string">'C'</span>]).cumsum()</span><br><span class="line">df3[<span class="string">'A'</span>] = pd.Series(list(range(len(df))))</span><br><span class="line">df3.plot(x=<span class="string">'A'</span>, y=<span class="string">'B'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></p>
+<h5 id="使用第二个y轴"><a href="#使用第二个y轴" class="headerlink" title="使用第二个y轴"></a>使用第二个y轴</h5><p>使用secondary_y关键字<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">df.A.plot()</span><br><span class="line">df.B.plot(secondary_y=<span class="keyword">True</span>, style=<span class="string">'g'</span>)</span><br><span class="line"><span class="comment"># 或者    mark_right默认是True</span></span><br><span class="line">ax = df.plot(secondary_y=[<span class="string">'A'</span>, <span class="string">'B'</span>], mark_right=<span class="keyword">True</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">'CD scale'</span>)</span><br><span class="line">ax.right_ax.set_ylabel(<span class="string">'AB scale'</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/frame_plot_secondary_y.png)</center>
+
+<h5 id="Scales尺度"><a href="#Scales尺度" class="headerlink" title="Scales尺度"></a>Scales尺度</h5><p>使用logy、logx、loglog关键字<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ts = pd.Series(np.random.randn(<span class="number">1000</span>), index=pd.date_range(<span class="string">'1/1/2000'</span>, periods=<span class="number">1000</span>))</span><br><span class="line">ts = np.exp(ts.cumsum())</span><br><span class="line">ts.plot(logy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
+<h4 id="其他plot，用kind指定"><a href="#其他plot，用kind指定" class="headerlink" title="其他plot，用kind指定"></a>其他plot，用kind指定</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">value</th>
+<th style="text-align:center">function</th>
+<th style="text-align:center">value</th>
+<th style="text-align:center">function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">bar</td>
+<td style="text-align:center">直方图</td>
+<td style="text-align:center">hist</td>
+<td style="text-align:center">统计直方图</td>
+</tr>
+<tr>
+<td style="text-align:center">kde, density</td>
+<td style="text-align:center">密度图</td>
+<td style="text-align:center">box</td>
+<td style="text-align:center">盒须图</td>
+</tr>
+<tr>
+<td style="text-align:center">area</td>
+<td style="text-align:center">面积图</td>
+<td style="text-align:center">scatter</td>
+<td style="text-align:center">散点图</td>
+</tr>
+<tr>
+<td style="text-align:center">hexbin</td>
+<td style="text-align:center">六边形箱图</td>
+<td style="text-align:center">pie</td>
+<td style="text-align:center">饼图</td>
+</tr>
+<tr>
+<td style="text-align:center">barh</td>
+<td style="text-align:center">横向的直方图</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df.ix[<span class="number">5</span>].plot(kind=<span class="string">'bar'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/bar_plot_ex.png)</center>
+
+<p><b>其他用法</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame()</span><br><span class="line">$-&gt; df.plot.area    df.plot.box     df.plot.hist    df.plot.pie</span><br><span class="line">	df.plot.bar     df.plot.density df.plot.kde     df.plot.scatter</span><br><span class="line">	df.plot.barh    df.plot.hexbin  df.plot.line</span><br></pre></td></tr></table></figure></p>
+<h5 id="bar-plot"><a href="#bar-plot" class="headerlink" title="bar plot"></a>bar plot</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">df.ix[<span class="number">5</span>].plot.bar()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">df2 = pd.DataFrame(np.random.rand(<span class="number">10</span>, <span class="number">4</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>])</span><br><span class="line">df2.plot.bar()</span><br><span class="line">df2.plot.bar(stacked=<span class="keyword">True</span>)  <span class="comment"># 堆叠式</span></span><br><span class="line">df2.plot.barh(stacked=<span class="keyword">True</span>)  <span class="comment"># 横向</span></span><br></pre></td></tr></table></figure>
+<h5 id="histogram"><a href="#histogram" class="headerlink" title="histogram"></a>histogram</h5><p>Histogram can be drawn by using the <b>DataFrame.plot.hist()</b> and <b>Series.plot.hist()</b> methods<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df4 = pd.DataFrame(&#123;<span class="string">'a'</span>: np.random.randn(<span class="number">1000</span>) + <span class="number">1</span>, <span class="string">'b'</span>: np.random.randn(<span class="number">1000</span>),<span class="string">'c'</span>: np.random.randn(<span class="number">1000</span>) - <span class="number">1</span>&#125;, columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>])</span><br><span class="line">df4.plot.hist(stacked=<span class="keyword">True</span>, bins=<span class="number">20</span>) <span class="comment"># 下图</span></span><br><span class="line">df4[<span class="string">'a'</span>].plot.hist(orientation=<span class="string">'horizontal'</span>, cumulative=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/hist_new_stacked.png)</center>
+
+<h5 id="Box盒须图"><a href="#Box盒须图" class="headerlink" title="Box盒须图"></a>Box盒须图</h5><p>Boxplot can be drawn calling <b>Series.plot.box()</b> and <b>DataFrame.plot.box()</b>, or <b>DataFrame.boxplot()</b> to visualize the distribution of values within each column<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame(np.random.rand(<span class="number">10</span>, <span class="number">5</span>), columns=[<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>, <span class="string">'D'</span>, <span class="string">'E'</span>])</span><br><span class="line"><span class="comment"># 设置不同区域的颜色</span></span><br><span class="line">color = dict(boxes=<span class="string">'DarkGreen'</span>, whiskers=<span class="string">'DarkOrange'</span>, medians=<span class="string">'DarkBlue'</span>, caps=<span class="string">'Gray'</span>)</span><br><span class="line"><span class="comment"># sym keyword, vert表示是否横向显示</span></span><br><span class="line"><span class="comment"># 另外还有positions=[1, 4, 5, 6, 8]参数指示盒图的位置</span></span><br><span class="line">df.plot.box(color=color, sym=<span class="string">'r+'</span>, vert=<span class="keyword">False</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/box_new_colorize.png)</center>
+
+
+<h5 id="Area面积图"><a href="#Area面积图" class="headerlink" title="Area面积图"></a>Area面积图</h5><p><b>Series.plot.area()</b> and <b>DataFrame.plot.area()</b></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame(np.random.rand(<span class="number">10</span>, <span class="number">4</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>])</span><br><span class="line">df.plot.area(stacked=<span class="keyword">True</span>)</span><br><span class="line"><span class="comment"># 如果stacked=False，图形不堆叠</span></span><br></pre></td></tr></table></figure>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/area_plot_stacked.png)</center>
+
+<h5 id="Scatter散点图"><a href="#Scatter散点图" class="headerlink" title="Scatter散点图"></a>Scatter散点图</h5><p>using the <b>DataFrame.plot.scatter()</b> method<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame(np.random.rand(<span class="number">50</span>, <span class="number">4</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>])</span><br><span class="line">ax = df.plot.scatter(x=<span class="string">'a'</span>, y=<span class="string">'b'</span>, color=<span class="string">'DarkBlue'</span>, label=<span class="string">'Group 1'</span>)</span><br><span class="line"><span class="comment"># 两种不同颜色的组，注意ax=ax</span></span><br><span class="line">df.plot.scatter(x=<span class="string">'c'</span>, y=<span class="string">'d'</span>, color=<span class="string">'DarkGreen'</span>, label=<span class="string">'Group 2'</span>, ax=ax)</span><br><span class="line"></span><br><span class="line">df.plot.scatter(x=<span class="string">'a'</span>, y=<span class="string">'b'</span>, c=<span class="string">'c'</span>, s=<span class="number">50</span>)  <span class="comment"># 下图</span></span><br><span class="line"><span class="comment"># 用c的值确定bubble大小</span></span><br><span class="line">df.plot.scatter(x=<span class="string">'a'</span>, y=<span class="string">'b'</span>, s=df[<span class="string">'c'</span>]*<span class="number">200</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/scatter_plot_colored.png)</center>
+
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/scatter_plot_bubble.png)</center>
+
+<h5 id="Hexagonal-Bin-Plot六边形箱图"><a href="#Hexagonal-Bin-Plot六边形箱图" class="headerlink" title="Hexagonal Bin Plot六边形箱图"></a>Hexagonal Bin Plot六边形箱图</h5><p>数据过多，过于密集，无法显示出每一个数据，所以就显示<b>数据密度相关参数</b><br>use<b> DataFrame.plot.hexbin()</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame(np.random.randn(<span class="number">1000</span>, <span class="number">2</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>])</span><br><span class="line">df[<span class="string">'b'</span>] = df[<span class="string">'b'</span>] + np.arange(<span class="number">1000</span>)</span><br><span class="line"><span class="comment"># gridsize决定网格能有多少个，默认值为100</span></span><br><span class="line">df.plot.hexbin(x=<span class="string">'a'</span>, y=<span class="string">'b'</span>, gridsize=<span class="number">25</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># a和b作为二维坐标，C作为值，reduce_C_function是一个用于处理多个数据值的函数</span></span><br><span class="line"><span class="comment"># reduce_C_function包括：mean, max, sum, std等，下面有图</span></span><br><span class="line">df.plot.hexbin(x=<span class="string">'a'</span>, y=<span class="string">'b'</span>, C=<span class="string">'z'</span>, reduce_C_function=np.max, gridsize=<span class="number">25</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/hexbin_plot_agg.png)</center>
+
+<h5 id="Pie饼图"><a href="#Pie饼图" class="headerlink" title="Pie饼图"></a>Pie饼图</h5><p><b>DataFrame.plot.pie()</b> or <b>Series.plot.pie()</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">series = pd.Series(<span class="number">3</span> * np.random.rand(<span class="number">4</span>), index=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>], name=<span class="string">'series'</span>)</span><br><span class="line"><span class="comment"># Series的饼状图</span></span><br><span class="line">series.plot.pie(figsize=(<span class="number">6</span>, <span class="number">6</span>))</span><br><span class="line"><span class="comment"># 使用subplot，每一列都是一个饼图，subplots=True要有</span></span><br><span class="line">df = pd.DataFrame(<span class="number">3</span> * np.random.rand(<span class="number">4</span>, <span class="number">2</span>), index=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>], columns=[<span class="string">'x'</span>, <span class="string">'y'</span>])</span><br><span class="line">df.plot.pie(subplots=<span class="keyword">True</span>, figsize=(<span class="number">8</span>, <span class="number">4</span>))</span><br><span class="line"><span class="comment"># labels=['AA', 'BB', 'CC', 'DD']   每个扇形的标签</span></span><br><span class="line"><span class="comment"># colors=['r', 'g', 'b', 'c']    每个扇形的颜色</span></span><br><span class="line"><span class="comment"># autopct='%.2f'    显示比例、显示精度</span></span><br><span class="line"><span class="comment"># fontsize=20       字体大小</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="Density-plot"><a href="#Density-plot" class="headerlink" title="Density plot"></a>Density plot</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ser = pd.Series(np.random.randn(<span class="number">1000</span>))</span><br><span class="line">ser.plot.kde()  <span class="comment"># 数量越多就越接近高斯分布</span></span><br></pre></td></tr></table></figure>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/kde_plot.png)</center>
+
+<h5 id="Scatter-Matrix-Plot"><a href="#Scatter-Matrix-Plot" class="headerlink" title="Scatter Matrix Plot"></a>Scatter Matrix Plot</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> scatter_matrix</span><br><span class="line">df = pd.DataFrame(np.random.randn(<span class="number">1000</span>, <span class="number">4</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>])</span><br><span class="line">scatter_matrix(df, alpha=<span class="number">0.2</span>, figsize=(<span class="number">6</span>, <span class="number">6</span>), diagonal=<span class="string">'kde'</span>)</span><br></pre></td></tr></table></figure>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/scatter_matrix_kde.png)</center>
+
+<h5 id="多元数据可视化"><a href="#多元数据可视化" class="headerlink" title="多元数据可视化"></a>多元数据可视化</h5><h6 id="Andrews曲线"><a href="#Andrews曲线" class="headerlink" title="Andrews曲线"></a>Andrews曲线</h6><p>可以应用于多元数据，将其绘制成使用样本属性作为傅里叶级数参数的大量曲线。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> andrews_curves</span><br><span class="line">data = pd.read_csv(<span class="string">'data/iris.data'</span>)</span><br><span class="line">andrews_curves(data, <span class="string">'Name'</span>)   <span class="comment"># Name是类别属性，根据类别划分</span></span><br></pre></td></tr></table></figure></p>
+<center>iris.data中的数据</center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">SepalLength</th>
+<th style="text-align:center">SepalWidth</th>
+<th style="text-align:center">PetalLength</th>
+<th style="text-align:center">PetalWidth</th>
+<th style="text-align:center">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">5.1</td>
+<td style="text-align:center">3.5</td>
+<td style="text-align:center">1.4</td>
+<td style="text-align:center">0.2</td>
+<td style="text-align:center">Iris-setosa</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/andrews_curves.png)</center>
+
+<h6 id="Parallel-Coordinates平行坐标系"><a href="#Parallel-Coordinates平行坐标系" class="headerlink" title="Parallel Coordinates平行坐标系"></a>Parallel Coordinates平行坐标系</h6><p>可以应用于多元数据,每个垂直的线都对应一个属性<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> parallel_coordinates</span><br><span class="line">data = pd.read_csv(<span class="string">'data/iris.data'</span>)</span><br><span class="line">parallel_coordinates(data, <span class="string">'Name'</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/parallel_coordinates.png)</center>
+
+<h5 id="随机性检测"><a href="#随机性检测" class="headerlink" title="随机性检测"></a>随机性检测</h5><h6 id="Lag-Plot"><a href="#Lag-Plot" class="headerlink" title="Lag Plot"></a>Lag Plot</h6><p>用于检测数据集或者是时间序列数据是否是随机数据,显示data[t]和data[t+1]的关系。<br>如果plot出的图形是无规则的，那么数据有极大的可能性是随机的。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> lag_plot</span><br><span class="line">data = pd.Series(np.arange(<span class="number">1000</span>))  <span class="comment"># 有规则</span></span><br><span class="line">data = pd.Series(np.random.rand(<span class="number">1000</span>)) <span class="comment"># 无规则</span></span><br><span class="line">data = pd.Series(<span class="number">0.1</span> * np.random.rand(<span class="number">1000</span>) + <span class="number">0.9</span> * np.sin(np.linspace(<span class="number">-99</span> * np.pi, <span class="number">99</span> * np.pi, num=<span class="number">1000</span>)))  <span class="comment"># 有规则， 有图</span></span><br><span class="line">lag_plot(data)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/lag_plot.png)</center>
+
+<h6 id="Autocorrelation-Plot"><a href="#Autocorrelation-Plot" class="headerlink" title="Autocorrelation Plot"></a>Autocorrelation Plot</h6><p>用于检测时序数据的随机性，通过计算不同的时间延迟（步长）下数据的自相关系数<br>如果这个序列是随机的，那么对于所有的延迟，其自相关系数都应该接近于0。否则，必然存在至少一个延迟对应的自相关系数远大于/小于0<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> autocorrelation_plot</span><br><span class="line">data = pd.Series(<span class="number">0.7</span> * np.random.rand(<span class="number">1000</span>) + <span class="number">0.3</span> * np.sin(np.linspace(<span class="number">-9</span> * np.pi, <span class="number">9</span> * np.pi, num=<span class="number">1000</span>)))</span><br><span class="line">autocorrelation_plot(data)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/autocorrelation_plot.png)</center>
+
+<p>其中，中间黑线的0值线，向外的实线和虚线分别是95%、99%置信带，有颜色的线是不同延迟对应的自相关系数。</p>
+<h6 id="Bootstrap-Plot"><a href="#Bootstrap-Plot" class="headerlink" title="Bootstrap Plot"></a>Bootstrap Plot</h6><p>可视化地评估统计信息的不确定性，比如说均值、中值、中距等<br>方法：从数据集中随机选取特定长度的子集并计算其相应的统计信息，重复特定次数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tools.plotting <span class="keyword">import</span> bootstrap_plot</span><br><span class="line">data = pd.Series(np.random.rand(<span class="number">1000</span>))</span><br><span class="line">bootstrap_plot(data, size=<span class="number">50</span>, samples=<span class="number">500</span>, color=<span class="string">'grey'</span>)</span><br></pre></td></tr></table></figure></p>
+<center>![](http://pandas.pydata.org/pandas-docs/stable/_images/bootstrap_plot.png)</center>
+
+<h5 id="Colormaps"><a href="#Colormaps" class="headerlink" title="Colormaps"></a>Colormaps</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> cm</span><br><span class="line"><span class="comment"># df.plot(colormap='cubehelix')</span></span><br><span class="line"><span class="comment"># df.plot(colormap=cm.cubehelix)</span></span><br><span class="line"><span class="comment"># colormap='Greens'</span></span><br><span class="line"><span class="comment"># colormap='gist_rainbow'</span></span><br><span class="line"><span class="comment"># colormap='winter'</span></span><br><span class="line">dd = pd.DataFrame(np.random.randn(<span class="number">10</span>, <span class="number">10</span>)).applymap(abs)</span><br><span class="line">dd = dd.cumsum()</span><br><span class="line">dd.plot.bar(colormap=<span class="string">'Greens'</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="http://pandas.pydata.org/pandas-docs/stable/_images/greens.png" alt=""></p>
+<h5 id="Plotting-Tables"><a href="#Plotting-Tables" class="headerlink" title="Plotting Tables"></a>Plotting Tables</h5><p>关键字table=True，table关键字也可以使用DataFrame或者Series作为值<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">df = pd.DataFrame(np.random.rand(<span class="number">5</span>, <span class="number">3</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>])</span><br><span class="line">ax.get_xaxis().set_visible(<span class="keyword">False</span>)   <span class="comment"># Hide Ticks</span></span><br><span class="line">df.plot(table=<span class="keyword">True</span>, ax=ax)</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://pandas.pydata.org/pandas-docs/stable/_images/line_plot_table_data.png" alt=""></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/07/10/python-visualization/" data-id="cjn8cdlkl009rvwphejzam643" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2016/07/19/Best-Time-to-Buy-and-Sell-Stock/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Best Time to Buy and Sell Stock
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/06/23/python数据加载、存储与文件格式/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">python数据加载、存储与文件格式</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

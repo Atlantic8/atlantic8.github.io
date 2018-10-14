@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>pandas初步 | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="SeriesSeries类似于一维数组对象，由一组数据和其对应的标签组成，仅由一组数据即可产生简单的Series：123456789101112131415161718192021222324252627282930313233343536373839from pandas import Series, DataFrameimport pandas as pdobj = Series([4,7,-">
+<meta name="keywords" content="python,pandas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pandas初步">
+<meta property="og:url" content="atlantic8.github.io/2016/05/17/pandas初步/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="SeriesSeries类似于一维数组对象，由一组数据和其对应的标签组成，仅由一组数据即可产生简单的Series：123456789101112131415161718192021222324252627282930313233343536373839from pandas import Series, DataFrameimport pandas as pdobj = Series([4,7,-">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-01-19T11:58:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pandas初步">
+<meta name="twitter:description" content="SeriesSeries类似于一维数组对象，由一组数据和其对应的标签组成，仅由一组数据即可产生简单的Series：123456789101112131415161718192021222324252627282930313233343536373839from pandas import Series, DataFrameimport pandas as pdobj = Series([4,7,-">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-pandas初步" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            pandas初步
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/05/17/pandas初步/">
+            <time datetime="2016-05-17T14:34:11.000Z" itemprop="datePublished">2016-05-17</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/pandas/">pandas</a>, <a class="tag-link" href="/tags/python/">python</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="Series"><a href="#Series" class="headerlink" title="Series"></a>Series</h4><p>Series类似于一维数组对象，由一组数据和其对应的标签组成，仅由一组数据即可产生简单的Series：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas <span class="keyword">import</span> Series, DataFrame</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">obj = Series([<span class="number">4</span>,<span class="number">7</span>,<span class="number">-5</span>,<span class="number">3</span>])</span><br><span class="line">obj.index</span><br><span class="line">$-&gt; RangeIndex(start=0, stop=4, step=1)</span><br><span class="line">obj.values</span><br><span class="line">$-&gt; array([ 4,  7, -5,  3], dtype=int64)</span><br><span class="line"></span><br><span class="line">obj2 = Series([<span class="number">4</span>,<span class="number">7</span>,<span class="number">-5</span>,<span class="number">3</span>], index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>])</span><br><span class="line"><span class="comment"># a 4, b 7, c -5, d 3</span></span><br><span class="line">obj2[<span class="string">'a'</span>]</span><br><span class="line">$-&gt; 4</span><br><span class="line">obj2[[<span class="string">'a'</span>,<span class="string">'b'</span>]]</span><br><span class="line">$-&gt; &#123;'a':4, 'b':7&#125;</span><br><span class="line">obj2[obj2 &gt; <span class="number">3</span>]</span><br><span class="line">$-&gt; &#123;'a':4, 'b':7&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#也可以将Series看成一个字典， index是key， values是value</span></span><br><span class="line"><span class="string">'b'</span> <span class="keyword">in</span> obj2</span><br><span class="line">$-&gt; true</span><br><span class="line"><span class="comment">#可以通过字典建立Series</span></span><br><span class="line">obj3 = Series(&#123;<span class="string">'a'</span>:<span class="number">4</span>, <span class="string">'b'</span>:<span class="number">7</span>, <span class="string">'c'</span>:<span class="number">-5</span>, <span class="string">'d'</span>:<span class="number">3</span>&#125;)</span><br><span class="line"></span><br><span class="line">sdata = &#123;<span class="string">'Ohio'</span>:<span class="number">35000</span>,<span class="string">'Texas'</span>:<span class="number">71000</span>,<span class="string">'Oregon'</span>:<span class="number">16000</span>,<span class="string">'Utah'</span>:<span class="number">5000</span>&#125;</span><br><span class="line">states=[<span class="string">'California'</span>,<span class="string">'Ohio'</span>,<span class="string">'Oregon'</span>,<span class="string">'Texas'</span>]</span><br><span class="line">obj4=Series(sdata,index=states)</span><br><span class="line">$-&gt; California        NaN</span><br><span class="line">    Ohio          <span class="number">35000.0</span></span><br><span class="line">    Oregon        <span class="number">16000.0</span></span><br><span class="line">    Texas         <span class="number">71000.0</span></span><br><span class="line">obj4.isnull()</span><br><span class="line">$-&gt; California     True</span><br><span class="line">    Ohio          <span class="keyword">False</span></span><br><span class="line">    Oregon        <span class="keyword">False</span></span><br><span class="line">    Texas         <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Series对象有一个name属性</span></span><br><span class="line">obj4.name = <span class="string">'population'</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="DataFrame"><a href="#DataFrame" class="headerlink" title="DataFrame"></a>DataFrame</h4><p>表格型数据，有行索引和列索引<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;<span class="string">'state'</span>:[<span class="string">'Ohio'</span>, <span class="string">'Ohio'</span>, <span class="string">'Ohio'</span>, <span class="string">'Nevada'</span>, <span class="string">'Nevada'</span>],</span><br><span class="line">        <span class="string">'year'</span>:[<span class="number">200</span>,<span class="number">2001</span>,<span class="number">2002</span>,<span class="number">2001</span>,<span class="number">2002</span>],</span><br><span class="line">        <span class="string">'pop'</span>:[<span class="number">1.5</span>,<span class="number">1.7</span>,<span class="number">3.6</span>,<span class="number">2.4</span>,<span class="number">2.9</span>]&#125;</span><br><span class="line">frame = DataFrame(data)</span><br><span class="line">$-&gt;   pop   state  year</span><br><span class="line">   <span class="number">0</span>  <span class="number">1.5</span>    Ohio   <span class="number">200</span></span><br><span class="line">   <span class="number">1</span>  <span class="number">1.7</span>    Ohio  <span class="number">2001</span></span><br><span class="line">   <span class="number">2</span>  <span class="number">3.6</span>    Ohio  <span class="number">2002</span></span><br><span class="line">   <span class="number">3</span>  <span class="number">2.4</span>  Nevada  <span class="number">2001</span></span><br><span class="line">   <span class="number">4</span>  <span class="number">2.9</span>  Nevada  <span class="number">2002</span></span><br></pre></td></tr></table></figure></p>
+<p>指定列名，列会按照columns制定的顺序排列<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataFrame(data, columns=[<span class="string">'year'</span>, <span class="string">'state'</span>, <span class="string">'pop'</span>])</span><br></pre></td></tr></table></figure></p>
+<p>指定index，如果index元素不在columns中，产生一列 NaN 值<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DataFrame(data, columns=[<span class="string">'year'</span>,<span class="string">'state'</span>,<span class="string">'pop'</span>], index=[<span class="string">'year'</span>,<span class="string">'state'</span>,<span class="string">'pop'</span>,<span class="string">'A'</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取DataFrame的一个列，成为一个Series</span></span><br><span class="line"><span class="comment"># 相同的index，name属性就是对应的列名</span></span><br><span class="line">frame[<span class="string">'year'</span>]  &amp;  frame.year</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取列名，删除一列</span></span><br><span class="line">frame.columns</span><br><span class="line">$-&gt;  Index([u'pop', u'state', u'year'], dtype='object')</span><br><span class="line"><span class="keyword">del</span> frame.year</span><br></pre></td></tr></table></figure></p>
+<p>嵌套字典构造DataFrame，外层的key作为列属性，里层的key作为行属性<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">pop = &#123;<span class="string">'Nvidia'</span>:&#123;<span class="number">2001</span>:<span class="number">2.4</span>, <span class="number">2002</span>:<span class="number">2.9</span>&#125;, <span class="string">'AMD'</span>:&#123;<span class="number">2000</span>:<span class="number">1.5</span>,<span class="number">2001</span>:<span class="number">1.7</span>,<span class="number">2002</span>:<span class="number">3.6</span>&#125;&#125;</span><br><span class="line">frame3 = DataFrame(pop)，加上index=[],重新设置index值</span><br><span class="line">$-&gt;       AMD  Nvidia</span><br><span class="line">    <span class="number">2000</span>  <span class="number">1.5</span>     NaN</span><br><span class="line">    <span class="number">2001</span>  <span class="number">1.7</span>     <span class="number">2.4</span></span><br><span class="line">    <span class="number">2002</span>  <span class="number">3.6</span>     <span class="number">2.9</span></span><br><span class="line">frame3.T</span><br><span class="line">$-&gt;         2000  2001  2002</span><br><span class="line">    AMD      <span class="number">1.5</span>   <span class="number">1.7</span>   <span class="number">3.6</span></span><br><span class="line">    Nvidia   NaN   <span class="number">2.4</span>   <span class="number">2.9</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置行、列属性的name,设置完了也会打印出来</span></span><br><span class="line">frame3.index.name = <span class="string">'year'</span></span><br><span class="line">frame3.columns.name = <span class="string">'state'</span></span><br><span class="line"><span class="comment"># 显示DataFrame中的数据，ndarray形式</span></span><br><span class="line">frame3.values</span><br><span class="line">$-&gt; array([[ 1.5,  nan],</span><br><span class="line">          [ <span class="number">1.7</span>,  <span class="number">2.4</span>],</span><br><span class="line">          [ <span class="number">3.6</span>,  <span class="number">2.9</span>]])</span><br></pre></td></tr></table></figure></p>
+<h5 id="DataFrame构造器"><a href="#DataFrame构造器" class="headerlink" title="DataFrame构造器"></a>DataFrame构造器</h5><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">data type</th>
+<th style="text-align:center">explain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">二维ndarray</td>
+<td style="text-align:center">数据矩阵，还可以传入行标和列标</td>
+</tr>
+<tr>
+<td style="text-align:center">由数组、列表或元组组成的字典</td>
+<td style="text-align:center">每个序列会变成DataFrame的一列，所有序列长度必须相同</td>
+</tr>
+<tr>
+<td style="text-align:center">NumPy的结构化/记录数据</td>
+<td style="text-align:center">类似于由数组组成的字典</td>
+</tr>
+<tr>
+<td style="text-align:center">由Series组成的字典</td>
+<td style="text-align:center">每个Series组成一列。没有显示指定index的话，各Series的index会被合并成结果的行index</td>
+</tr>
+<tr>
+<td style="text-align:center">由字典组成的字典</td>
+<td style="text-align:center">各内层字典组成一列，键合并成行index</td>
+</tr>
+<tr>
+<td style="text-align:center">字典或Series的列表</td>
+<td style="text-align:center">各项成为DataFrame的一行，字典键或Series索引的并集将成为列index</td>
+</tr>
+<tr>
+<td style="text-align:center">由列表或元组组成的列表</td>
+<td style="text-align:center">类似于ndarray</td>
+</tr>
+<tr>
+<td style="text-align:center">另一个DataFrame</td>
+<td style="text-align:center">原来DataFrame的索引会被保留，除非显示指定</td>
+</tr>
+<tr>
+<td style="text-align:center">NumPy的MaskedArray</td>
+<td style="text-align:center">类似于ndarray，只是掩码值在结果DataFrame会变成NaN/缺失值</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h5 id="索引对象"><a href="#索引对象" class="headerlink" title="索引对象"></a>索引对象<immutable></immutable></h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">obj = Series(range(<span class="number">3</span>), index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</span><br><span class="line">index = obj.index</span><br><span class="line">index[<span class="number">1</span>] = <span class="string">'x'</span></span><br><span class="line">$-&gt; TypeError: Index does not support mutable operations</span><br></pre></td></tr></table></figure>
+<p>重新索引,如果某个索引值当前不存在，引入缺失值<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新索引列index</span></span><br><span class="line">obj = Series([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</span><br><span class="line">obj2 = obj.reindex([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>], fill_value=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># 重新索引行/列index</span></span><br><span class="line">obj2 = obj.reindex([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>], fill_value=<span class="number">0</span>, columns=[<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>])</span><br><span class="line"><span class="comment"># 也可以使用</span></span><br><span class="line">frame.ix[[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>], [<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>]]</span><br></pre></td></tr></table></figure></p>
+<p>处理时间序列数据时，可能需要一些插值处理，method选项<br>ffill | pad      : 前向填充(搬运)<br>bfill | backfill : 后向填充(搬运)<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">obj3=Series([<span class="string">'blue'</span>,<span class="string">'red'</span>,<span class="string">'yellow'</span>], index=[<span class="number">0</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line">obj3.reindex(range(<span class="number">6</span>), method=<span class="string">'ffill'</span>)</span><br><span class="line">$-&gt; 0      blue</span><br><span class="line">    <span class="number">1</span>      blue</span><br><span class="line">    <span class="number">2</span>       red</span><br><span class="line">    <span class="number">3</span>    yellow</span><br><span class="line">    <span class="number">4</span>    yellow</span><br><span class="line">    <span class="number">5</span>    yellow</span><br><span class="line">    dtype: object</span><br></pre></td></tr></table></figure></p>
+<p>丢弃指定轴上的项<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">obj = Series([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</span><br><span class="line">obj.drop(<span class="string">'c'</span>)</span><br><span class="line">$-&gt; a    1</span><br><span class="line">    b    <span class="number">2</span></span><br><span class="line">    dtype: int64</span><br></pre></td></tr></table></figure></p>
+<h5 id="索引、选取和过滤"><a href="#索引、选取和过滤" class="headerlink" title="索引、选取和过滤"></a>索引、选取和过滤</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">obj = Series(np.arange(<span class="number">4.</span>), index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>])</span><br><span class="line">obj[<span class="number">0</span>]</span><br><span class="line">$-&gt; 0.0</span><br><span class="line">obj[<span class="string">'b'</span>:<span class="string">'d'</span>]</span><br><span class="line">$-&gt; b    1.0</span><br><span class="line">    c    <span class="number">2.0</span></span><br><span class="line">    d    <span class="number">3.0</span></span><br><span class="line">    dtype: float64</span><br><span class="line"><span class="comment"># b c d 对应的都设置为5</span></span><br><span class="line">obj[<span class="string">'b'</span>:<span class="string">'d'</span>] = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">data = DataFrame(np.arange(<span class="number">16</span>).reshape((<span class="number">4</span>,<span class="number">4</span>)), columns=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>], index=[<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>,<span class="string">'D'</span>])</span><br><span class="line">data &gt; <span class="number">5</span></span><br><span class="line">$-&gt; upper      a      b      c      d</span><br><span class="line">    A      <span class="keyword">False</span>  <span class="keyword">False</span>  <span class="keyword">False</span>  <span class="keyword">False</span></span><br><span class="line">    B      <span class="keyword">False</span>  <span class="keyword">False</span>   <span class="keyword">True</span>   <span class="keyword">True</span></span><br><span class="line">    C       <span class="keyword">True</span>   <span class="keyword">True</span>   <span class="keyword">True</span>   <span class="keyword">True</span></span><br><span class="line">    D       <span class="keyword">True</span>   <span class="keyword">True</span>   <span class="keyword">True</span>   <span class="keyword">True</span></span><br><span class="line">data[data &lt; <span class="number">5</span>] = <span class="number">0</span></span><br><span class="line">$-&gt; upper   a   b   c   d</span><br><span class="line">    A       <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></span><br><span class="line">    B       <span class="number">0</span>   <span class="number">5</span>   <span class="number">6</span>   <span class="number">7</span></span><br><span class="line">    C       <span class="number">8</span>   <span class="number">9</span>  <span class="number">10</span>  <span class="number">11</span></span><br><span class="line">    D      <span class="number">12</span>  <span class="number">13</span>  <span class="number">14</span>  <span class="number">15</span></span><br></pre></td></tr></table></figure>
+<h5 id="DataFrame的索引选项"><a href="#DataFrame的索引选项" class="headerlink" title="DataFrame的索引选项"></a>DataFrame的索引选项</h5><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">data type</th>
+<th style="text-align:center">explain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">obj[val]</td>
+<td style="text-align:center">选取DataFrame的单个列或一组列</td>
+</tr>
+<tr>
+<td style="text-align:center">obj.ix[val]</td>
+<td style="text-align:center">选取DataFrame的单个行或一组行</td>
+</tr>
+<tr>
+<td style="text-align:center">obj.ix[:,val]</td>
+<td style="text-align:center">选取单个列或列子集</td>
+</tr>
+<tr>
+<td style="text-align:center">obj.ix[val1,val2]</td>
+<td style="text-align:center">同时选取行和列</td>
+</tr>
+<tr>
+<td style="text-align:center">reindex方法</td>
+<td style="text-align:center">匹配一个或多个轴到新索引</td>
+</tr>
+<tr>
+<td style="text-align:center">xs方法</td>
+<td style="text-align:center">根据标签选取当行或单列，返回一个Series</td>
+</tr>
+<tr>
+<td style="text-align:center">icol,irow方法</td>
+<td style="text-align:center">根据整数选取当行或单列，返回一个Series</td>
+</tr>
+<tr>
+<td style="text-align:center">get_value</td>
+<td style="text-align:center">根据行列标签获取对应值</td>
+</tr>
+<tr>
+<td style="text-align:center">set_value</td>
+<td style="text-align:center">根据行列标签设置对应值</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h5 id="算术运算和数据对齐"><a href="#算术运算和数据对齐" class="headerlink" title="算术运算和数据对齐"></a>算术运算和数据对齐</h5><p>Series对象可以叠加，对应index相加，没有对应index相加的是 NaN<br>DataFrame对象也可以相加，行和列都相加<br>为了不得到NaN，可以使用add函数，设置fill_value<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">df1.add(df2, fill_value=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># other operants</span></span><br><span class="line">df1.sub(df2, fill_value=<span class="number">0</span>)</span><br><span class="line">df1.div(df2, fill_value=<span class="number">0</span>)</span><br><span class="line">df1.mul(df2, fill_value=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<h5 id="函数应用和映射"><a href="#函数应用和映射" class="headerlink" title="函数应用和映射"></a>函数应用和映射</h5><p>NumPy的ufunc也可以用于操作pandas对象<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">frame = DataFrame(np.random.randn(<span class="number">4</span>,<span class="number">3</span>),columns=list(<span class="string">'bde'</span>),index=list(<span class="string">'xyzw'</span>))</span><br><span class="line"><span class="comment"># 绝对值</span></span><br><span class="line">np.abs(frame)</span><br></pre></td></tr></table></figure></p>
+<p>DataFrame的apply方法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">frame = DataFrame(np.random.randn(<span class="number">4</span>,<span class="number">3</span>),columns=list(<span class="string">'bde'</span>),index=list(<span class="string">'xyzw'</span>))</span><br><span class="line">f = <span class="keyword">lambda</span> x: x.max()-x.min()</span><br><span class="line">frame.apply(f)</span><br><span class="line"><span class="comment"># 除标量外，传递给apply的函数还可以返回多个值组成的Series</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> Series([x.min(), x.max()], index=[<span class="string">'min'</span>, <span class="string">'max'</span>])</span><br><span class="line">frame.apply(f)</span><br><span class="line">$-&gt;             b         d         e</span><br><span class="line">    min <span class="number">-0.983954</span> <span class="number">-0.578884</span> <span class="number">-0.916169</span></span><br><span class="line">    max  <span class="number">1.111333</span>  <span class="number">0.982841</span>  <span class="number">0.663686</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="排序和排名"><a href="#排序和排名" class="headerlink" title="排序和排名"></a>排序和排名</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">obj = Series(range(<span class="number">4</span>), index=[<span class="string">'a'</span>,<span class="string">'d'</span>,<span class="string">b','</span>c<span class="string">'])</span></span><br><span class="line"><span class="string">obj.sort_index() # order by index</span></span><br><span class="line"><span class="string">$-&gt; a    0.0</span></span><br><span class="line"><span class="string">    b    1.0</span></span><br><span class="line"><span class="string">    c    2.0</span></span><br><span class="line"><span class="string">    d    3.0</span></span><br><span class="line"><span class="string">    dtype: float64</span></span><br><span class="line"><span class="string">obj.order() # 按值排序, NaN都放最后</span></span><br><span class="line"><span class="string">$-&gt; a    0.0</span></span><br><span class="line"><span class="string">    b    1.0</span></span><br><span class="line"><span class="string">    c    2.0</span></span><br><span class="line"><span class="string">    d    3.0</span></span><br><span class="line"><span class="string">    dtype: float64</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># DataFrame对象也可以排序</span></span><br><span class="line"><span class="string">frame.sort_index(axis=0)</span></span><br><span class="line"><span class="string">frame = DataFrame(&#123;'</span>a<span class="string">':[1,2,3], '</span><span class="string">b':[4,5,6]&#125;)</span></span><br><span class="line"><span class="string"># 按照a和b排序，降序</span></span><br><span class="line"><span class="string">frame.sort_index(by=['</span>a<span class="string">','</span><span class="string">b'],ascending=False)</span></span><br></pre></td></tr></table></figure>
+<h5 id="重复值轴索引"><a href="#重复值轴索引" class="headerlink" title="重复值轴索引"></a>重复值轴索引</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">obj = Series(range(<span class="number">5</span>), index=[<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>])</span><br><span class="line">obj.index.is_unique</span><br><span class="line">$-&gt; False</span><br></pre></td></tr></table></figure>
+<h5 id="汇总和计算描述统计"><a href="#汇总和计算描述统计" class="headerlink" title="汇总和计算描述统计"></a>汇总和计算描述统计</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">df = DataFrame([[<span class="number">1.4</span>,np.nan],[<span class="number">7.1</span>,<span class="number">-4.5</span>],[np.nan,np.nan],[<span class="number">0.75</span>,<span class="number">-1.3</span>]],index=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>],columns=[<span class="string">'one'</span>,<span class="string">'two'</span>])</span><br><span class="line"><span class="comment"># ax=1时按行求和，ax=0时按列求和</span></span><br><span class="line"><span class="comment"># skipna=True会忽略NaN(默认)</span></span><br><span class="line">df.sum(axis=ax, skipna=<span class="keyword">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># idxmin/idxmax返回间接统计索引</span></span><br><span class="line">df.idxmax()</span><br><span class="line">$-&gt; one    b</span><br><span class="line">    two    d</span><br><span class="line">    dtype: object</span><br><span class="line">df.cumsum()</span><br><span class="line">$-&gt;     one  two</span><br><span class="line">    a  <span class="number">1.40</span>  NaN</span><br><span class="line">    b  <span class="number">8.50</span> <span class="number">-4.5</span></span><br><span class="line">    c   NaN  NaN</span><br><span class="line">    d  <span class="number">9.25</span> <span class="number">-5.8</span></span><br><span class="line">df.describe() <span class="comment"># 一次性产生多个汇总统计</span></span><br><span class="line">$-&gt;             one       two</span><br><span class="line">    count  <span class="number">3.000000</span>  <span class="number">2.000000</span></span><br><span class="line">    mean   <span class="number">3.083333</span> <span class="number">-2.900000</span></span><br><span class="line">    std    <span class="number">3.493685</span>  <span class="number">2.262742</span></span><br><span class="line">    min    <span class="number">0.750000</span> <span class="number">-4.500000</span></span><br><span class="line">    <span class="number">25</span>%         NaN       NaN</span><br><span class="line">    <span class="number">50</span>%         NaN       NaN</span><br><span class="line">    <span class="number">75</span>%         NaN       NaN</span><br><span class="line">    max    <span class="number">7.100000</span> <span class="number">-1.300000</span></span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">method</th>
+<th style="text-align:center">explain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">count</td>
+<td style="text-align:center">非NaN值的数量</td>
+</tr>
+<tr>
+<td style="text-align:center">describe</td>
+<td style="text-align:center">汇总统计</td>
+</tr>
+<tr>
+<td style="text-align:center">min,max</td>
+<td style="text-align:center">最大、最小值</td>
+</tr>
+<tr>
+<td style="text-align:center">argmin,argmax</td>
+<td style="text-align:center">最小、最大值的索引位置</td>
+</tr>
+<tr>
+<td style="text-align:center">idxmin,idxmax</td>
+<td style="text-align:center">最小、最大值的索引</td>
+</tr>
+<tr>
+<td style="text-align:center">quantile</td>
+<td style="text-align:center">计算样本的分位数</td>
+</tr>
+<tr>
+<td style="text-align:center">sum,mean,median</td>
+<td style="text-align:center">总和、均值、中位数</td>
+</tr>
+<tr>
+<td style="text-align:center">mad</td>
+<td style="text-align:center">根据平均值计算平均绝对离差</td>
+</tr>
+<tr>
+<td style="text-align:center">var,std</td>
+<td style="text-align:center">样本方差、标准差</td>
+</tr>
+<tr>
+<td style="text-align:center">skew</td>
+<td style="text-align:center">样本值的偏度(三阶矩)</td>
+</tr>
+<tr>
+<td style="text-align:center">kurt</td>
+<td style="text-align:center">样本值的峰度(四阶矩)</td>
+</tr>
+<tr>
+<td style="text-align:center">cumsum</td>
+<td style="text-align:center">样本累计和</td>
+</tr>
+<tr>
+<td style="text-align:center">cummin,cummax</td>
+<td style="text-align:center">样本累计最小、最大值</td>
+</tr>
+<tr>
+<td style="text-align:center">cumprod</td>
+<td style="text-align:center">样本累计积</td>
+</tr>
+<tr>
+<td style="text-align:center">diff</td>
+<td style="text-align:center">计算一阶差分(时间序列数据)</td>
+</tr>
+<tr>
+<td style="text-align:center">pct_change</td>
+<td style="text-align:center">计算百分数变化</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>相关系数和协方差<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列表之间的相关系数、协方差</span></span><br><span class="line">frame.col1.corr(frame.col2)</span><br><span class="line">frame.col1.cov(frame.col2)</span><br><span class="line"><span class="comment"># DataFrame的相关系数、协方差，是指各个列之间的相关系数、协方差</span></span><br><span class="line">frame.corr()</span><br><span class="line">$-&gt;           b         d         e</span><br><span class="line">    b  <span class="number">1.000000</span> <span class="number">-0.911353</span>  <span class="number">0.324945</span></span><br><span class="line">    d <span class="number">-0.911353</span>  <span class="number">1.000000</span> <span class="number">-0.252583</span></span><br><span class="line">    e  <span class="number">0.324945</span> <span class="number">-0.252583</span>  <span class="number">1.000000</span></span><br><span class="line">frame.cov()</span><br><span class="line">$-&gt;           b         d         e</span><br><span class="line">    b  <span class="number">0.591176</span> <span class="number">-0.292541</span>  <span class="number">0.347585</span></span><br><span class="line">    d <span class="number">-0.292541</span>  <span class="number">0.174294</span> <span class="number">-0.146703</span></span><br><span class="line">    e  <span class="number">0.347585</span> <span class="number">-0.146703</span>  <span class="number">1.935457</span></span><br><span class="line"><span class="comment"># x可以是Series或者是DataFrame</span></span><br><span class="line">frame.corrwith(x)</span><br></pre></td></tr></table></figure></p>
+<h5 id="唯一值、值计数和成员资格"><a href="#唯一值、值计数和成员资格" class="headerlink" title="唯一值、值计数和成员资格"></a>唯一值、值计数和成员资格</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">obj = Series([<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'b'</span>,<span class="string">'a'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'b'</span>])</span><br><span class="line">obj.unique()</span><br><span class="line">$-&gt; array(['a', 'b', 'c', 'd'], dtype=object)</span><br><span class="line">obj.value_counts()</span><br><span class="line">$-&gt; b    3</span><br><span class="line">    c    <span class="number">2</span></span><br><span class="line">    a    <span class="number">2</span></span><br><span class="line">    d    <span class="number">1</span></span><br><span class="line">    dtype: int64</span><br><span class="line">pd.value_counts(obj.values, sort=<span class="keyword">False</span>)</span><br><span class="line"><span class="comment"># Series中的所有元素是否在参数中</span></span><br><span class="line">mask = obj.isin([<span class="string">'b'</span>,<span class="string">'c'</span>])</span><br><span class="line">$-&gt; 0    False</span><br><span class="line">    <span class="number">1</span>     <span class="keyword">True</span></span><br><span class="line">    <span class="number">2</span>     <span class="keyword">True</span></span><br><span class="line">    <span class="number">3</span>     <span class="keyword">True</span></span><br><span class="line">    <span class="number">4</span>    <span class="keyword">False</span></span><br><span class="line">    <span class="number">5</span>     <span class="keyword">True</span></span><br><span class="line">    <span class="number">6</span>    <span class="keyword">False</span></span><br><span class="line">    <span class="number">7</span>     <span class="keyword">True</span></span><br><span class="line">    dtype: bool</span><br><span class="line">obj[mask]</span><br><span class="line">$-&gt; 1    b</span><br><span class="line">    <span class="number">2</span>    c</span><br><span class="line">    <span class="number">3</span>    b</span><br><span class="line">    <span class="number">5</span>    c</span><br><span class="line">    <span class="number">7</span>    b</span><br><span class="line">    dtype: object</span><br></pre></td></tr></table></figure>
+<h5 id="缺失数据处理"><a href="#缺失数据处理" class="headerlink" title="缺失数据处理"></a>缺失数据处理</h5><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">method</th>
+<th style="text-align:center">explain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">dropna</td>
+<td style="text-align:center">根据标签值中是否存在缺失数据对轴标签进行过滤，可通过阈值调节容忍度</td>
+</tr>
+<tr>
+<td style="text-align:center">fillna</td>
+<td style="text-align:center">用指定值或插值方法填充缺失数据</td>
+</tr>
+<tr>
+<td style="text-align:center">isnull</td>
+<td style="text-align:center">布尔值列表，True表示缺失值/NA</td>
+</tr>
+<tr>
+<td style="text-align:center">notnull</td>
+<td style="text-align:center">与isnull相反</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> nan <span class="keyword">as</span> NA</span><br><span class="line">data = Series([<span class="number">1</span>,NA,<span class="number">3.5</span>,NA,<span class="number">7</span>])</span><br><span class="line"><span class="comment"># 舍弃包含NA的行或列，加上how='all'后舍弃全是NA的行或列</span></span><br><span class="line"><span class="comment"># 默认是行，设置axis=1变成列！</span></span><br><span class="line">data.dropna()  data.dropna(how=<span class="string">'all'</span>)</span><br><span class="line">data.[data.notnull()]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换NA，返回新对象</span></span><br><span class="line"><span class="comment"># 设置inplace=True对现有对象就地修改</span></span><br><span class="line">data.fillna(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="层次化索引"><a href="#层次化索引" class="headerlink" title="层次化索引"></a>层次化索引</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">data = Series(np.random.randn(<span class="number">10</span>),index=[[<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'d'</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>]])</span><br><span class="line">$-&gt; a  1    0.506070</span><br><span class="line">       <span class="number">2</span>   <span class="number">-2.293016</span></span><br><span class="line">       <span class="number">3</span>    <span class="number">1.391751</span></span><br><span class="line">    b  <span class="number">1</span>   <span class="number">-1.218733</span></span><br><span class="line">       <span class="number">2</span>    <span class="number">0.390983</span></span><br><span class="line">       <span class="number">3</span>    <span class="number">1.462456</span></span><br><span class="line">    c  <span class="number">1</span>    <span class="number">0.162262</span></span><br><span class="line">       <span class="number">2</span>   <span class="number">-0.091724</span></span><br><span class="line">    d  <span class="number">2</span>    <span class="number">0.321799</span></span><br><span class="line">       <span class="number">3</span>    <span class="number">0.203933</span></span><br></pre></td></tr></table></figure>
+<p>取值方法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">data[<span class="string">'b'</span>]</span><br><span class="line">data[<span class="string">'b'</span>:<span class="string">'c'</span>]</span><br><span class="line">data[:,<span class="number">2</span>] <span class="comment"># 二层取值</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># unstack可以将这种数据重新安装到DataFrame中</span></span><br><span class="line"><span class="comment"># stack是unstack的逆操作</span></span><br><span class="line">data.unstack()</span><br><span class="line">$-&gt;           1         2         3</span><br><span class="line">	a  <span class="number">0.506070</span> <span class="number">-2.293016</span>  <span class="number">1.391751</span></span><br><span class="line">	b <span class="number">-1.218733</span>  <span class="number">0.390983</span>  <span class="number">1.462456</span></span><br><span class="line">	c  <span class="number">0.162262</span> <span class="number">-0.091724</span>       NaN</span><br><span class="line">	d       NaN  <span class="number">0.321799</span>  <span class="number">0.203933</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DataFrame可以使用分层索引</span></span><br><span class="line">frame = DataFrame(np.arange(<span class="number">12</span>).reshape((<span class="number">4</span>,<span class="number">3</span>)),index=[[<span class="string">'a'</span>,<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'b'</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>]],columns=[[<span class="string">'Ohis'</span>,<span class="string">'Ohis'</span>,<span class="string">'Colorado'</span>],[<span class="string">'Green'</span>,<span class="string">'Red'</span>,<span class="string">'Green'</span>]])</span><br><span class="line">frame.index.names=[<span class="string">'key1'</span>,<span class="string">'key2'</span>]</span><br><span class="line">frame.columns.names=[<span class="string">'state'</span>,<span class="string">'color'</span>]</span><br><span class="line">$-&gt; state      Ohis     Colorado</span><br><span class="line">    color     Green Red    Green</span><br><span class="line">    key1 key2</span><br><span class="line">    a    <span class="number">1</span>        <span class="number">0</span>   <span class="number">1</span>        <span class="number">2</span></span><br><span class="line">         <span class="number">2</span>        <span class="number">3</span>   <span class="number">4</span>        <span class="number">5</span></span><br><span class="line">    b    <span class="number">1</span>        <span class="number">6</span>   <span class="number">7</span>        <span class="number">8</span></span><br><span class="line">         <span class="number">2</span>        <span class="number">9</span>  <span class="number">10</span>       <span class="number">11</span></span><br></pre></td></tr></table></figure></p>
+<p>重排分级顺序<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">frame.swaplevel(<span class="string">'key1'</span>,<span class="string">'key2'</span>)</span><br><span class="line">$-&gt; state      Ohis     Colorado</span><br><span class="line">	color     Green Red    Green</span><br><span class="line">	key2 key1</span><br><span class="line">	<span class="number">1</span>    a        <span class="number">0</span>   <span class="number">1</span>        <span class="number">2</span></span><br><span class="line">	<span class="number">2</span>    a        <span class="number">3</span>   <span class="number">4</span>        <span class="number">5</span></span><br><span class="line">	<span class="number">1</span>    b        <span class="number">6</span>   <span class="number">7</span>        <span class="number">8</span></span><br><span class="line">	<span class="number">2</span>    b        <span class="number">9</span>  <span class="number">10</span>       <span class="number">11</span></span><br></pre></td></tr></table></figure></p>
+<p>根据级别汇总统计<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果对列计数，需要设置axis=1</span></span><br><span class="line">frame.sum(level=<span class="string">'key2'</span>)</span><br><span class="line">$-&gt; state  Ohis     Colorado</span><br><span class="line">	color Green Red    Green</span><br><span class="line">	key2</span><br><span class="line">	<span class="number">1</span>         <span class="number">6</span>   <span class="number">8</span>       <span class="number">10</span></span><br><span class="line">	<span class="number">2</span>        <span class="number">12</span>  <span class="number">14</span>       <span class="number">16</span></span><br><span class="line">frame.sum(level=<span class="string">'color'</span>,axis=<span class="number">1</span>)</span><br><span class="line">$-&gt; color      Green  Red</span><br><span class="line">    key1 key2</span><br><span class="line">    a    <span class="number">1</span>         <span class="number">2</span>    <span class="number">1</span></span><br><span class="line">         <span class="number">2</span>         <span class="number">8</span>    <span class="number">4</span></span><br><span class="line">    b    <span class="number">1</span>        <span class="number">14</span>    <span class="number">7</span></span><br><span class="line">         <span class="number">2</span>        <span class="number">20</span>   <span class="number">10</span></span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/05/17/pandas初步/" data-id="cjn8cdlki009mvwph9rgjybe4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2016/06/08/简单git使用方法/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    简单git使用方法
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/05/11/mean-shift/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">mean shift</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

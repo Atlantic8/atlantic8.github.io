@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>python时间序列分析 | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="基础工具基础工具类，datetime模块    type explanation     date 以公历形式存储日历日期   time 以时、分、秒、毫秒形式存储时间   datetime 存储如期和时间   timedelta 两个datetime之间的差      datetime以毫秒形式存储日期和时间，datetime.timedelta表示两个datetime对象之间的时间差 可以给d">
+<meta name="keywords" content="python,time_series_data">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python时间序列分析">
+<meta property="og:url" content="atlantic8.github.io/2016/08/15/python时间序列分析/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="基础工具基础工具类，datetime模块    type explanation     date 以公历形式存储日历日期   time 以时、分、秒、毫秒形式存储时间   datetime 存储如期和时间   timedelta 两个datetime之间的差      datetime以毫秒形式存储日期和时间，datetime.timedelta表示两个datetime对象之间的时间差 可以给d">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-01-19T11:58:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python时间序列分析">
+<meta name="twitter:description" content="基础工具基础工具类，datetime模块    type explanation     date 以公历形式存储日历日期   time 以时、分、秒、毫秒形式存储时间   datetime 存储如期和时间   timedelta 两个datetime之间的差      datetime以毫秒形式存储日期和时间，datetime.timedelta表示两个datetime对象之间的时间差 可以给d">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-python时间序列分析" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            python时间序列分析
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/08/15/python时间序列分析/">
+            <time datetime="2016-08-15T11:06:30.000Z" itemprop="datePublished">2016-08-15</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/python/">python</a>, <a class="tag-link" href="/tags/time-series-data/">time_series_data</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="基础工具"><a href="#基础工具" class="headerlink" title="基础工具"></a>基础工具</h4><h5 id="基础工具类，datetime模块"><a href="#基础工具类，datetime模块" class="headerlink" title="基础工具类，datetime模块"></a>基础工具类，datetime模块</h5><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">type</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">date</td>
+<td style="text-align:center">以公历形式存储日历日期</td>
+</tr>
+<tr>
+<td style="text-align:center">time</td>
+<td style="text-align:center">以时、分、秒、毫秒形式存储时间</td>
+</tr>
+<tr>
+<td style="text-align:center">datetime</td>
+<td style="text-align:center">存储如期和时间</td>
+</tr>
+<tr>
+<td style="text-align:center">timedelta</td>
+<td style="text-align:center">两个datetime之间的差</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>datetime以毫秒形式存储日期和时间，datetime.timedelta表示两个datetime对象之间的时间差</li>
+<li>可以给datetime加上、减去一个或者多个timedelta对象</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta</span><br><span class="line">now = datetime.now()</span><br><span class="line">now.year, now.month, now.day</span><br><span class="line">$-&gt; datetime.datetime(2016, 8, 4, 15, 14, 36, 899000)</span><br><span class="line"></span><br><span class="line"><span class="comment"># timedelta只有days和seconds这两个成员</span></span><br><span class="line">delta = datetime(<span class="number">2011</span>,<span class="number">7</span>,<span class="number">2</span>)-datetime(<span class="number">2011</span>,<span class="number">7</span>,<span class="number">1</span>,<span class="number">9</span>)</span><br><span class="line">delta.days, delta.seconds</span><br><span class="line">$-&gt; (0, 54000)</span><br><span class="line"></span><br><span class="line">delta = datetime(<span class="number">2011</span>,<span class="number">7</span>,<span class="number">2</span>)<span class="number">-2</span>*timedelta(<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="字符串和datetime的相互转换"><a href="#字符串和datetime的相互转换" class="headerlink" title="字符串和datetime的相互转换"></a>字符串和datetime的相互转换</h5><p>datetime -&gt; string</p>
+<ul>
+<li>str方法</li>
+<li>strftime方法</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">stamp = datetime(<span class="number">2011</span>,<span class="number">8</span>,<span class="number">1</span>)</span><br><span class="line">str(stamp)</span><br><span class="line">$-&gt; '2011-08-01 00:00:00'</span><br><span class="line">stamp.strftime(<span class="string">'%Y-%m-%d'</span>)</span><br><span class="line">$-&gt; '2011-08-01'</span><br></pre></td></tr></table></figure>
+<p>string -&gt; datetime</p>
+<ul>
+<li>datetime.strptime</li>
+<li>dateutil的parser.parse方法，dateutil几乎可以理解所有人类能够理解的日期格式</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">value = <span class="string">'2011-1-25'</span></span><br><span class="line"><span class="comment"># 返回一个datetime对象</span></span><br><span class="line">datetime.strptime(value, <span class="string">'%Y-%m-%d'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> dateutil.parse <span class="keyword">import</span> parse</span><br><span class="line">parse(<span class="string">'2011-03-12'</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="pandas中的时间数据处理"><a href="#pandas中的时间数据处理" class="headerlink" title="pandas中的时间数据处理"></a>pandas中的时间数据处理</h5><ul>
+<li>pandas处理成组的时间数据</li>
+<li>可以处理空值和非法值，用NaT表示</li>
+<li>可能会把一些不是日期的字符串变成日期</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">datestr = [<span class="string">'2011-04-12'</span>,<span class="string">'2015-11-09'</span>]</span><br><span class="line">pd.to_datetime(datestr)</span><br></pre></td></tr></table></figure>
+<h4 id="时间序列基础"><a href="#时间序列基础" class="headerlink" title="时间序列基础"></a>时间序列基础</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line">dates = [datetime(<span class="number">2012</span>,<span class="number">1</span>,<span class="number">1</span>), datetime(<span class="number">2012</span>,<span class="number">1</span>,<span class="number">2</span>)]</span><br><span class="line"><span class="comment"># datetime对象放置在一个DatetimeIndex中，pandas会自动识别这个Series为时间序列数据</span></span><br><span class="line">ts = Series(np.random.randn(<span class="number">2</span>), index=dates)</span><br><span class="line"></span><br><span class="line"><span class="comment"># DatetimeIndex中的各个标量是pandas的TimeStamp对象</span></span><br><span class="line">ts.index[<span class="number">0</span>]</span><br><span class="line">$-&gt; Timestamp('2012-01-01 00:00:00')</span><br></pre></td></tr></table></figure>
+<h5 id="索引与子集"><a href="#索引与子集" class="headerlink" title="索引与子集"></a>索引与子集</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以传入被解释为日期的字符串来访问</span></span><br><span class="line">ts[<span class="string">'2012-01-01'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切片操作，可以传入‘年’或者‘年月’</span></span><br><span class="line"><span class="comment"># periods决定date_range的长度</span></span><br><span class="line">longer_ts = Series(np.random.randn(<span class="number">1000</span>), index=pd.date_range(<span class="string">'1/1/2000'</span>,period=<span class="number">1000</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以像列表切片那样，可以传入字符串日期，datetime或TimeStamp对象</span></span><br><span class="line"><span class="comment"># 这样切片产生的是源数据的视图，与numpy数组的切片运算一致</span></span><br><span class="line">ts[datetime(<span class="number">2011</span>,<span class="number">1</span>,<span class="number">7</span>):] <span class="comment"># 2011-1-7起的所有数据</span></span><br><span class="line">ts[<span class="string">'1/6/2011'</span>:<span class="string">'1/11/2011'</span>] <span class="comment"># 从[2011-1-6, 2011-1-11)的数据</span></span><br><span class="line"></span><br><span class="line">ts.truncate(after=<span class="string">'1/1/2011'</span>) <span class="comment"># 也有类似的效果</span></span><br></pre></td></tr></table></figure>
+<p>在Series与DataFrame中均适用，只要设置index即可</p>
+<h5 id="日期范围"><a href="#日期范围" class="headerlink" title="日期范围"></a>日期范围</h5><h6 id="date-range"><a href="#date-range" class="headerlink" title="date_range"></a>date_range</h6><ul>
+<li>pandas.date_range(start=s, end=e, period=p, freq=f, normalize=True)</li>
+<li>[s, e)：决定了初始时间和结束时间</li>
+<li>p：周期值，决定日期长度</li>
+<li>f：决定频率，默认为’D’,表示天。常用频率见下表，更详细的见书本314页</li>
+<li>normalize：True表示产生规范化到午夜的时间戳</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">value</th>
+<th style="text-align:center">explanation</th>
+<th style="text-align:center">value</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">D</td>
+<td style="text-align:center">每日历日</td>
+<td style="text-align:center">B</td>
+<td style="text-align:center">每工作日</td>
+</tr>
+<tr>
+<td style="text-align:center">H</td>
+<td style="text-align:center">每小时</td>
+<td style="text-align:center">T or min</td>
+<td style="text-align:center">每分钟</td>
+</tr>
+<tr>
+<td style="text-align:center">S</td>
+<td style="text-align:center">每秒钟</td>
+<td style="text-align:center">L or ms</td>
+<td style="text-align:center">每毫秒</td>
+</tr>
+<tr>
+<td style="text-align:center">U</td>
+<td style="text-align:center">每微秒</td>
+<td style="text-align:center">M</td>
+<td style="text-align:center">每月最后一个日历日</td>
+</tr>
+<tr>
+<td style="text-align:center">BM</td>
+<td style="text-align:center">每月最后一个工作日</td>
+<td style="text-align:center">MS</td>
+<td style="text-align:center">每月第一个日历日</td>
+</tr>
+<tr>
+<td style="text-align:center">W-MON,W-TUE,..</td>
+<td style="text-align:center">从指定的星期几开始起的每一周</td>
+<td style="text-align:center">BMS</td>
+<td style="text-align:center">每月第一个工作日</td>
+</tr>
+<tr>
+<td style="text-align:center">Q-JAN,Q-FEB,..</td>
+<td style="text-align:center">从起始时间开始，每个季度最后一个月的最后一个工作日</td>
+<td style="text-align:center">WOM-1MON,WOM-2MON,..WOM-1FRI..</td>
+<td style="text-align:center">产生每月第x个星期几</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="日期偏移量"><a href="#日期偏移量" class="headerlink" title="日期偏移量"></a>日期偏移量</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tseries.offsets <span class="keyword">import</span> Hour,Minute</span><br><span class="line">hour = Hour(<span class="number">4</span>)</span><br><span class="line"><span class="comment"># 也可以更加简洁地使用freq参数</span></span><br><span class="line"><span class="comment"># freq = '1h30min'</span></span><br><span class="line">pd.date_range(<span class="string">'1/1/2011'</span>, <span class="string">'1/2/2011'</span>, freq=<span class="string">'4h'</span>)</span><br><span class="line">$-&gt; DatetimeIndex(['2011-01-01 00:00:00', '2011-01-01 04:00:00',</span><br><span class="line">                   <span class="string">'2011-01-01 08:00:00'</span>, <span class="string">'2011-01-01 12:00:00'</span>,</span><br><span class="line">               	   <span class="string">'2011-01-01 16:00:00'</span>, <span class="string">'2011-01-01 20:00:00'</span>,</span><br><span class="line">               	   <span class="string">'2011-01-02 00:00:00'</span>],</span><br><span class="line">                  dtype=<span class="string">'datetime64[ns]'</span>, freq=<span class="string">'4H'</span>)</span><br></pre></td></tr></table></figure>
+<h6 id="移动数据"><a href="#移动数据" class="headerlink" title="移动数据"></a>移动数据</h6><ul>
+<li>Series和DataFrame都有一个shift方法用于移动数据</li>
+<li>shift移动步长参数：正值后移，负值前移</li>
+<li>shift也可以带有参数 freq，这种情况下，数据不变，索引移动(正值前移)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算变化率</span></span><br><span class="line">ts / ts.shift(<span class="number">1</span>) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">ts.shift(<span class="number">2</span>,freq=<span class="string">'D'</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>日期偏移量可以做用在datetime或TimeStamp对象上</li>
+<li>如果加的是锚点偏移量(如MonthEnd)，第一次会偏移到符合频率规则的下一日期</li>
+<li>通过锚点偏移量的rollforward和rollback方法</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pandas.tseries.offsets <span class="keyword">import</span> Day, MonthEnd</span><br><span class="line"></span><br><span class="line">now = datetime(<span class="number">2011</span>,<span class="number">2</span>,<span class="number">15</span>)</span><br><span class="line">now + MonthEnd()</span><br><span class="line">$-&gt; Timestamp('2011-02-28 00:00:00')</span><br><span class="line">now + MonthEnd(<span class="number">2</span>)</span><br><span class="line">$-&gt; Timestamp('2011-03-31 00:00:00')'</span><br><span class="line"></span><br><span class="line">offset = MonthEnd()</span><br><span class="line">offset.rollforward(now)</span><br><span class="line">$-&gt; Timestamp('2011-02-28 00:00:00')</span><br><span class="line">offset.rollback(now)</span><br><span class="line">$-&gt; Timestamp('2011-01-31 00:00:00')</span><br></pre></td></tr></table></figure>
+<h5 id="时区处理"><a href="#时区处理" class="headerlink" title="时区处理"></a>时区处理</h5><p>时间序列、日期范围和时间戳都可以从naive型转化为本地化时区意识型，也可以从一个时区转化为另一个时区<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pytz</span><br><span class="line"><span class="comment"># 常用时区列表</span></span><br><span class="line">pytz.common_timezones</span><br><span class="line"><span class="comment"># 获取时区对象</span></span><br><span class="line">tz = pytz.timezone(<span class="string">'UTC'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>默认情况下，pandas中的时区是naive的，其索引的<b>tz字段</b>为None<br>所以在生成日期范围的时候可以加上一个时区信息,设置tz参数。也可以直接使用tz_localize方法<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">pd.date_range(<span class="string">'1/1/2001'</span>,period=<span class="number">10</span>,tz=<span class="string">'UTC'</span>)</span><br><span class="line"><span class="comment"># 完成本地化操作</span></span><br><span class="line">ts_utc = ts.tz_localize(<span class="string">'UTC'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时区转化</span></span><br><span class="line">ts_utc.tz_convert(<span class="string">'US/Eastern'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时间戳转换</span></span><br><span class="line">stamp = pd.TimeStamp(<span class="string">'2011-03-12 04:00'</span>)</span><br><span class="line">stamp_utc = stamp.tz_localize(<span class="string">'UTC'</span>)</span><br><span class="line">stamp_eu = stamp.tz_convert(<span class="string">'Europe/Moscow'</span>)</span><br><span class="line"></span><br><span class="line">stamp_moscow = pd.TimeStamp(<span class="string">'2011-03-12 04:00'</span>, tz=<span class="string">'Europe/Moscow'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>合并两个时间序列数据，时区不同时，结果自动转化为UTC时间。</p>
+<h5 id="时期Period及其算术运算"><a href="#时期Period及其算术运算" class="headerlink" title="时期Period及其算术运算"></a>时期Period及其算术运算</h5><ul>
+<li>时期Period表示的是时间区间，如数日、数月、数季、数年等，包含在pandas中</li>
+<li>构造函数需要一个字符串或者整数，以及freq参数</li>
+<li>pandas.period_range函数，pandas.PeriodIndex函数</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这个Period表示的是从2007-1-1到2007-12-31日之间的整段时间</span></span><br><span class="line"><span class="comment"># 可以被看成一个被划分成多个月度时期的时间段中的游标</span></span><br><span class="line">p = pd.Period(<span class="number">2007</span>,freq=<span class="string">'A-DEC'</span>)</span><br><span class="line"><span class="comment"># 与整数直接进行加、减法运算</span></span><br><span class="line">p + <span class="number">5</span></span><br><span class="line">$-&gt; Period('2012', 'A-DEC')</span><br><span class="line"></span><br><span class="line"><span class="comment"># Period对象之间的加、减法运算</span></span><br><span class="line"><span class="comment"># freq不同时会抛出异常</span></span><br><span class="line">pd.Period(<span class="string">'2014'</span>, freq=<span class="string">'A-DEC'</span>) - p</span><br><span class="line">$-&gt; 7L</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建时期范围</span></span><br><span class="line">pd.period_range(<span class="string">'1/1/2000'</span>, <span class="string">'6/30/2000'</span>, freq=<span class="string">'M'</span>)</span><br><span class="line"></span><br><span class="line">values = [<span class="string">'2001Q3'</span>, <span class="string">'2002Q2'</span>, <span class="string">'2003Q1'</span>]</span><br><span class="line">index = pd.PeriodIndex(values, freq=<span class="string">'Q-DEC'</span>)</span><br><span class="line">index $-&gt; PeriodIndex(['2001Q3', '2002Q2', '2003Q1'], dtype='int64', freq='Q-DEC')</span><br></pre></td></tr></table></figure>
+<h6 id="时期的频率转换"><a href="#时期的频率转换" class="headerlink" title="时期的频率转换"></a>时期的频率转换</h6><p>Period和PeriodIndex对象都可以通过其asfreq方法被转换到其他频率<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">p = pd.Period(<span class="string">'2007'</span>, freq=<span class="string">'A-DEC'</span>)</span><br><span class="line">p.asfreq(<span class="string">'M'</span>,how=<span class="string">'start'</span>)</span><br><span class="line">$-&gt; Period('2007-01','M')</span><br><span class="line">p.asfreq(<span class="string">'M'</span>,how=<span class="string">'end'</span>)</span><br><span class="line">$-&gt; Period('2007-12','M')</span><br><span class="line">P.asfreq(<span class="string">'B'</span>,how=<span class="string">'start'</span>)</span><br><span class="line">$-&gt; Period('2007-01-01', 'B')</span><br><span class="line"></span><br><span class="line"><span class="comment"># 高频率转化为低频率</span></span><br><span class="line">p = pd.Period(<span class="string">'2007-08'</span>, <span class="string">'M'</span>)</span><br><span class="line">p.asfreq(<span class="string">'A-JUN'</span>)</span><br><span class="line"><span class="comment"># 在频率A-JUN中，2007-08实际上是属于2008年</span></span><br><span class="line">$-&gt; Period('2008','A-JUN')</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按季度计算的时期频率</span></span><br><span class="line"><span class="comment"># 频率为 Q-JAN,Q-FEB,Q-MAR,....Q-DEC, JAN starts from feb</span></span><br><span class="line">p = pd.Period(<span class="string">'2012Q4'</span>, freq=<span class="string">'Q-JAN'</span>)</span><br><span class="line"><span class="comment"># 2012年Q4是从2011-11-01到2012-01-31</span></span><br><span class="line">p.asfreq(<span class="string">'D'</span>, <span class="string">'start'</span>)</span><br><span class="line">$-&gt; Period('2011-11-01', 'D')</span><br><span class="line">p.asfreq(<span class="string">'D'</span>,<span class="string">'e'</span>)</span><br><span class="line">$-&gt; Period('2012-01-31', 'D')</span><br><span class="line"></span><br><span class="line"><span class="comment"># TimeStamp和Period的相互转换</span></span><br><span class="line"><span class="comment"># to_timestamp()和to_period('freq')方法</span></span><br><span class="line">ts = Series(np.random.randn(<span class="number">3</span>), index=pd.date_range(<span class="string">'1/1/2000'</span>,periods=<span class="number">3</span>,freq=<span class="string">'M'</span>))</span><br><span class="line">ts  $-&gt;</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-31</span>    <span class="number">2.375484</span></span><br><span class="line"><span class="number">2000</span><span class="number">-02</span><span class="number">-29</span>    <span class="number">0.726024</span></span><br><span class="line"><span class="number">2000</span><span class="number">-03</span><span class="number">-31</span>   <span class="number">-0.328938</span></span><br><span class="line">Freq: M, dtype: float64</span><br><span class="line"></span><br><span class="line">pts = ts.to_period()</span><br><span class="line">pts $-&gt;</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span>    <span class="number">2.375484</span></span><br><span class="line"><span class="number">2000</span><span class="number">-02</span>    <span class="number">0.726024</span></span><br><span class="line"><span class="number">2000</span><span class="number">-03</span>   <span class="number">-0.328938</span></span><br><span class="line">Freq: M, dtype: float64</span><br><span class="line"></span><br><span class="line">pts.to_timestamp(how=<span class="string">'end'</span>)</span><br><span class="line">$-&gt;</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-31</span>    <span class="number">2.375484</span></span><br><span class="line"><span class="number">2000</span><span class="number">-02</span><span class="number">-29</span>    <span class="number">0.726024</span></span><br><span class="line"><span class="number">2000</span><span class="number">-03</span><span class="number">-31</span>   <span class="number">-0.328938</span></span><br><span class="line">Freq: M, dtype: float64</span><br></pre></td></tr></table></figure></p>
+<p>通过数组创建PeriodIndex<br>固定频率的数据集通常会将时间信息分开存放在多个列中，将这些数据以及频率传入PeriodIndex中就可以将它们合并成一个DataFrame索引<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># quarter表示季度</span></span><br><span class="line">pd.PeriodIndex(year=data.year, quarter=data.quarter, freq=<span class="string">'Q-DEC'</span>)</span><br></pre></td></tr></table></figure></p>
+<h5 id="重采样及频率转换"><a href="#重采样及频率转换" class="headerlink" title="重采样及频率转换"></a>重采样及频率转换</h5><ul>
+<li>重采样指的是将时间序列从一个频率转换到另一个频率的处理过程</li>
+<li>低频到高频称为升采样，反之为降采样</li>
+<li>pandas对象都有一个resample方法</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">param</th>
+<th style="text-align:center">explanation</th>
+<th style="text-align:center">param</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">freq</td>
+<td style="text-align:center">表示重采样频率的字符串或DataOffset,’M’,’5min’,Second(15)</td>
+<td style="text-align:center">how=’mean’</td>
+<td style="text-align:center">产生聚合的函数名或数组函数，默认为mean，还有’first’,’last’,’ohlc’,’min’</td>
+</tr>
+<tr>
+<td style="text-align:center">axis=0</td>
+<td style="text-align:center">采样轴，默认为axis=0</td>
+<td style="text-align:center">fill_method=None</td>
+<td style="text-align:center">升采样时的插值方式，可取’ffill’或’bfill’</td>
+</tr>
+<tr>
+<td style="text-align:center">closed=’right’</td>
+<td style="text-align:center">降采样中，时间段哪一端是闭合的</td>
+<td style="text-align:center">label=’right’</td>
+<td style="text-align:center">降采样中聚合值的标签</td>
+</tr>
+<tr>
+<td style="text-align:center">loffset=None</td>
+<td style="text-align:center">面元标签的时间校正值，-1s(Second(-1))将时间调早1s</td>
+<td style="text-align:center">limit=None</td>
+<td style="text-align:center">向前、向后填充时，允许填充的最大时期数</td>
+</tr>
+<tr>
+<td style="text-align:center">kind=None</td>
+<td style="text-align:center">聚合到时期或时间戳，默认聚合到时间序列的索引类型</td>
+<td style="text-align:center">convention=None</td>
+<td style="text-align:center">重采样时期，低频到高频所采用的约定(‘start’/‘end’)，默认为’end’</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="降采样"><a href="#降采样" class="headerlink" title="降采样"></a>降采样</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 聚合到5min范围，聚合函数为'sum'求和</span></span><br><span class="line">ts.resample(<span class="string">'5min'</span>, how=<span class="string">'sum'</span>)</span><br><span class="line"></span><br><span class="line">ts.resample(<span class="string">'5min'</span>, how=<span class="string">'sum'</span>, closed=<span class="string">'left'</span>, label=<span class="string">'left'</span>, loffset=<span class="string">'-1s'</span>)</span><br></pre></td></tr></table></figure>
+<p>OHLC重采样</p>
+<ul>
+<li>经常应用于金融数据的采样方法，计算各面元的四个值，分别是第一个值（open/开盘）、最后一个值（close/收盘）、最大值（high/最高）、最小值（low/最低）</li>
+<li>传入how=’ohlc’即可得到含有这四种聚合值的DataFrame</li>
+<li>ts.resample(‘5min’, how=’ohlc’)</li>
+<li>也可以通过groupby进行重采样</li>
+<li>ts.groupby(lambda x: x.month).mean()</li>
+<li>ts.groupby(lambda x: x.weekday).mean()</li>
+</ul>
+<h6 id="升采样"><a href="#升采样" class="headerlink" title="升采样"></a>升采样</h6><ul>
+<li>升采样过程中，不需要聚合，需要插值</li>
+<li>既不是降采样也不是升采样的采样，需要传入新的频率 frame.resample(‘W-MON’,fill_method=’ffill’)</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">frame = DataFrame(np.random.randn(<span class="number">2</span>,<span class="number">4</span>),index=pd.date_range(<span class="string">'1/1/2000'</span>,periods=<span class="number">2</span>,freq=<span class="string">'W-WED'</span>),columns=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>])</span><br><span class="line">frame</span><br><span class="line">$-&gt;               a         b         c         d</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-12</span>  <span class="number">2.512896</span> <span class="number">-1.719330</span>  <span class="number">0.090617</span>  <span class="number">0.329635</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置fill_method为ffill或者bfill，不设置时，引入缺失值</span></span><br><span class="line"><span class="comment"># 如果设置limit值，则只填充limit行</span></span><br><span class="line">frame.resample(<span class="string">'D'</span>, fill_method=<span class="string">'ffill'</span>, limit=<span class="number">4</span>)</span><br><span class="line">$-&gt;                a         b         c         d</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-05</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-06</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-07</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-08</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-09</span> <span class="number">-0.550387</span> <span class="number">-1.294863</span>  <span class="number">0.274911</span>  <span class="number">0.330741</span></span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-10</span>       NaN       NaN       NaN       NaN</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-11</span>       NaN       NaN       NaN       NaN</span><br><span class="line"><span class="number">2000</span><span class="number">-01</span><span class="number">-12</span>  <span class="number">2.512896</span> <span class="number">-1.719330</span>  <span class="number">0.090617</span>  <span class="number">0.329635</span></span><br></pre></td></tr></table></figure>
+<h5 id="绘图中的移动窗口函数"><a href="#绘图中的移动窗口函数" class="headerlink" title="绘图中的移动窗口函数"></a>绘图中的移动窗口函数</h5><ul>
+<li>移动窗口上计算的各种函数也是一类常见于时间序列的数组变换，称之为移动窗口函数</li>
+<li>它们接受TimeSeries或DataFrame对象，以及一个窗口长度。它们是pandas的函数</li>
+</ul>
+<center>移动窗口和指数加权函数</center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">function</th>
+<th style="text-align:center">explanation</th>
+<th style="text-align:center">function</th>
+<th style="text-align:center">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">rolling_count</td>
+<td style="text-align:center">各窗口非NA观测值的数量</td>
+<td style="text-align:center">rolling_sum</td>
+<td style="text-align:center">窗口和</td>
+</tr>
+<tr>
+<td style="text-align:center">rolling_mean</td>
+<td style="text-align:center">窗口均值</td>
+<td style="text-align:center">rolling_median</td>
+<td style="text-align:center">窗口中位数</td>
+</tr>
+<tr>
+<td style="text-align:center">rolling_var,rolling_std</td>
+<td style="text-align:center">窗口无偏方差、标准差(n-1)</td>
+<td style="text-align:center">rolling_skew,rolling_kurt</td>
+<td style="text-align:center">窗口三阶矩(偏度)、四阶矩(峰度)</td>
+</tr>
+<tr>
+<td style="text-align:center">rolling_min,rolling_max</td>
+<td style="text-align:center">窗口的最值</td>
+<td style="text-align:center">rolling_quantile</td>
+<td style="text-align:center">窗口制定百分数、分位数位置的值</td>
+</tr>
+<tr>
+<td style="text-align:center">rolling_corr,rolling_cov</td>
+<td style="text-align:center">窗口的相关系数和协方差</td>
+<td style="text-align:center">rolling_apply</td>
+<td style="text-align:center">对窗口应用普通数组函数</td>
+</tr>
+<tr>
+<td style="text-align:center">ewma</td>
+<td style="text-align:center">指数加权移动平均</td>
+<td style="text-align:center">ewmvar,ewmstd</td>
+<td style="text-align:center">指数加权移动方差和标准差</td>
+</tr>
+<tr>
+<td style="text-align:center">ewmcorr,ewmcov</td>
+<td style="text-align:center">指数加权移动相关系数和协方差</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这些函数均不考虑NA值，bottlenect则是NA友好的窗口移动函数集。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 窗口长度为250</span></span><br><span class="line">pd.rooling_mean(data[<span class="string">'col1'</span>], <span class="number">250</span>, min_periods=<span class="number">10</span>).plot()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将rolling_mean()函应用到所有列上,画出所有列对应的数据</span></span><br><span class="line">expanding = <span class="keyword">lambda</span> x : rolling_mean(x, len(x), min_periods=<span class="number">1</span>)</span><br><span class="line">pd.rolling_mean(data, <span class="number">60</span>).plot(logy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
+<h6 id="指数加权函数"><a href="#指数加权函数" class="headerlink" title="指数加权函数"></a>指数加权函数</h6><ul>
+<li>通过定义一个衰减因子，decay factor，使得近期的观测值拥有更大的权重</li>
+<li>衰减因子定义可以使用：时间间隔span，兼容于窗口大小等于时间间隔的简单移动窗口函数</li>
+<li>具有较强的适应性</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pd.ewma(data[<span class="string">'col1'</span>], span=<span class="number">60</span>).plot()</span><br><span class="line"><span class="comment"># ewmvar, ewmstd的使用同理</span></span><br></pre></td></tr></table></figure>
+<h6 id="二元移动窗口函数"><a href="#二元移动窗口函数" class="headerlink" title="二元移动窗口函数"></a>二元移动窗口函数</h6><ul>
+<li>作用在两个个序列上的函数，比如相关性计算和协方差计算</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pd.rolling_corr(series1, series2, <span class="number">100</span>, min_periods=<span class="number">100</span>).plot()</span><br><span class="line"><span class="comment"># 计算一个序列与DataFrame的各个列的相关关系时</span></span><br><span class="line">data = DataFrame(...)</span><br><span class="line">pd.rolling_corr(data, series, <span class="number">100</span>, min_periods=<span class="number">100</span>).plot()</span><br></pre></td></tr></table></figure>
+<h6 id="用户定义的移动窗口函数"><a href="#用户定义的移动窗口函数" class="headerlink" title="用户定义的移动窗口函数"></a>用户定义的移动窗口函数</h6><ul>
+<li>使用rolling_apply()函数，需要自定义函数作为参数输入</li>
+<li>自定义函数要求：能从数组的各个片段中产生单个值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># percentileofscore(x,y)可用于计算样本x中特定值y的百分等级</span></span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> percentileofscore</span><br><span class="line">score_at_2percent = <span class="keyword">lambda</span> x: percentileofscore(x, <span class="number">0.02</span>)</span><br><span class="line">pd.rolling_apply(data[<span class="string">'col'</span>], <span class="number">200</span>, score_at_2percent)</span><br></pre></td></tr></table></figure>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/08/15/python时间序列分析/" data-id="cjn8cdlkn009vvwphoztn7lmm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2016/08/15/python数据规整-分组-聚合/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    python数据规整_分组_聚合
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/08/15/NumPy进阶/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">NumPy进阶</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

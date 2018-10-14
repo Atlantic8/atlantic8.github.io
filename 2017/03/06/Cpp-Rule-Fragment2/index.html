@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Cpp Rule Fragment2 | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="左右的概念左值、右值C++中左值与右值这两概念是从 c 中传承而来的，在 c 中，左值指的是既能够出现在等号左边也能出现在等号右边的变量(或表达式)，右值指的则是只能出现在等号右边的变量(或表达式) 在 C语言中，通常来说有名字的变量就是左值(如 a, b)，而由运算操作(加减乘除，函数调用返回值等)所产生的中间结果(没有名字)就是右值，如 3 + 4， a + b 等。 在 C++ 中，每一个表">
+<meta name="keywords" content="Cpp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cpp Rule Fragment2">
+<meta property="og:url" content="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="左右的概念左值、右值C++中左值与右值这两概念是从 c 中传承而来的，在 c 中，左值指的是既能够出现在等号左边也能出现在等号右边的变量(或表达式)，右值指的则是只能出现在等号右边的变量(或表达式) 在 C语言中，通常来说有名字的变量就是左值(如 a, b)，而由运算操作(加减乘除，函数调用返回值等)所产生的中间结果(没有名字)就是右值，如 3 + 4， a + b 等。 在 C++ 中，每一个表">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-03-19T08:07:41.123Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cpp Rule Fragment2">
+<meta name="twitter:description" content="左右的概念左值、右值C++中左值与右值这两概念是从 c 中传承而来的，在 c 中，左值指的是既能够出现在等号左边也能出现在等号右边的变量(或表达式)，右值指的则是只能出现在等号右边的变量(或表达式) 在 C语言中，通常来说有名字的变量就是左值(如 a, b)，而由运算操作(加减乘除，函数调用返回值等)所产生的中间结果(没有名字)就是右值，如 3 + 4， a + b 等。 在 C++ 中，每一个表">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Cpp-Rule-Fragment2" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Cpp Rule Fragment2
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/06/Cpp-Rule-Fragment2/">
+            <time datetime="2017-03-06T07:28:49.000Z" itemprop="datePublished">2017-03-06</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Cpp/">Cpp</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="左右的概念"><a href="#左右的概念" class="headerlink" title="左右的概念"></a>左右的概念</h5><h6 id="左值、右值"><a href="#左值、右值" class="headerlink" title="左值、右值"></a>左值、右值</h6><p>C++中左值与右值这两概念是从 c 中传承而来的，在 c 中，<strong>左值指的是既能够出现在等号左边也能出现在等号右边的变量(或表达式)，右值指的则是只能出现在等号右边的变量(或表达式)</strong></p>
+<p><strong>在 C语言中，通常来说有名字的变量就是左值</strong>(如 a, b)，<strong>而由运算操作(加减乘除，函数调用返回值等)所产生的中间结果(没有名字)就是右值</strong>，如 3 + 4， a + b 等。</p>
+<p>在 C++ 中，每一个表达式都会产生一个左值，或者右值，相应的，该表达式也就被称作“左值表达式”， “右值表达式”。对于内置的基本数据类型来说，左值右值的概念和 c 没有太多不同，不同的地方在于自定义的类型，具体如下：</p>
+<ul>
+<li>对于内置的类型，右值是不可被修改的(non-modifiable)，也不可被 const, volatile 所修饰（volatile关键字的作用是防止优化编译器把变量从内存装入CPU寄存器中，保证每次取的值都是内存中值）</li>
+<li>对于自定义的类型(user-defined types)，右值却允许通过它的成员函数进行修改<br>2<h6 id="左值引用、右值引用"><a href="#左值引用、右值引用" class="headerlink" title="左值引用、右值引用"></a>左值引用、右值引用</h6></li>
+<li>左值引用，<code>Type &amp; 左值引用名 = 左值表达式;</code></li>
+<li>声明时必须初始化，初始化之后无法在改变；对别名的一切操作都等价于对原来变量的操作。</li>
+<li>右值不能赋值给左值引用，加上const限定符即可</li>
+<li>c++中临时变量默认const属性，所以只能传给const引用(延长生命周期)</li>
+</ul>
+<hr>
+<ul>
+<li>右值引用，<code>Type &amp;&amp; 右值引用名 = 右值表达式;</code></li>
+<li>可以直接把左值或者右值转换成右值引用，但转换后原对象就不能使用了</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> &amp; a1 = val+<span class="number">1</span>;  <span class="comment">// 错误，此时val+1（中间结果用const型的临时变量保存）等价于右值，右值不能赋值给左值引用</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>&amp; a2 = val+<span class="number">1</span>; <span class="comment">// 正确</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>&amp; a3 = <span class="number">10</span>;  <span class="comment">//  正确</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> &amp;&amp; a4 = std::move(val+<span class="number">1</span>); <span class="comment">// 正确</span></span><br></pre></td></tr></table></figure>
+<h4 id="动态内存与智能指针"><a href="#动态内存与智能指针" class="headerlink" title="动态内存与智能指针"></a>动态内存与智能指针</h4><ul>
+<li>智能指针负责自动释放所指向的对象，定义在<code>memory</code>头文件中</li>
+<li>智能指针也是模板，创建智能指针时需要提供类型信息</li>
+<li>智能指针的使用与普通指针类似</li>
+<li>包括shared_ptr（允许多个指针指向同一个对象）、unique_ptr（独占所指向的对象）、weak_ptr（指向shared_ptr所指向的对象）</li>
+</ul>
+<p>注意事项</p>
+<ul>
+<li>不用相同的内置指针初始化多个智能指针</li>
+<li>不delete get函数返回的值</li>
+<li>不用get返回值初始化/reset另一个智能指针</li>
+<li>如果智能指针管理的资源不是new分配的资源，需要传给他一个删除器</li>
+</ul>
+<h5 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shared_ptr&lt;T&gt; sp; <span class="comment">// 空指针</span></span><br><span class="line"><span class="keyword">if</span> (p)   <span class="comment">//  如果p指向一个对象则为true</span></span><br><span class="line">*p</span><br><span class="line">p-&gt;mem</span><br><span class="line">p.get()   <span class="comment">// 返回p中保存的指针</span></span><br><span class="line">swap(p, q)  <span class="comment">// 交换p和q中的指针</span></span><br></pre></td></tr></table></figure>
+<p><strong>不要将get函数得到的内置指针用于初始化其他智能指针</strong>，可能会导致两个智能指针指向同一个对象，且他们的计数器都为1<br>以上操作也适用于unique_ptr，下面的操作则是shared_ptr独占：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">make_shared&lt;T&gt; (args)  <span class="comment">// 返回一个shared_ptr, 指向类型T的动态内存对象，使用args初始化</span></span><br><span class="line">shared_ptr&lt;T&gt;p(q)   <span class="comment">// p是q的拷贝；q中的计数器加一，要求q中的指针必须能转化位T*</span></span><br><span class="line">p = q    <span class="comment">// p,q都是shared_ptr，保存的指针必须能相互转换。p的引用计数器递减，q的递增。若p的引用计数器变为0，则将其管理的资源释放</span></span><br><span class="line">p.unique()   <span class="comment">//  若p.use_count()为1，返回true；否则返回false</span></span><br><span class="line">p.use_count  <span class="comment">// 返回与p共享对象的智能指针个数；一般用于调试</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">auto p1 = <span class="keyword">new</span> auto(obj); <span class="comment">// p指向一个与obj类类型相同的对象，该对象用obj初始化</span></span><br><span class="line"></span><br><span class="line">auto p2 = <span class="keyword">new</span> auto&#123;a,b,c&#125;; <span class="comment">// 错误，括号中只能有单个初始化器</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 内存耗尽时new操作会抛出bad_alloc异常，下面的方法可以避免抛出异常</span></span><br><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (notthrow) <span class="keyword">int</span>;   <span class="comment">// 内存耗尽时返回空指针</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>delete空指针没有问题</li>
+<li>delete之后应该重置指针</li>
+</ul>
+<h6 id="shared-ptr和new"><a href="#shared-ptr和new" class="headerlink" title="shared_ptr和new"></a>shared_ptr和new</h6><ul>
+<li>可以使用new返回的指针初始化智能指针</li>
+<li><strong>接受指针参数的智能指针构造函数为explicit</strong>（不准指针隐式转换），必须使用直接初始化形式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">p</span><span class="params">(new <span class="keyword">int</span>(<span class="number">42</span>)</span>)</span>;</span><br><span class="line">shared_ptr&lt;<span class="keyword">int</span>&gt; p1 = <span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">42</span>); <span class="comment">// 错误，可以使用reset</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">shared_ptr&lt;T&gt; <span class="title">p</span><span class="params">(u)</span></span>;  <span class="comment">// p从unique_ptr接管对象所有权，将u置空</span></span><br><span class="line"><span class="function">shared_ptr&lt;T&gt; <span class="title">p</span><span class="params">(q, d)</span>  <span class="comment">// p接管内置指针q所指向的对象，q必须能转换为T*，p使用可调用对象d代替delete</span></span></span><br><span class="line"><span class="function">p.<span class="title">reset</span><span class="params">()</span>   <span class="comment">// 若p是唯一指向其对象的shared_ptr，reset释放该对象</span></span></span><br><span class="line"><span class="function">p.<span class="title">reset</span><span class="params">(q)</span>  <span class="comment">// 若传递了参数内置指针q，令p指向q，否则将p置空</span></span></span><br><span class="line"><span class="function">p.<span class="title">reset</span><span class="params">(q, d)</span></span>;  <span class="comment">// 有d则使用可调用对象代替delete</span></span><br></pre></td></tr></table></figure>
+<h5 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h5><ul>
+<li>一个对象只能有一个unique_ptr，不支持拷贝（除非是返回即将要销毁或局部对象的拷贝）、赋值</li>
+<li>必须采用直接初始化形式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">unique_ptr&lt;T, D&gt; u <span class="comment">// D为可调用对象，用来释放内存</span></span><br><span class="line"><span class="function">unique_ptr&lt;T, D&gt; <span class="title">u</span><span class="params">(d)</span>   <span class="comment">// 用d代替D</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">u </span>= nullptr  <span class="comment">// 释放u指向的对象，将u置空</span></span><br><span class="line">u.release()  <span class="comment">// u交出控制权，返回内置指针，将u置空</span></span><br><span class="line"></span><br><span class="line">u.reset()     <span class="comment">// 释放u指向的对象</span></span><br><span class="line">u.reset(q)   <span class="comment">// 提供内置指针q，则令u指向这个对象；否则将u置空</span></span><br><span class="line">u.reset(nullptr)</span><br></pre></td></tr></table></figure>
+<h6 id="unique-ptr和动态数组"><a href="#unique-ptr和动态数组" class="headerlink" title="unique_ptr和动态数组"></a>unique_ptr和动态数组</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">unique_ptr&lt;T[]&gt; u;  <span class="comment">// u指向一个动态分配的数组</span></span><br><span class="line">unique_ptr&lt;T[]&gt; u(p);  <span class="comment">// u指向内置指针p指向的动态动态分配的数组，p类型必须能转换为T*</span></span><br><span class="line">u[i];   <span class="comment">// 访问数组</span></span><br></pre></td></tr></table></figure>
+<p>shared_ptr没有提供管理动态数组的功能，需要使用需要自己定义删除器。</p>
+<h5 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h5><ul>
+<li>不能控制对象生存周期，指向由shared_ptr管理的对象，切不改变shared_ptr引用计数</li>
+<li>需要用shared_ptr初始化</li>
+<li>指向对象可能被释放掉，所以不能直接访问</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">weak_ptr&lt;T&gt; <span class="title">w</span><span class="params">(sp)</span></span>;  <span class="comment">// 初始化</span></span><br><span class="line"></span><br><span class="line">w = p; <span class="comment">// p可以是weak_ptr或shared_ptr，赋值后两者共享对象</span></span><br><span class="line">w.reset()  <span class="comment">// w置空</span></span><br><span class="line">w.use_count()  <span class="comment">// 与w共享对象的shared_ptr的数量</span></span><br><span class="line">w.expired()     <span class="comment">// w.use_count() == 0返回true</span></span><br><span class="line">w.lock()   <span class="comment">// w.expired() 为true返回一个空shared_ptr，否则返回一个与w共享对象的shared_ptr</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 访问</span></span><br><span class="line"><span class="keyword">if</span> (shared_ptr&lt;<span class="keyword">int</span>&gt; np = w.lock()) &#123;  <span class="comment">// np不为空成立</span></span><br><span class="line">    <span class="comment">// 使用np访问对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="allocator类"><a href="#allocator类" class="headerlink" title="allocator类"></a>allocator类</h5><ul>
+<li>定义在memory头文件中，是一个模板</li>
+<li>allocator分配的内存都是未构造的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allocator&lt;T&gt; a;</span><br><span class="line">a.allocate(n);  <span class="comment">// 分配一段原始的、未构造的内存，保存n个类型为T的对象</span></span><br><span class="line">a.deallocate(p, n);  <span class="comment">// 释放从T*类型的指针p开始的内存，这块内存保存了n个T类型对象；p必须是由allocate函数返回的指针，n必须是p创建时要求的大小。调用之前，必须对这n个T对象调用destory</span></span><br><span class="line"></span><br><span class="line">a.construct(p, args); <span class="comment">// p必须是类型为T*的指针，指向一块原始内存，args被传递给类型为T的构造函数，用来在p指向的内存中构造一个对象</span></span><br><span class="line">a.destory(p)  <span class="comment">// 对p指向的对象指向析构函数</span></span><br></pre></td></tr></table></figure>
+<h6 id="构造、填充未初始化内存的算法"><a href="#构造、填充未初始化内存的算法" class="headerlink" title="构造、填充未初始化内存的算法"></a>构造、填充未初始化内存的算法</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">uninitialized_copy(b, e, b2);  <span class="comment">// 拷贝迭代器b、e指定范围元素到b2指定的未构造的原始内存中，b2指向的内存必须足够大</span></span><br><span class="line">uninitialized_copy_n(b, n, b2); <span class="comment">// 从b开始，n个元素</span></span><br><span class="line"></span><br><span class="line">uninitialized_fill(b, e, t);  <span class="comment">// 拷贝值均为t</span></span><br><span class="line">uninitialized_fill_n(b, n, t);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这几个算法都返回下一个未初始化的内存位置</span></span><br></pre></td></tr></table></figure>
+<h4 id="拷贝控制"><a href="#拷贝控制" class="headerlink" title="拷贝控制"></a>拷贝控制</h4><h5 id="拷贝、赋值与销毁"><a href="#拷贝、赋值与销毁" class="headerlink" title="拷贝、赋值与销毁"></a>拷贝、赋值与销毁</h5><h6 id="拷贝构造函数"><a href="#拷贝构造函数" class="headerlink" title="拷贝构造函数"></a>拷贝构造函数</h6><ul>
+<li>成员类型决定拷贝方式，内置类型直接拷贝，类类型需要拷贝构造函数来拷贝</li>
+<li>不应该是explicit的</li>
+<li>参数是自身类类型的引用</li>
+<li>编译器会为我们定义一个（如果我们没有定义）</li>
+</ul>
+<p><strong>拷贝初始化发生的时间不仅在用=定义变量时，也会发生在</strong>：</p>
+<ol>
+<li>将对象作为实参传递给非引用类型的形参</li>
+<li>从返回非引用类型的函数返回一个对象</li>
+<li>用花括号列表初始化一个数组中的元素或一个聚合类中的成员</li>
+</ol>
+<h6 id="拷贝赋值运算符"><a href="#拷贝赋值运算符" class="headerlink" title="拷贝赋值运算符"></a>拷贝赋值运算符</h6><ul>
+<li>编译器会为我们定义一个（如果我们没有定义）</li>
+</ul>
+<h6 id="析构函数"><a href="#析构函数" class="headerlink" title="析构函数"></a>析构函数</h6><ul>
+<li>编译器会为我们定义一个（如果我们没有定义）</li>
+<li>一般为空，成员是在析构函数体之后隐含的析构阶段被销毁的</li>
+<li>某些类中，析构函数也被用来阻止该类型的对象被销毁</li>
+<li>需要析构函数的类也需要拷贝、赋值操作</li>
+</ul>
+<h6 id="使用-default"><a href="#使用-default" class="headerlink" title="使用=default"></a>使用<code>=default</code></h6><ul>
+<li>将拷贝控制成员定义为<code>=default</code>可以显式地要求编译器生成合成的版本</li>
+<li>类内使用`=default’修饰的成员将隐式地声明为内联的</li>
+<li>如果不希望内联，则只对类外的定义使用<code>=default</code>。</li>
+</ul>
+<h6 id="阻止拷贝"><a href="#阻止拷贝" class="headerlink" title="阻止拷贝"></a>阻止拷贝</h6><ul>
+<li>在函数第一次声明后面写上<code>=delete</code>表示<strong>删除的函数</strong>，不希望定义这些成员</li>
+<li>拷贝构造函数、拷贝赋值运算符定义为删除的函数可以阻止拷贝</li>
+<li>析构函数不能是删除的成员，因为存在对象无法销毁的问题</li>
+<li>但如果你真的这么干了：如果一个类有数据成员不能默认构造、拷贝、复制、销毁，则对应的成员函数将被定义为删除的</li>
+</ul>
+<h5 id="动态内存管理类"><a href="#动态内存管理类" class="headerlink" title="动态内存管理类"></a>动态内存管理类</h5><ul>
+<li>在运行时分配可变大小内存的空间</li>
+<li>以vector为例，添加元素的成员函数检查是否有更多空间，没有则申请新的空间，<strong>将已有元素移到新空间</strong>，释放旧空间，添加新元素</li>
+</ul>
+<h5 id="移动构造函数和std-move"><a href="#移动构造函数和std-move" class="headerlink" title="移动构造函数和std::move"></a>移动构造函数和std::move</h5><ul>
+<li>移动构造函数通常是将资源从给定对象“移动”而不是拷贝到正在创建的对象</li>
+<li>调用标准库函数move（utility头文件）表示希望使用移动构造函数</li>
+</ul>
+<h6 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h6><ul>
+<li><strong>右值引用是指必须绑定到右值的引用</strong>，通过<code>&amp;&amp;</code>获得</li>
+<li>右值引用只能绑定到将要销毁的对象，因此可以将一个将要销毁的资源移动到另一个对象中</li>
+<li>左值引用不能绑定到要求转换的表达式、字面常量、返回右值的表达式（变量是左值）</li>
+<li>右值引用有相反的要求；一般右值生命周期短（字面常量、临时对象等）</li>
+<li>通过move函数显式地将左值转换为对应的右值引用类型，使用move不用using声明，直接用<code>std::move</code></li>
+<li>右值引用做形参时不能为const，因为需要窃取他的数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> &amp;&amp;r1 = <span class="number">42</span>; <span class="comment">// correct</span></span><br><span class="line"><span class="keyword">int</span> &amp;&amp;r2 = r1;  <span class="comment">// wrong, 变量表达式r1是左值</span></span><br><span class="line"><span class="comment">// 调用move后，意味着除了对r1赋值、销毁外，将不再使用它</span></span><br><span class="line"><span class="keyword">int</span> &amp;&amp;r3 = std::move(r1); <span class="comment">// ok</span></span><br></pre></td></tr></table></figure>
+<h5 id="移动构造函数、移动赋值运算符"><a href="#移动构造函数、移动赋值运算符" class="headerlink" title="移动构造函数、移动赋值运算符"></a>移动构造函数、移动赋值运算符</h5><ul>
+<li>移动构造函数的<strong>第一个参数是该类型的一个右值引用</strong></li>
+<li>必须确保移动后，源对象处于销毁无害的状态，也就是说<strong>源对象必须不再指向被移动的资源</strong>（指针置为nullptr，因为源对象可以被销毁，如果它的指针还指向被移动的资源，执行析构函数时就会将被移动的资源释放）</li>
+<li>移动操作<strong>通常</strong>不抛出异常。编写不抛出异常的移动操作，应该使用<code>noexcept</code>通知标准库，免去其为了处理可能存在的异常做的额外工作（可能出现异常的还是不要写比较好）</li>
+<li><code>noexcept</code>出现在参数列表之后；如果是构造函数，其在初始化列表的<code>:</code>之前</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">A::A(A &amp;&amp;a) noexcept : x(a.x), y(x.y) &#123;</span><br><span class="line">    a.x = a.y = nullptr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">A &amp;A::operator=(A &amp;&amp; a) noexcept &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == &amp;a) <span class="keyword">return</span> *<span class="keyword">this</span>;  <span class="comment">// 自赋值</span></span><br><span class="line">	free();   <span class="comment">// 释放现在对象的资源</span></span><br><span class="line">	x = a.x;</span><br><span class="line">	y = a.y;</span><br><span class="line">	a.x = a.y = nullptr;  <span class="comment">// 重置源对象的指针</span></span><br><span class="line">	<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>只有当一个类没有定义任何自己版本的拷贝控制成员，且类的每个非<code>static</code>数据成员都可以移动时，编译器才会为它合成移动构造函数或移动赋值运算符。编译器可以移动内置类型的成员；也可以移动有对应移动操作的类成员</strong></li>
+<li>移到构造函数永远不会隐式地定义为删除的函数（delete）</li>
+<li>如果显式要求编译器生成<code>=default</code>的移动操作，但编译器不能移动所有成员，则编译器将移动操作定义为删除的</li>
+<li>类本身的析构函数为删除的、不可访问的，则其移动构造函数为删除的</li>
+<li>如果类成员是const的或者是引用，则类的移动赋值运算符定义为删除的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct X &#123;</span><br><span class="line">    <span class="keyword">int</span> i;               <span class="comment">// 内置成员可以移动</span></span><br><span class="line">	std::string s;   <span class="comment">//  string有自己的移动操作</span></span><br><span class="line">&#125;;</span><br><span class="line">struct Y &#123;</span><br><span class="line">    X mem;     <span class="comment">// X有合成移动操作</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">X x1, x = std::move(x1);   <span class="comment">// 合成移动构造函数</span></span><br><span class="line">Y y1, y = std::move(y1);   <span class="comment">// 使用合成移动构造函数</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>既有拷贝构造函数也有移动构造函数时，遵循<strong>移动右值，拷贝左值</strong>的方法</li>
+<li>没有移动构造函数时，右值也被拷贝</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A  a1, a2;</span><br><span class="line">a1 = a2;  <span class="comment">// a2是左值，使用拷贝</span></span><br><span class="line"><span class="function">A <span class="title">getA</span><span class="params">(istream&amp; is)</span></span>;  <span class="comment">// 函数getA返回一个右值</span></span><br><span class="line">a2 = getA();      <span class="comment">// 返回右值，使用移动赋值</span></span><br></pre></td></tr></table></figure>
+<h6 id="移动迭代器"><a href="#移动迭代器" class="headerlink" title="移动迭代器"></a>移动迭代器</h6><ul>
+<li>一般的迭代器解引用操作返回一个指向元素的左值，<strong>移动迭代器的解引用操作生成一个右值引用</strong></li>
+<li>调用<code>make_move_iterator</code>将一个普通迭代器转化为一个移动迭代器，原迭代器的所有操作在移动迭代器中都正常工作</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto first = alloc.allocate(new_capacity);</span><br><span class="line"><span class="comment">// 使用移动构造函数来构造每个元素</span></span><br><span class="line">auto last = uninitialized_copy(make_move_iterator(begin()), make_move_iterator(end()), first);</span><br></pre></td></tr></table></figure>
+<h6 id="右值、左值引用成员函数、重载和引用函数"><a href="#右值、左值引用成员函数、重载和引用函数" class="headerlink" title="右值、左值引用成员函数、重载和引用函数"></a>右值、左值引用成员函数、重载和引用函数</h6><ul>
+<li>类成员函数的参数列表后可以放置<code>&amp;</code>或<code>&amp;&amp;</code>，称为引用限定符</li>
+<li>引用限定符指出<code>this</code>可以指向一个左值或右值</li>
+<li>引用限定符只能用在非static成员函数中（类似const限定符），且必须在声明、定义中都出现</li>
+<li><strong>引用限定符就是限制调用成员函数的对象有引用限定</strong></li>
+<li><code>&amp;</code>限定的函数，只能将这个函数用于左值；<code>&amp;&amp;</code>则只能用于右值</li>
+<li>同时有const限定符的函数，引用限定符应该在const限定符之后<code>const &amp;</code></li>
+<li>引用限定符可以区分重载版本（const也可以），表示其对象是右值还是左值</li>
+<li>定义两个及以上具有相同名字和参数列表的函数，就必须对所有函数加上引用限定符，或者所有都不加。（有的加，有的不加不行）</li>
+</ul>
+<p><strong>右值执行排序，可以直接进行，因为右值没有其他用户，可以改变；但是，对const右值、左值进行排序时，不能改变对象，所以先拷贝再排序。</strong></p>
+<h4 id="重载运算与类型转换"><a href="#重载运算与类型转换" class="headerlink" title="重载运算与类型转换"></a>重载运算与类型转换</h4><ul>
+<li>运算符作用域内置类型的运算对象时，运算符的含义无法改变（不能重载）</li>
+<li>只能重载已有的运算符</li>
+<li>不能被重载的运算符包括<code>::        .*        .        ?:</code></li>
+<li>下标运算符<code>[]</code>返回的是元素的引用</li>
+</ul>
+<h5 id="输入输出运算符"><a href="#输入输出运算符" class="headerlink" title="输入输出运算符"></a>输入输出运算符</h5><ul>
+<li>输入、输出运算符必须是非成员函数</li>
+<li>一般地，重载输出运算符<code>&lt;&lt;</code>函数的第一个参数是一个非常量<code>ostream</code>对象引用（非常量是因为向流写入内容会改变其状态，引用是因为ostream不能拷贝），第二个参数一般是要打印对象的常量引用；函数返回ostream的形参</li>
+<li>重载输入运算符函数的第二个参数<strong>非常量对象的引用</strong>，返回istream的形参</li>
+<li>重载输入运算符要处理可能失败的情况，输出则不需要</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ostream&amp; operator&lt;&lt;(ostream&amp; os, <span class="keyword">const</span> A&amp; a) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">	<span class="keyword">return</span> os;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">istream&amp; operator&gt;&gt;(istream&amp; is, A&amp; a) &#123;</span><br><span class="line">    <span class="comment">// .... 包括处理失败情况</span></span><br><span class="line">	<span class="keyword">return</span> is;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="递增递减运算符"><a href="#递增递减运算符" class="headerlink" title="递增递减运算符"></a>递增递减运算符</h5><ul>
+<li>区分前置、后置的办法是：<strong>后置版本有一个不被使用的int类型形参</strong></li>
+<li>后置版本需要先记录对象的状态，操作完成后返回之前记录的状态</li>
+<li><strong>后置运算符返回对象的原值</strong>，不是引用</li>
+<li>显式调用后置运算符需要多加一个参数: <code>a.operator++(0);</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A&amp; operator++();    <span class="comment">// 前置</span></span><br><span class="line">A operator++(<span class="keyword">int</span>);  <span class="comment">// 后置，有形参，返回原值</span></span><br><span class="line"></span><br><span class="line">A A::operator++() &#123;</span><br><span class="line">    A ret = *<span class="keyword">this</span>;</span><br><span class="line">	++*<span class="keyword">this</span>;</span><br><span class="line">	<span class="keyword">return</span> ret; <span class="comment">// 返回之前的记录</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="成员访问运算符"><a href="#成员访问运算符" class="headerlink" title="成员访问运算符"></a>成员访问运算符</h5><ul>
+<li>包括解引用<code>*</code>和箭头运算符<code>-&gt;</code>两种</li>
+<li><code>-&gt;</code>必须是类成员，解引用通常是类成员</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">string&amp; operator*() <span class="keyword">const</span> &#123;</span><br><span class="line">    <span class="comment">// 检查curr是否在有效范围内，如果是，返回curr所知元素的引用</span></span><br><span class="line">    auto p = check(curr, <span class="string">"dereference past end"</span>);</span><br><span class="line">	<span class="keyword">return</span> (*p)[curr];          <span class="comment">// *p是对象所指的vector</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string * operator-&gt;() <span class="keyword">const</span>&#123;</span><br><span class="line">    <span class="comment">// 将工作委托给解引用运算符</span></span><br><span class="line">    <span class="keyword">return</span> &amp; <span class="keyword">this</span>-&gt;operator*();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="函数调用运算符"><a href="#函数调用运算符" class="headerlink" title="函数调用运算符"></a>函数调用运算符</h5><ul>
+<li>重载函数调用运算符就可以向调用函数一样使用类对象</li>
+<li>由于可以像使用函数对象那样使用，重载调用运算符可以替代lambda表达式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct <span class="title">absInt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">int</span> val)</span> <span class="keyword">const</span> </span>&#123;   <span class="comment">// 注意参数放在后面的括号里</span></span><br><span class="line">	    <span class="keyword">return</span> val&lt;<span class="number">0</span>? -val:val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">absInt ai;</span><br><span class="line">ai(-<span class="number">10</span>);  <span class="comment">// 返回10</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">stable_sort(words.begin(), words.end(), [](<span class="keyword">const</span> string&amp; s1, <span class="keyword">const</span> string&amp; s2)&#123;<span class="keyword">return</span> s1.size &lt; s2.size()&#125;;);</span><br><span class="line"><span class="comment">// 类似于</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">short_string</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">bool <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">const</span> string&amp; s1, <span class="keyword">const</span> string&amp; s2)</span> <span class="keyword">const</span></span>&#123;</span><br><span class="line">	    <span class="keyword">return</span> s1.size &lt; s2.size();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// short_string()构造一个对象，由于重载了调用运算符，就可以看作"可调用对象"使用</span></span><br><span class="line">stable_sort(words.begin(), words.end(), short_string());</span><br></pre></td></tr></table></figure>
+<h6 id="标准库定义的函数对象"><a href="#标准库定义的函数对象" class="headerlink" title="标准库定义的函数对象"></a>标准库定义的函数对象</h6><p>标准库定义了一组表示算术运算符、关系运算符和逻辑运算符的类，每个类分别定义了一个执行命名操作的调用运算符（所以其对象也可以被“调用”）。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>算术</th>
+<th>关系</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plus<t></t></td>
+<td>equal_to<t></t></td>
+<td>logical_and<t></t></td>
+</tr>
+<tr>
+<td>minus<t></t></td>
+<td>not_equal_to<t></t></td>
+<td>logical_or<t></t></td>
+</tr>
+<tr>
+<td>multiplies<t></t></td>
+<td>greater<t></t></td>
+<td>logical_not<t></t></td>
+</tr>
+<tr>
+<td>divides<t></t></td>
+<td>greater_equal<t></t></td>
+<td></td>
+</tr>
+<tr>
+<td>modules<t></t></td>
+<td>less<t></t></td>
+<td></td>
+</tr>
+<tr>
+<td>megate<t></t></td>
+<td>less_equal<t></t></td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">plus&lt;<span class="keyword">int</span>&gt; intadd;</span><br><span class="line">intadd(<span class="number">10</span>, <span class="number">15</span>);  <span class="comment">// 25</span></span><br><span class="line"></span><br><span class="line">negate&lt;<span class="keyword">int</span>&gt; intnegate;</span><br><span class="line">intnegate(<span class="number">10</span>);  <span class="comment">// -10</span></span><br><span class="line">intnegate(intadd(<span class="number">10</span>,<span class="number">15</span>));  <span class="comment">// -25</span></span><br><span class="line"></span><br><span class="line">sort(vec.begin(), vec.end(), greater&lt;string&gt;());</span><br><span class="line"><span class="comment">// 如果vector里面是string*也照样可以</span></span><br><span class="line">sort(vec.begin(), vec.end(), greater&lt;string*&gt;());</span><br></pre></td></tr></table></figure>
+<h6 id="可调用对象与function"><a href="#可调用对象与function" class="headerlink" title="可调用对象与function"></a>可调用对象与function</h6><p>C++中的可调用对象包括：<strong>函数、函数指针、lambda表达式、bind创建的对象、重载了调用运算符的类</strong></p>
+<ul>
+<li>function类型定义在<code>functional</code>头文件中，是一个模板</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function&lt;T&gt; f;  <span class="comment">// f是用来存储可调用对象的空的function，T限定函数类型（T就是`返回值 (各个参数)`）</span></span><br><span class="line"><span class="function">function&lt;T&gt; <span class="title">f</span><span class="params">(nullptr)</span></span>;  <span class="comment">//  显式构造一个空的function</span></span><br><span class="line"><span class="function">function&lt;T&gt; <span class="title">f</span><span class="params">(obj)</span></span>;  <span class="comment">// f中存储可调用对象obj的副本</span></span><br><span class="line">f                               <span class="comment">// f中有可调用对象为真，否则为假</span></span><br><span class="line">f(args);                    <span class="comment">// 调用f中的对象，args是参数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义为function&lt;T&gt;的成员类型</span></span><br><span class="line">result_type       <span class="comment">// 可调用对象的返回类型</span></span><br><span class="line">argument_type <span class="comment">// T一个实参时，实参的类型</span></span><br><span class="line">first_argument_type, second_argument_type</span><br></pre></td></tr></table></figure>
+<p>使用示例<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt; f1 = add;    <span class="comment">// 函数指针</span></span><br><span class="line">function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt; f2 = divide(); <span class="comment">// 重载了调用运算符的类的对象</span></span><br><span class="line">function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>, <span class="keyword">int</span>)&gt; f3 = [](<span class="keyword">int</span> i, <span class="keyword">int</span> j) &#123;<span class="keyword">return</span> i+j;&#125;;  <span class="comment">// lambda表达式</span></span><br><span class="line"></span><br><span class="line">f1(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">f2(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">f3(<span class="number">3</span>,<span class="number">4</span>);</span><br></pre></td></tr></table></figure></p>
+<h5 id="重载、类型转换与运算符"><a href="#重载、类型转换与运算符" class="headerlink" title="重载、类型转换与运算符"></a>重载、类型转换与运算符</h5><ul>
+<li>可以通过定义类类型转换运算符达到类类型转换的效果</li>
+<li>转换构造函数和类型转换运算符共同定义了类类型转换</li>
+</ul>
+<h6 id="类型转换运算符"><a href="#类型转换运算符" class="headerlink" title="类型转换运算符"></a>类型转换运算符</h6><ul>
+<li><strong>类型转换运算符是类成员函数</strong></li>
+<li>可以面向除了<code>void*</code>之外的任意类型进行定义，只要该类型能作为函数的返回类型（数组、函数类型就不行）</li>
+<li>一般形式<code>operator type() const</code></li>
+<li>类型转换运算符是<strong>隐式执行</strong>的，没有形参，不能传递实参，不能指定返回类型</li>
+<li>可能产生意外结果</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">smallInt</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    smallInt(<span class="keyword">int</span> i=<span class="number">0</span>) : val(i) &#123;</span><br><span class="line">	    <span class="keyword">if</span> (i&lt;<span class="number">0</span> || i&gt;<span class="number">255</span>) <span class="keyword">throw</span> std::out_of_range(<span class="string">"Invalid value"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="function">operator <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="keyword">return</span> val;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> operator <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span></span>; <span class="comment">// wrong，不能有返回类型</span></span><br><span class="line">	<span class="function">operator <span class="title">int</span><span class="params">(<span class="keyword">int</span> = <span class="number">0</span>)</span> <span class="keyword">const</span></span>; <span class="comment">// wrong，不能有形式参数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::size_t val;</span><br><span class="line">&#125;</span><br><span class="line">smallInt si;</span><br><span class="line">si = <span class="number">4</span>;  <span class="comment">// 先将4隐式转换为smallInt，再调用赋值运算符</span></span><br><span class="line">si+<span class="number">3</span>;    <span class="comment">// 先将si隐式转换为int，再执行整数加法</span></span><br><span class="line"></span><br><span class="line">smallInt s = <span class="number">3.14</span>;  <span class="comment">// 内置类型转换double-&gt;int，再调用smallInt(int)构造</span></span><br><span class="line">s+<span class="number">3.14</span>                <span class="comment">// smallInt先转成int，内置类型再将int转换成double</span></span><br></pre></td></tr></table></figure>
+<p>由于隐式转换可能会带来意想不到的结果，所以有时候需要使用<strong>显式的类型转换运算符</strong>。定义显式类型转换运算符只需要加上<code>explicit</code>即可，但转换时就行必须使用显式的强制转换方式。<br><strong>有一个例外：当表达式被用作条件判断（<code>if, while, do, for, &amp;&amp;, ||, !, ?:</code>），编译器会将显式的类型转换自动用于它，也就是会隐式执行</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">explicit operator <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="keyword">return</span> val;&#125;  <span class="comment">// 改变的类型转换运算符</span></span><br><span class="line"></span><br><span class="line">smallInt si = <span class="number">3</span>; <span class="comment">// ok</span></span><br><span class="line">si+<span class="number">3</span>                 <span class="comment">// wrong，此处需要隐式转换，但转换函数是显式的</span></span><br><span class="line">static_cast&lt;<span class="keyword">int</span>&gt;(si) + <span class="number">3</span>  <span class="comment">// 显示请求转换</span></span><br></pre></td></tr></table></figure></p>
+<p>IO类型可以向void*转换，C++11下支持将IO类型向bool显式类型转换，IO类型向bool的转换一般定义成显式（explicit），因为通常用在条件判断部分，所以也可以隐式执行。</p>
+<h6 id="二义性问题"><a href="#二义性问题" class="headerlink" title="二义性问题"></a>二义性问题</h6><p>二义性类型转换的途径</p>
+<ul>
+<li>两个类提供了相同的类型转换（分别通过构造函数和类型转换运算符）</li>
+<li>定义了多个转换规则，这些转换<strong>涉及的类型本身可以通过其他类型转换联系在一起</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">struct A &#123;</span><br><span class="line">    A(<span class="keyword">int</span> = <span class="number">0</span>); <span class="comment">// 最好不要创建两个转换源都是算术类型的类型转换</span></span><br><span class="line">	A(<span class="keyword">double</span>);</span><br><span class="line">	<span class="function">operator <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span></span>;  <span class="comment">// 最好不要创建两个转换对象都是算术类型的类型转换</span></span><br><span class="line">	<span class="function">operator <span class="title">double</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">	<span class="comment">// other member</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">(<span class="keyword">long</span> <span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">A a;</span><br><span class="line">f2(a);  <span class="comment">// 二义性错误，两个类型转换函数都可以</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> lg;</span><br><span class="line"><span class="function">A <span class="title">a2</span><span class="params">(lg)</span></span>;  <span class="comment">// 二义性，编译器无法区分long转int和double的好坏</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">short</span> s = <span class="number">42</span>;</span><br><span class="line"><span class="function">A <span class="title">a3</span><span class="params">(s)</span></span>;  <span class="comment">//ok, 使用A::A(int)</span></span><br></pre></td></tr></table></figure>
+<p>但是short转int确实比short转double好</p>
+<p><strong>重载函数于转换构造函数</strong></p>
+<ul>
+<li>如果两个或多个类型的转换都提供了同一种可行的匹配，则这些类型转换一样好</li>
+<li><strong>即使其中一个能精确匹配，另一个需要额外的标准类型转换，编译器也会将其表示为二义性错误</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">struct C &#123;</span><br><span class="line">	C(<span class="keyword">int</span>);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line">struct D &#123;</span><br><span class="line">	D(ing);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">const</span> C&amp;)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">const</span> D&amp;)</span></span></span><br><span class="line"><span class="function"><span class="title">f</span><span class="params">(<span class="number">10</span>)</span></span>;  <span class="comment">//二义性</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ---------------------------------分割线----------------------------------</span></span><br><span class="line"></span><br><span class="line">struct E &#123;</span><br><span class="line">    E(<span class="keyword">double</span>);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">const</span> C&amp;)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">const</span> E&amp;)</span></span>;</span><br><span class="line">f(<span class="number">10</span>);  <span class="comment">// 依旧二义性错误，即使其中一个能精确匹配，另一个需要额外的标准类型转换，编译器也会将其表示为二义性错误</span></span><br></pre></td></tr></table></figure>
+<p>函数匹配与重载运算符</p>
+<ul>
+<li>表达式中运算符的候选函数集包括成员函数和非成员函数</li>
+<li><strong>如果对同一个类既提供了转换目标是算术类型的类型转换，也提供了重载的运算符，则将会遇到重载运算符与内置运算符的二义性</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">friend A operator+(<span class="keyword">const</span> A&amp; a, <span class="keyword">const</span> A&amp; b);</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    A(<span class="keyword">int</span> = <span class="number">0</span>);</span><br><span class="line">	<span class="function">operator <span class="title">int</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="keyword">return</span> val&#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    size_t val;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">A a1, a2;</span><br><span class="line">A a3 = s1 + s2;  <span class="comment">// 使用重载的operator+</span></span><br><span class="line"><span class="keyword">int</span> i = s3 + <span class="number">1</span>;    <span class="comment">//  二义性错误</span></span><br></pre></td></tr></table></figure>
+<h4 id="面向对象程序设计-OOP"><a href="#面向对象程序设计-OOP" class="headerlink" title="面向对象程序设计 OOP"></a>面向对象程序设计 OOP</h4><ul>
+<li>OOP的核心思想是<strong>数据抽象、继承和动态绑定</strong></li>
+</ul>
+<h5 id="基类与派生类（父类与子类）"><a href="#基类与派生类（父类与子类）" class="headerlink" title="基类与派生类（父类与子类）"></a>基类与派生类（父类与子类）</h5><ul>
+<li>子类经常覆盖父类中的虚函数，如果不覆盖，子类将直接继承父类的版本</li>
+<li>能把子类对象当成父类对象来用，也能把父类的指针或引用绑定到子类对象的父类部分上</li>
+<li>子类构造函数先初始化父类部分，然后按照声明顺序依次初始化子类成员</li>
+<li><strong>派生类可以访问基类的公有和受保护成员</strong></li>
+</ul>
+<hr>
+<ul>
+<li>基类中的静态成员在整个继承体系中都只存在该成员的唯一定义，如果是private的，派生类就不能访问</li>
+<li><strong>声明派生类时不能加上派生列表</strong></li>
+<li>派生类一定要有定义，类不能派生自己</li>
+<li>使用final关键字可以禁止类被继承</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">father</span> </span>&#123;&#125;;</span><br><span class="line">class A final : public father &#123;&#125;;  // ok, 但A不能被继承</span><br><span class="line">class B : public A&#123;&#125;;  // 错误，A是final的</span><br></pre></td></tr></table></figure>
+<ul>
+<li>派生类向基类的自动类型转换只对指针、引用类型有效</li>
+<li>用派生类对象为基类对象初始化或者赋值时，其派生类独有的部分会被忽略</li>
+</ul>
+<h5 id="虚函数"><a href="#虚函数" class="headerlink" title="虚函数"></a>虚函数</h5><ul>
+<li>运行时动态绑定</li>
+<li>所有虚函数都必须有定义</li>
+<li>派生类中的虚函数可以不加<code>virtual</code>关键字，因为一旦某个函数被声明为虚函数，他在所有派生类中都是虚函数</li>
+<li>覆盖基类虚函数的派生类函数必须在形参上与派生类完全一致</li>
+<li><code>override</code>关键字用来说明派生类中的虚函数</li>
+<li><code>final</code>关键字阻止函数派生类覆盖此函数</li>
+<li>如果虚函数使用默认实参，实参由本次调用的静态类型决定（使用基类的指针就用基类的虚函数默认实参），所以最好定义派生类、基类虚函数的默认实参一致</li>
+<li>回避虚函数机制，可使用作用域运算符机制</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line"><span class="function">virtual <span class="keyword">void</span> <span class="title">f1</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line">class B : A &#123;</span><br><span class="line"><span class="function">virtual <span class="keyword">void</span> <span class="title">f1</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">final</span></span>;  <span class="comment">// 不允许后续的其他类覆盖f1</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">A * a = <span class="keyword">new</span> B();</span><br><span class="line">a-&gt;f1();  <span class="comment">// 调用B类中的虚函数f1</span></span><br><span class="line">a-&gt;A::f1();  <span class="comment">// 无论a类型是什么，都是用A中的虚函数f1</span></span><br></pre></td></tr></table></figure>
+<h5 id="抽象基类"><a href="#抽象基类" class="headerlink" title="抽象基类"></a>抽象基类</h5><ul>
+<li>抽象基类负责定义接口，不能直接创建其对象</li>
+</ul>
+<h6 id="纯虚函数"><a href="#纯虚函数" class="headerlink" title="纯虚函数"></a>纯虚函数</h6><ul>
+<li>在函数声明加上<code>=0</code>就可以将函数声明为纯虚函数</li>
+<li>纯虚函数无需定义，非要定义的话必须在类的外部</li>
+</ul>
+<h5 id="访问控制与继承"><a href="#访问控制与继承" class="headerlink" title="访问控制与继承"></a>访问控制与继承</h5><h6 id="受保护的成员-protected"><a href="#受保护的成员-protected" class="headerlink" title="受保护的成员 protected"></a>受保护的成员 protected</h6><ul>
+<li>类的用户不能访问受保护的成员，私有的更不行</li>
+<li>派生类的成员、友元可访问继承来的protected、public成员，private不行</li>
+<li><strong>派生类的成员、友元只能通过派生类对象访问基类的受保护成员。派生类无法访问基类对象中的受保护成员</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class base &#123;</span><br><span class="line">protected:</span><br><span class="line">    int mem;</span><br><span class="line">&#125;;</span><br><span class="line">class sneak : base &#123;</span><br><span class="line">	friend void get(sneak&amp;);  // 可以通过自身对象访问基类的受保护部分</span><br><span class="line">	friend void get(base&amp;);   // 不能访问基类对象中的受保护成员</span><br><span class="line">	int j; // private</span><br><span class="line">&#125;;</span><br><span class="line">void get(sneaky&amp; s)&#123;s.j = s.mem = 0;&#125;</span><br><span class="line">void get(base &amp;b) &#123;b.mem = 0;&#125;  // 错误，不能访问</span><br></pre></td></tr></table></figure>
+<ul>
+<li>派生类对其继承而来的成员的访问权限收到两个因素影响：<ul>
+<li>基类中该成员的访问说明符</li>
+<li>派生类的派生列表中的访问说明符</li>
+</ul>
+</li>
+<li><strong>派生访问说明符对于派生类的成员及其友元能否访问直接基类的成员没什么影响</strong>，<strong>其对基类成员的访问权限只与基类中的访问说明符有关</strong></li>
+<li><strong>派生访问说明符的目的是控制派生类用户（包括派生类的派生类）对于基类成员的访问权限</strong><ul>
+<li>如果继承是公有的，成员遵循原有的访问说明符</li>
+<li>如果继承是私有的，则所有对象都是私有的</li>
+<li>如果继承是protected的，原本public的称为protected的</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>派生类向基类转换的可访问性</strong>（假定D继承自B）</p>
+<ul>
+<li>只有继承方式是public，用户代码才能使用派生类向基类的转换</li>
+<li>无论以什么方式继承，D的成员和友元都能使用派生类向基类的转换</li>
+<li>如果D以public或protected方式继承B，则D的派生类的成员和友元可以使用D向B的转换</li>
+<li>要改变个别成员的可访问性，可使用<code>using</code>关键字</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">base</span> </span>&#123;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">int</span> mem, n;</span><br><span class="line">&#125;;</span><br><span class="line">class derived : private base&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    using base::mem;</span><br><span class="line">protect:</span><br><span class="line">    using base::n;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>友元与继承</p>
+<ul>
+<li>友元关系不能继承</li>
+</ul>
+<h5 id="继承中的类作用域"><a href="#继承中的类作用域" class="headerlink" title="继承中的类作用域"></a>继承中的类作用域</h5><ul>
+<li>先名字查找再类型检查（p-&gt;mem(), obj.mem()）<ol>
+<li>确定p的静态类型，因为调用的是成员，该类型必然是类类型</li>
+<li>在p的静态类型对应的类中查找mem，找不到则直接基类中查找直到继承链最顶端。还是找不到就报错</li>
+<li>一旦找到mem，就进行常规的类型检查以确认本次调用是否合法</li>
+<li>如果调用合法，则编译器将根据调用的是否是虚函数产生不同的代码</li>
+</ol>
+</li>
+<li>内层作用域的函数不会重载声明在外层作用域的函数</li>
+<li>名字查找过程中，<strong>派生类会隐藏基类的同名成员（即使形参列表不一样）</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">base</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line">class derived : private base&#123;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span>)</span></span>;  <span class="comment">// 隐藏了基类的f()</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">base b; derived d;</span><br><span class="line">d.f(<span class="number">10</span>);  <span class="comment">// ok</span></span><br><span class="line">d.f();      <span class="comment">// wrong，参数列表为空的f函数被隐藏了</span></span><br></pre></td></tr></table></figure>
+<h5 id="拷贝函数与拷贝控制"><a href="#拷贝函数与拷贝控制" class="headerlink" title="拷贝函数与拷贝控制"></a>拷贝函数与拷贝控制</h5><h6 id="虚析构函数"><a href="#虚析构函数" class="headerlink" title="虚析构函数"></a>虚析构函数</h6><ul>
+<li>派生类会继承基类析构函数的虚属性</li>
+<li>基类虚析构函数能保证delete基类指针时使用正确的析构函数版本</li>
+<li>定义了虚析构函数的类，编译器就不会为其合成移动操作</li>
+</ul>
+<h6 id="派生类中删除的拷贝控制与基类的关系"><a href="#派生类中删除的拷贝控制与基类的关系" class="headerlink" title="派生类中删除的拷贝控制与基类的关系"></a>派生类中删除的拷贝控制与基类的关系</h6><ul>
+<li>基类中的默认构造函数、拷贝构造函数、拷贝赋值运算符或析构函数是被删除的或不可访问的，则派生类中对应的成员将是删除的</li>
+<li>基类中的析构函数是不可访问或删除的，那么派生类中的合成的默认和拷贝构造函数都是删除的</li>
+<li>基类中对应操作是删除的，派生类中的也会是删除的（比如说移动构造函数）</li>
+</ul>
+<h6 id="移动操作与继承"><a href="#移动操作与继承" class="headerlink" title="移动操作与继承"></a>移动操作与继承</h6><ul>
+<li>带有虚析构函数的类，编译器不会为其合成移动操作，所以其子类也没有</li>
+<li>确实需要移动操作时，可以显式地定义（可以使用合成版本）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    A() = <span class="keyword">default</span>;   <span class="comment">// 默认构造</span></span><br><span class="line">	A(<span class="keyword">const</span> A&amp;) = <span class="keyword">default</span>;   <span class="comment">// 拷贝构造</span></span><br><span class="line">	A(A&amp;&amp;) = <span class="keyword">default</span>;        <span class="comment">// 移动构造</span></span><br><span class="line">	A&amp; operator=(<span class="keyword">const</span> A&amp;) = <span class="keyword">default</span>;   <span class="comment">// 拷贝赋值</span></span><br><span class="line">	A&amp; operator=(A&amp;&amp;) = <span class="keyword">default</span>;        <span class="comment">// 移动赋值</span></span><br><span class="line">	virtual ~A();</span><br><span class="line">	<span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="派生类的拷贝控制"><a href="#派生类的拷贝控制" class="headerlink" title="派生类的拷贝控制"></a>派生类的拷贝控制</h6><ul>
+<li>派生类在拷贝、移动的同时要拷贝、移动基类部分(显式地)</li>
+<li>派生类赋值运算符的处理方法也类似</li>
+<li>派生类的析构函数只负责销毁派生类自己分配的资源</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">base</span> </span>&#123;&#125;;</span><br><span class="line">class D : private base&#123;</span><br><span class="line">    D(<span class="keyword">const</span> D&amp; d) : base(d), <span class="comment">/*D的成员初始值*/</span> &#123;...&#125; <span class="comment">// d作为参数将被绑定到类型为base&amp;的实参上</span></span><br><span class="line">	D(D&amp;&amp; d) : base(std::move(d)), <span class="comment">/*D的成员初始值*/</span> &#123;...&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">D&amp; D::operator= (<span class="keyword">const</span> D&amp; d) &#123;</span><br><span class="line">    base::operator=(d);  <span class="comment">// 为基类部分赋值</span></span><br><span class="line">	<span class="comment">// 酌情处理自赋值、释放已有资源</span></span><br><span class="line">	<span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="在构造函数和虚构函数中调用虚函数"><a href="#在构造函数和虚构函数中调用虚函数" class="headerlink" title="在构造函数和虚构函数中调用虚函数"></a>在构造函数和虚构函数中调用虚函数</h6><ul>
+<li><strong>如果构造函数或析构函数调用了某个虚函数，则程序会执行与调用构造函数或析构函数所属类型相对应的虚函数版本</strong></li>
+<li>这个例子：创建派生类对象时，先调用基类的构造函数，此时对象的派生类部分是未被初始化的，调用派生类的虚函数存在风险，所以应该调用基类的虚函数。</li>
+</ul>
+<h6 id="继承的构造函数"><a href="#继承的构造函数" class="headerlink" title="继承的构造函数"></a>继承的构造函数</h6><ul>
+<li>一个类可以继承其直接基类的构造函数</li>
+<li>类不能继承默认、移动、拷贝构造函数</li>
+<li>继承方式是使用<code>using base::base;</code>就可以继承base的构造函数，对于基类的构造函数，编译器将会为派生类与之对应的派生类版本<code>derived(params) : base(args) {}</code></li>
+<li>构造函数的using声明不会改变该构造函数的访问级别（私有还是私有，公有还是共有）</li>
+<li>当基类构造函数有默认实参，派生类将获得多个构造函数，每个构造函数省略掉一个含有默认实参的形参</li>
+<li>派生类不继承某些构造函数的原因可能是：<ul>
+<li>派生类自己定义了有相同参数列表的构造函数</li>
+<li>默认、移动、拷贝构造函数按照正常规则被合成</li>
+</ul>
+</li>
+</ul>
+<h6 id="容器与继承"><a href="#容器与继承" class="headerlink" title="容器与继承"></a>容器与继承</h6><ul>
+<li>不能把具有继承关系的对象放在一个容器中</li>
+<li>在容器中放置（智能）指针而非对象</li>
+<li>派生类的（智能）指针可以隐式转换为基类的（智能）指针</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;shared_ptr&lt;quote&gt;&gt; basket;</span><br><span class="line">basket.push_back(make_shared&lt;quote&gt;(<span class="string">"00001"</span>, <span class="number">50</span>));</span><br><span class="line">basket.push_back(make_shared&lt;derived_quote&gt;(<span class="string">"972719"</span>, <span class="number">35</span>, <span class="number">21</span>, <span class="number">7</span>));</span><br></pre></td></tr></table></figure>
+<h5 id="多重继承与虚继承"><a href="#多重继承与虚继承" class="headerlink" title="多重继承与虚继承"></a>多重继承与虚继承</h5><h6 id="多重继承"><a href="#多重继承" class="headerlink" title="多重继承"></a>多重继承</h6><ul>
+<li>每个基类包含一个可选的访问说明符</li>
+<li>关键字<code>class</code>的默认访问说明符是<code>private</code>，<code>struct</code>的默认访问说明符是<code>public</code></li>
+<li>派生类的对象包含每个基类的子对象，派生类的构造函数初始值只能初始化它的直接基类</li>
+<li><strong>基类的构造顺序与派生列表中的基类出现的顺序一致</strong></li>
+<li>多重构造在析构时，顺序与构造时相反，派生类的析构函数只负责销毁自己的部分</li>
+<li>派生列表中，同一个基类只能出现一次</li>
+</ul>
+<p><strong>多重继承构造函数的继承</strong></p>
+<ul>
+<li>C++11中允许派生类从他的基类中继承构造函数</li>
+<li>如果继承的多个构造函数相同（形参列表完全相同），程序产生错误</li>
+<li>如果不想上述错误出现，这个类必须为该构造函数定义它自己的版本</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct base1 &#123;</span><br><span class="line">	base1() = <span class="keyword">default</span>;</span><br><span class="line">	base1(<span class="keyword">const</span> string&amp;);</span><br><span class="line">&#125;;</span><br><span class="line">struct base2 &#123;</span><br><span class="line">base2() = <span class="keyword">default</span>;</span><br><span class="line">base2(<span class="keyword">const</span> string&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// D1尝试继承两个基类中的参数为 const string&amp; 的构造函数</span></span><br><span class="line">struct D1 : <span class="keyword">public</span> base1, <span class="keyword">public</span> base2 &#123;</span><br><span class="line">	using base1::base1;  <span class="comment">// 继承base1</span></span><br><span class="line">	using base2::base2;  <span class="comment">// 继承base2</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct D2 : <span class="keyword">public</span> base1, <span class="keyword">public</span> base2 &#123;</span><br><span class="line">	using base1::base1;  <span class="comment">// 继承base1</span></span><br><span class="line">	using base2::base2;  <span class="comment">// 继承base2</span></span><br><span class="line">	<span class="comment">// 定义自己的 参数为 const string&amp; 的构造函数</span></span><br><span class="line">	D2(<span class="keyword">const</span> string&amp; s) : base1(s), base2(s);</span><br><span class="line">	D2() = <span class="keyword">default</span>;  <span class="comment">// 一旦D2定义了自己的构造函数，就必须出现这个</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h6 id="类型转换与多个基类"><a href="#类型转换与多个基类" class="headerlink" title="类型转换与多个基类"></a>类型转换与多个基类</h6><ul>
+<li>可以使某个可访问的基类的指针、引用直接指向一个派生类的对象</li>
+<li>编译器认为基类们向派生类的转换不分优劣，因此可能会产生二义性错误</li>
+</ul>
+<h6 id="虚继承"><a href="#虚继承" class="headerlink" title="虚继承"></a>虚继承</h6><ul>
+<li>派生类可能通过直接基类间接继承自同一个间接基类，所以派生类对象会包含两份间接基类的对象</li>
+<li>虚继承可以解决上述问题，<strong>其目的是令某个类作出声明，承诺愿意共享它的基类</strong></li>
+<li>共享的基类称为虚基类</li>
+<li><strong>含有虚基类的对象构造顺序：虚基类总是先于非虚基类构造</strong></li>
+<li>先虚：虚子对象按照他们在派生列表中出现的顺序从左向右出现，然后才是非虚对象从左向右</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// base是D1、D2的虚基类</span></span><br><span class="line">class D1 : public virtual base &#123;&#125;;</span><br><span class="line">class D2 : virtual public base &#123;&#125;;</span><br></pre></td></tr></table></figure>
+<pre><code>class Character {};
+class BookCharacter : public Character{};
+class ZooAnimal {};
+class Bear : public ZooAnimal{};
+class ToyAnimal{};
+class TeddyBear : public BookCharacter, public Bear, public virtual ToyAnimal{};
+// 构造TeddyBear时，构造顺序如下：
+ZooAnimal();
+ToyAnimal();
+Character();
+BookCharacter();
+Bear();
+TeddyBear();
+</code></pre><h4 id="标准库特殊设施"><a href="#标准库特殊设施" class="headerlink" title="标准库特殊设施"></a>标准库特殊设施</h4><h5 id="bitset类"><a href="#bitset类" class="headerlink" title="bitset类"></a>bitset类</h5><p><code>#include &lt;bitset&gt;</code></p>
+<h6 id="定义与初始化"><a href="#定义与初始化" class="headerlink" title="定义与初始化"></a>定义与初始化</h6><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bitset&lt;n&gt; b</code></td>
+<td><code>b有n位，每一位均是0。此构造函数为constexpr</code></td>
+</tr>
+<tr>
+<td><code>bitset&lt;n&gt; b(u)</code></td>
+<td><code>b是unsigned long long值u的低n位的拷贝，如果u没有n位，则补0。此构造函数为constexpr</code></td>
+</tr>
+<tr>
+<td><code>bitset&lt;n&gt; b(s, pos, m, zero, one)</code></td>
+<td><code>explicit型。从string s的pos（默认为0）位置开始的m（默认为string::npos）个字符，s中只能包含zero（默认&#39;0&#39;）和one（默认&#39;1&#39;）</code></td>
+</tr>
+<tr>
+<td><code>bitset&lt;n&gt; b(cp, pos, m, zero, one)</code></td>
+<td><code>explicit型。从字符数组cp的pos（默认为0）位置开始的m（默认为string::npos）个字符，cp中只能包含zero（默认&#39;0&#39;）和one（默认&#39;1&#39;）</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h6><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>解释</th>
+<th>函数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>b.any()</code></td>
+<td><code>b中是否有为1的二进制位</code></td>
+<td><code>b.all()</code></td>
+<td><code>是否所有的位置都为1</code></td>
+</tr>
+<tr>
+<td><code>b.none()</code></td>
+<td><code>b中是否所有的位置都为0</code></td>
+<td><code>b.count()</code></td>
+<td><code>b中1的个数</code></td>
+</tr>
+<tr>
+<td><code>b.size()</code></td>
+<td><code>b中位数总和，constexpr型</code></td>
+<td><code>b.test(pos)</code></td>
+<td><code>pos位位1：true，否则false</code></td>
+</tr>
+<tr>
+<td><code>b.set(pos, v)</code></td>
+<td><code>将pos位置为v(默认true是1)，不带参数pos则设置所有位</code></td>
+<td><code>b.reset(pos)</code></td>
+<td><code>将pos复位，没有pos则全部复位</code></td>
+</tr>
+<tr>
+<td><code>b.flip(pos)</code></td>
+<td><code>反转pos位或者全部反转</code></td>
+<td><code>b[pos]</code></td>
+<td><code>访问pos位置，如果b是const的，返回true/false布尔值</code></td>
+</tr>
+<tr>
+<td><code>b.to_ulong()</code></td>
+<td><code>返回b对应的unsigned long值，放不下则抛出异常</code></td>
+<td><code>b.to_ullong()</code></td>
+<td><code>返回b对应的unsigned long long值，放不下则抛出异常</code></td>
+</tr>
+<tr>
+<td><code>b.to_string(zero, one)</code></td>
+<td><code>将b转换成&#39;0&#39;,&#39;1&#39;组成的string类型</code></td>
+<td><code>os&lt;&lt;b</code></td>
+<td><code>打印b中的01流</code></td>
+</tr>
+<tr>
+<td><code>is&gt;&gt;b</code></td>
+<td><code>从is读入字符存入b，当下一个字符不是&#39;0&#39;,&#39;1&#39;或是已经到达b.size()时停止</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h5 id="随机数"><a href="#随机数" class="headerlink" title="随机数"></a>随机数</h5><p><code>#include &lt;random.h&gt;</code></p>
+<h6 id="随机数引擎类和随机数分布"><a href="#随机数引擎类和随机数分布" class="headerlink" title="随机数引擎类和随机数分布"></a>随机数引擎类和随机数分布</h6><p>随机数引擎是函数对象类，定义了调用运算符，该运算符不接收参数并返回一个随机unsigned整数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">default_random_engine e;</span><br><span class="line">e();</span><br></pre></td></tr></table></figure></p>
+<p>随机数引擎操作如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Engine e</code></td>
+<td><code>默认构造函数，使用默认种子</code></td>
+</tr>
+<tr>
+<td><code>Engine e(s)</code></td>
+<td><code>使用整型值s作为种子</code></td>
+</tr>
+<tr>
+<td><code>e.seed(s)</code></td>
+<td><code>使用种子s重置e的状态</code></td>
+</tr>
+<tr>
+<td><code>e.min()</code></td>
+<td><code>此引擎可生成的最小值</code></td>
+</tr>
+<tr>
+<td><code>e.max()</code></td>
+<td><code>最大值</code></td>
+</tr>
+<tr>
+<td><code>Engine::result_type</code></td>
+<td><code>此引擎生成的unsigned整型类型</code></td>
+</tr>
+<tr>
+<td><code>e.discard(u)</code></td>
+<td><code>将引擎推进u步，u的类型位uul</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>为了得到一个指定范围内的数，使用一个分布类型的对象<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0-9之间的均匀分布</span></span><br><span class="line"><span class="comment">// u是一个调用运算符，接受一个随机数引擎作为参数</span></span><br><span class="line"><span class="function">unifrom_int_distribution&lt;unsigned&gt; <span class="title">u</span><span class="params">(<span class="number">0</span>, <span class="number">9</span>)</span></span>;</span><br><span class="line">default_random_engine e;</span><br><span class="line">cout &lt;&lt; u(e) &lt;&lt; endl;</span><br></pre></td></tr></table></figure></p>
+<h6 id="其他随机数分布"><a href="#其他随机数分布" class="headerlink" title="其他随机数分布"></a>其他随机数分布</h6><ul>
+<li>使用<code>uniform_real_distribution&lt;double&gt;</code>类型的对象生成随机浮点数，用法类似上面</li>
+<li><code>uniform_real_distribution&lt;&gt;</code>默认为<code>double</code>类型</li>
+<li>高斯分布：<code>normal_distribution&lt;&gt; n(u, sigma);</code> // 均值为<code>u</code>，标准差为<code>sigma</code></li>
+<li><code>lround(a)</code>函数对<code>a</code>进行四舍五入转化为整数，来自头文件<code>cmath</code></li>
+<li><code>bernoulli_distribution b(p)</code>一次成功概率为<code>p</code>。它不是模板类（没有<code>&lt;&gt;</code>）</li>
+</ul>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/" data-id="cjn8cdlg0001ovwph1638tipb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/03/07/K-Nearest-Neighbor/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    K-Nearest Neighbor
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/03/04/BM/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">BM</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

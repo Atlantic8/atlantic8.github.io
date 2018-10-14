@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Hidden Markov Model | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="概率图模型概率图模型是一类用图来表达变量相关关系的概率模型，常见的是用一个节点表示一个或一组随机变量，节点之间的边表示变量之间的概率关系。概率模型可以大致分为两类：  第一类使用有向无环图表示变量之间的依赖关系，称之为有向图模型或者贝叶斯网 第二类使用无向无环图表示变量之间的依赖关系，称之为无向图模型或者马尔可夫网  本文要介绍的隐马尔可夫模型就是结构简单的动态贝叶斯网。 隐马尔可夫模型HMM的主">
+<meta name="keywords" content="machine learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hidden Markov Model">
+<meta property="og:url" content="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="概率图模型概率图模型是一类用图来表达变量相关关系的概率模型，常见的是用一个节点表示一个或一组随机变量，节点之间的边表示变量之间的概率关系。概率模型可以大致分为两类：  第一类使用有向无环图表示变量之间的依赖关系，称之为有向图模型或者贝叶斯网 第二类使用无向无环图表示变量之间的依赖关系，称之为无向图模型或者马尔可夫网  本文要介绍的隐马尔可夫模型就是结构简单的动态贝叶斯网。 隐马尔可夫模型HMM的主">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-06-21T07:03:29.987Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hidden Markov Model">
+<meta name="twitter:description" content="概率图模型概率图模型是一类用图来表达变量相关关系的概率模型，常见的是用一个节点表示一个或一组随机变量，节点之间的边表示变量之间的概率关系。概率模型可以大致分为两类：  第一类使用有向无环图表示变量之间的依赖关系，称之为有向图模型或者贝叶斯网 第二类使用无向无环图表示变量之间的依赖关系，称之为无向图模型或者马尔可夫网  本文要介绍的隐马尔可夫模型就是结构简单的动态贝叶斯网。 隐马尔可夫模型HMM的主">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                115
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                41
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Hidden-Markov-Model" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Hidden Markov Model
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/31/Hidden-Markov-Model/">
+            <time datetime="2016-12-31T01:41:54.000Z" itemprop="datePublished">2016-12-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h5><p>概率图模型是一类用图来表达变量相关关系的概率模型，常见的是用一个节点表示一个或一组随机变量，节点之间的边表示变量之间的概率关系。概率模型可以大致分为两类：</p>
+<ul>
+<li>第一类使用有向无环图表示变量之间的依赖关系，称之为有向图模型或者贝叶斯网</li>
+<li>第二类使用无向无环图表示变量之间的依赖关系，称之为无向图模型或者马尔可夫网</li>
+</ul>
+<p>本文要介绍的隐马尔可夫模型就是结构简单的动态贝叶斯网。</p>
+<h5 id="隐马尔可夫模型"><a href="#隐马尔可夫模型" class="headerlink" title="隐马尔可夫模型"></a>隐马尔可夫模型</h5><p>HMM的主要作用是时序数据建模，应用范围包括语音识别、自然语言处理等领域。<br>与马尔可夫过程不同，HMM中状态是无法直接观测的，取而代之，我们可以获取到与状态值息息相关的观测变量值，图中是经典的海藻与天气例子。</p>
+<center>![经典的海藻于天气示例](http://ww2.sinaimg.cn/large/9bcfe727jw1fb9wwz6vk7j20eq08cdg2.jpg)</center>
+
+<p>一个HMM模型中有两组变量，第一组是状态变量$Y=\lbrace y_1,y_2,…,y_n \rbrace$表示隐含的状态，下标表示时序。另一组是观测变量$X=\lbrace x_1,x_2,…,x_n \rbrace$，下标表示时序。系统可能会存在多个状态，这些状态的集合为$S=\lbrace s_1,s_2,…,s_N \rbrace$，如果$y_i = k$那么表示$i$时刻的状态为$s_k$。观测变量可以是离散的也可以是连续的，不妨假设其为离散值。同样地，定义观测值的集合$O = \lbrace o_1,o_2,…,o_M \rbrace$，如果$x_i = k$那么表示$i$时刻的状态为$o_k$。</p>
+<p>HMM中有两个重要的性质：</p>
+<ul>
+<li>观测变量的取值仅依赖于状态变量</li>
+<li>t时刻的状态仅依赖于t-1时刻的状态</li>
+</ul>
+<p>基于上面两个性质，可以得到如下公式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1,y_1,...,x_n,y_n)=p(y_1)p(x_1|y_1)\prod_{i=2}^n p(y_i|y_{i-1})p(x_i|y_i)
+\end{aligned}</script><p>上式基本上描述了HMM的结构信息，在实际计算时还需要如下参数</p>
+<hr>
+<p>状态转移概率$A=[a_{ij}]_{N\times N}$，其中<script type="math/tex">a_{ij}=p(y_{t+1}=j|y_t=i)</script>表示由状态$s_i$转移到状态$s_j$的概率。</p>
+<p>输出观测概率$B=[b_{ij}]_{N\times M}$，其中<script type="math/tex">b_{ij}=p(x_t=j|y_t=i)</script>表示在状态$s_i$下观测值为$o_j$的概率。</p>
+<p>初始状态概率$\pi=(\pi_1,…,\pi_N)$，其中<script type="math/tex">\pi_i=p(y_1=i)</script>表示初始状态为$s_i$的概率。</p>
+<hr>
+<p>指定了状态空间$Y$，观测空间$X$和上述三组参数，一个HMM就确定了，所以一个HMM可以表示成一个五元组$(N,M,A,B,\pi)$，$N,M$分别表示状态值和观测值的可能取值范围。HMM也可以表示成$\lambda=(A,B,\pi)$。</p>
+<p>下面考虑三个实际问题：</p>
+<hr>
+<h6 id="模型于观测序列匹配度"><a href="#模型于观测序列匹配度" class="headerlink" title="模型于观测序列匹配度"></a>模型于观测序列匹配度</h6><p>给定模型$\lambda=(A,B,\pi)$，如何有效计算其产生观测序列$X=(x_1,x_2,…,x_T)$的概率$p(X|\lambda)$？</p>
+<p>为解决这一问题，Baum提出了<strong>前向算法</strong>，具体如下：<br><strong>定义$\theta_t(j)$为在$t$时刻，整体观测序列为$x_1,…,x_t$，此时状态为$s_j$的概率</strong>。其中我们有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_1(i) = \pi_ib_{ix_1}
+\end{aligned}</script><p>表示第一个观测值的概率，其递推式也很容易写出</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_{t+1}(i)=\left[\sum_{j=1}^N\theta_t(j)a_{ji}\right]b_{ix_{t+1}}
+\end{aligned}</script><p>有两部分构成，第一部分是由枚举$t$时刻的状态并跳转到$t+1$时刻，第二部分是$t+1$时刻的状态产生观测值的概率。</p>
+<p>当$n=1$时，输出序列为$x_1$，此时计算概率$p(x_1|\lambda)$也就是计算初始状态集合每个可能的状态产生观测值$x_1$的概率和，也就是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1|\lambda)=\sum_{i=1}^N \theta_1(i)
+\end{aligned}</script><p>当$n=2$时，输出序列为$x_1x_2$，所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1,x_2|\lambda) &=  \sum_{j=1}^N \theta_2(j)
+\end{aligned}</script><p>后面的依此类推，前向算法的描述如下：</p>
+<hr>
+<p>1 初始化：$\theta_1(i)=\pi_ib_{i1}, 1\le i \le N$<br>2 $\theta_{t+1}(j)=\left[\sum_{i=1}^N \theta_t(i)a_{ij}\right]b_{jx_{t+1}}$<br>3 $p(x_1,…,x_T|\lambda)=\sum_{j=1}^N \theta_T(j)$</p>
+<hr>
+<p>一共有$T$个时刻，每个时刻要考虑$N$个状态，每个状态又要考虑钱一个时刻的$N$个状态，所以时间复杂度为$O(N^2T)$。</p>
+<h6 id="推断隐藏序列"><a href="#推断隐藏序列" class="headerlink" title="推断隐藏序列"></a>推断隐藏序列</h6><p>由于有时候我们需要隐藏序列包含的信息，所以给出隐藏序列是有必要的（比如词性标注最终就需要给出词性序列）。问题的形式化表述即为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\arg\max_{y_1,...,y_T} p(y_1,...,y_T|x_1,...,x_T,\lambda)
+\end{aligned}</script><p>这个问题的解决方法是维特比（Viterbi）算法。</p>
+<p><strong>定义维特比变量$\gamma_t(j)$：表示在时序$t$，观察序列为$x_1,…,x_t$，状态为$s_j$的最大概率</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma_t(j)=\max p(y_1,...,y_t=j|x_1,...,x_t,\lambda)
+\end{aligned}</script><p>直观来说，在时序$t+1$状态为$s_j$的最大概率应该是时序$t$时所有状态转换到时序$t+1$、观测值为$x_{t+1}$并且状态为$s_j$的最大值，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma_{t+1}(j)=\max_k \gamma_{t}(k)a_{kj}b_{jx_{t+1}}
+\end{aligned}</script><p>并且，为了记忆路径，定义路径变量$\phi_t(j)$为该路径上的状态$s_j$的前一个状态，即从$t-1$时序到$t$的最优转移方式。</p>
+<p>维特比算法的描述如下：</p>
+<hr>
+<p>1 初始化：<br>2 $\quad \gamma_1(j)=\pi_i b_{ix_{1}},\;\phi_1(i)=0,1\le i \le N$<br>3 归纳计算：<br>4 $\quad \gamma_t(j)=\max_k \gamma_{t-1}(k)a_{kj}b_{jx_{t}}$<br>5 $\quad \phi_t(i)=\arg\max_j \gamma_{t-1}(j)a_{jk}b_{kx_{t}}$<br>6 确定路径：<br>7 $\quad y_T=\arg\max_{y_j} \gamma_{T}(j)$<br>8 $\quad for\;t=T-1,…,1$<br>9 $\quad \quad y_t=\phi_{t+1}(y_{t+1})$</p>
+<hr>
+<h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>HMM的学习就是给定观测序列$X=x_1,…,x_T$，试图找到最优的参数$\lambda$使得$p(X|\lambda)$最大。如果知道了状态序列，那么$\pi,A,B$就都可以统计出来。但是状态序列其实是隐变量，求解此问题的方法是前向后向算法，也叫做Baum-Welch算法。</p>
+<p>定义</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\beta_t(i)=p(x_{t+1},...,x_T|y_t=i,\lambda)
+\end{aligned}</script><p>表示<strong>当前$t$时刻状态为$s_i$，部分观测序列为$x_{t+1},…,x_T$的概率</strong>。与前向算法类似，$\beta_t(i)$也可以有效地计算，公式如下</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\beta_t(i)&=\left[\sum_{j=1}^N \beta_{t+1}(j)a_{ij}\right]b_{jx_{t+1}},\; 1\le t \le T-1 \\
+\beta_T(i)&=1
+\end{aligned}</script><p>进一步可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(X,y_t=i|\lambda)&=p(x_1,...,x_t,y_t=i|\lambda)p(x_{t+1},...,x_T,y_t=i|\lambda)=\theta_t(i)\beta_t(i) \\
+p(X,y_t=i|\lambda)&=\sum_{i=1}^N \theta_t(i)\beta_t(i)
+\end{aligned}</script><center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1fbacpj6v5zj20cc064jrl.jpg)</center>
+
+<p>在前后向算法中，定义<script type="math/tex">\xi_t(i,j)=p(y_t=i,y_{t+1}=j|X,\lambda)</script>表示给定HMM和观测序列$X$，$t,t+1$时刻的状态分别是$s_i,s_j$的概率。如上图所示，对上式的推导为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\xi_t(i,j)&=\frac{p(y_t=i,y_{t+1}=j,X|\lambda)}{p(X|\lambda)} \\
+&= \frac{\theta_t(i)a_{ij}\beta_{t+1}(j)b_{jx_{t+1}}} {\sum_{i=1}^N \sum_{j=1}^N \theta_t(i)a_{ij}\beta_{t+1}(j)b_{jx_{t+1}}}
+\end{aligned}</script><p>除此之外，再定义<script type="math/tex">\eta_t(i)=p(y_t=i|X,\lambda)</script>表示给定HMM和观测序列$X$，$t$时刻状态为$s_i$的概率，所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\eta_t(i) = \frac{p(y_t=i,X|\lambda)} {p(X|\lambda)} = \frac{\theta_t(i)\beta_t(i)}{\sum_{i=1}^N \theta_t(i)\beta_t(i)}
+\end{aligned}</script><p>考虑$\xi_t(i,j)$和$\eta_t(i)$的定义，就能够得到（想想就能得到）<script type="math/tex">\eta_t(i)=\sum_{i=1}^N \xi_t(i,j)</script>下面介绍前向后向算法的描述：</p>
+<hr>
+<p>1  初始化：随机初始化参数$A,B,\lambda$<br>2  不满足停止条件时迭代计算：<br>3  $\quad \beta_T(i)=1,1\le i \le N$<br>4  $\quad \beta_t(i)=\left[\sum_{j=1}^N \beta_{t+1}(j)a_{ij}\right]b_{jx_{t+1}},\; t \in \lbrace T-1,…,1 \rbrace,1\le i \le N $<br>5  $\quad \theta_{t}(i)=\left[\sum_{j=1}^N \theta_{t-1}(j)a_{ji}\right]b_{ix_{t}}$<br>6  $\quad$计算$\xi_t(i,j),\eta_t(i), 1\le i,j \le N,1 \le t \le T$<br>7  $\quad $更新参数：<br>8  $\quad \pi=\eta_1(i),1\le i \le N$<br>9  $\quad a_{ij}=\frac{\sum_{t=1}^{T-1}\xi_t(i,j)}{\sum_{t=1}^{T-1}\eta_t(i)},1\le i,j \le N$<br>10 $\quad b_{jk}=\frac{\sum_{t=1,x_t=k}^T\quad \eta_t(j)} {\sum_{t=1}^{T}\eta_t(j)} ,1\le j \le N,1\le k \le M$<br>11 输出HMM：$\lambda=(A,B,\pi)$</p>
+<p>$o_t=k$表示$t$时刻的观测值为第$k$种观测值。停止条件可以是：参数$\lambda=(A,B,\pi)$收敛。</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjn8cdlh2003cvwph9w2ai7t2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/01/06/Markov-Decision-Process/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Markov Decision Process
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/12/27/Support-Vector-Machine/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Support Vector Machine</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/07/30/WordRank/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
+                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
+                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
