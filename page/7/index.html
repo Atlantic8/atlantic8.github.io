@@ -170,11 +170,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                115
+                118
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                41
+                44
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +233,517 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Wildcard-Matching" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/24/Wildcard-Matching/">Wildcard Matching</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/24/Wildcard-Matching/">
+            <time datetime="2016-09-24T14:59:35.000Z" itemprop="datePublished">2016-09-24</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Greedy/">Greedy</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Implement wildcard pattern matching with support for ‘?’ and ‘*’.</p>
+<p>‘?’ Matches any single character.<br>‘*’ Matches any sequence of characters (including the empty sequence).</p>
+<p>The matching should cover the entire input string (not partial).</p>
+<p>The function prototype should be:<br>bool isMatch(const char <em>s, const char </em>p)</p>
+<pre><code>Some examples:
+isMatch(&quot;aa&quot;,&quot;a&quot;) → false
+isMatch(&quot;aa&quot;,&quot;aa&quot;) → true
+isMatch(&quot;aaa&quot;,&quot;aa&quot;) → false
+isMatch(&quot;aa&quot;, &quot;*&quot;) → true
+isMatch(&quot;aa&quot;, &quot;a*&quot;) → true
+isMatch(&quot;ab&quot;, &quot;?*&quot;) → true
+isMatch(&quot;aab&quot;, &quot;c*a*b&quot;) → false
+</code></pre><h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>C++的DP方法超时（好像java可以）。<br>线性时间算法的基本思想是维护两个指针p1、p2，分别指向s和p，分以下几种情况：</p>
+<ul>
+<li>p[p2] == ‘?’ 说明匹配，那么 ++p1，++p2</li>
+<li>p[p2] == ‘*’ 这也是一种匹配，但是可能的情况很多，用start保存此星号的位置，用matched保存与当前星号匹配的s的位置，p2++，p1不移动，先把与星号匹配的设为空，因为如果后面不匹配的话，还会回来给星号匹配字符</li>
+<li>否则，当前已经不能匹配了，找到上一个星号位置<ul>
+<li>上一个星号存在，则p回退到上一个星号后一位，把matched对应的字符串匹配给星号，s回退到matched下一位，matched++，p2=star+1，p1=++matched</li>
+<li>否则，没有可能的匹配了，返回 false</li>
+</ul>
+</li>
+<li>最后，如果p2还没到结尾，如果p2及其后面都是’*’，那么匹配成功，否则失败</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">bool <span class="title">isMatch</span><span class="params">(string s, string p)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> star=-<span class="number">1</span>, s1=<span class="number">0</span>, p1=<span class="number">0</span>, matched=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (s1 &lt; s.length()) &#123;</span><br><span class="line">		<span class="keyword">if</span> (p[p1]==<span class="string">'?'</span> || s[s1]==p[p1]) &#123;++s1, ++p1;&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (p[p1] == <span class="string">'*'</span>) &#123;star = p1++; matched = s1;&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (star&gt;=<span class="number">0</span>) &#123;p1 = star+<span class="number">1</span>; s1 = ++matched;&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span> (p1&lt;p.length() &amp;&amp; p[p1]==<span class="string">'*'</span>) ++p1;</span><br><span class="line">	<span class="keyword">return</span> p1==p.length();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/24/Wildcard-Matching/" data-id="cjpqxp6me0095xgph153b8rqd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Segment-Tree" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/24/Segment-Tree/">Segment Tree</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/24/Segment-Tree/">
+            <time datetime="2016-09-24T01:15:15.000Z" itemprop="datePublished">2016-09-24</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="线段树"><a href="#线段树" class="headerlink" title="线段树"></a>线段树</h5><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727jw1f768k0nw59j20ql0cmt9m.jpg" alt=""><br>线段树（英语：Segment Tree）是一种二叉搜索树，它将一个区间划分成一些单元区间，每个单元区间对应线段树中的一个叶结点。</p>
+<p>对于线段树中的每一个非叶子节点[a,b]，它的左子树表示的区间为[a,(a+b)/2]，右子树表示的区间为[(a+b)/2+1,b]。因此线段树是平衡二叉树。叶节点数目为N，即整个线段区间的长度。</p>
+<p>给定整个线段区间，建立一棵线段树的时间复杂度是O(N)。单点修改的时间复杂度是O(logN) 。单点查询的时间复杂度是O(1)。如果允许惰性赋值而加上延迟标记的话，许多的区间修改的时间复杂度也会是 O(log N)，但是单点查询的时间复杂度会变成O(log N)。</p>
+<p>线段树的每个节点上往往都增加了一些其他的域。在这些域中保存了某种动态维护的信息，视不同情况而定。这些域使得线段树具有极大的灵活性，可以适应不同的需求。</p>
+<h6 id="动态结构"><a href="#动态结构" class="headerlink" title="动态结构"></a>动态结构</h6><pre><code>struct node{
+     node* left;
+     node* right;
+    ……
+}
+</code></pre><p>动态结构的方法在Range Sum Query中。</p>
+<p>静态数组型结构：maxn是最大区间数，而节点数要开4倍多</p>
+<pre><code>struct node{
+      int left;
+      int right;
+    ……
+}Tree[maxn*4+5]
+</code></pre><p>使用静态数组结构（从1开始计数），left、right表示其左右孩子在数组中对应的位置，如果当前节点的位置时i，那么左孩子2<em>i，右孩子2</em>i+1。</p>
+<p>构造方法：主要思想是递归构造，如果当前节点记录的区间只有一个值，则直接赋值，否则递归构造左右子树，最后回溯的时候给当前节点赋值<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">node： 当前节点在静态数组segTree中的位置</span></span><br><span class="line"><span class="comment">begin：题目给定数组的下标起始位置</span></span><br><span class="line"><span class="comment">end：  题目给定数组的下标终止位置</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">build</span><span class="params">(<span class="keyword">int</span> node, <span class="keyword">int</span> begin, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (begin == end)</span><br><span class="line">        segTree[node] = array[begin]; <span class="comment">/* 只有一个元素,节点记录该单元素 */</span></span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* 递归构造左右子树 */</span></span><br><span class="line">        build(<span class="number">2</span>*node, begin, (begin+end)/<span class="number">2</span>);</span><br><span class="line">        build(<span class="number">2</span>*node+<span class="number">1</span>, (begin+end)/<span class="number">2</span>+<span class="number">1</span>, end);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 回溯时得到当前node节点的线段信息 */</span></span><br><span class="line">        <span class="keyword">if</span> (segTree[<span class="number">2</span> * node] &lt;= segTree[<span class="number">2</span> * node + <span class="number">1</span>])</span><br><span class="line">            segTree[node] = segTree[<span class="number">2</span> * node];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            segTree[node] = segTree[<span class="number">2</span> * node + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>区间查询：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">node：当前查询节点</span></span><br><span class="line"><span class="comment">begin,end：当前节点存储的区间，即当前结点的范围</span></span><br><span class="line"><span class="comment">left,right：此次query所要查询的区间</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">query</span><span class="params">(<span class="keyword">int</span> node, <span class="keyword">int</span> begin, <span class="keyword">int</span> end, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p1, p2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*  查询区间和要求的区间没有交集  */</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt; end || right &lt; begin)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询范围和当前结点的范围重合</span></span><br><span class="line">    <span class="keyword">if</span> (begin == left &amp;&amp; end == right)</span><br><span class="line">        <span class="keyword">return</span> segTree[node];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 分别查询当前结点的左右孩子</span></span><br><span class="line">    p1 = query(<span class="number">2</span> * node, begin, (begin + end) / <span class="number">2</span>, left, right);</span><br><span class="line">    p2 = query(<span class="number">2</span> * node + <span class="number">1</span>, (begin + end) / <span class="number">2</span> + <span class="number">1</span>, end, left, right);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*  return the expect value  */</span></span><br><span class="line">    <span class="keyword">if</span> (p1 == -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> p2;</span><br><span class="line">    <span class="keyword">if</span> (p2 == -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> p1;</span><br><span class="line">    <span class="keyword">return</span>  p1 + p2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>单节点更新：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">node：当前节点的下标</span></span><br><span class="line"><span class="comment">left,right：当前节点的表示范围</span></span><br><span class="line"><span class="comment">ind,add：将原数组中ind位置元素增加add</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Updata</span><span class="params">(<span class="keyword">int</span> node, <span class="keyword">int</span> left, <span class="keyword">int</span> right, <span class="keyword">int</span> ind, <span class="keyword">int</span> add)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 当前是叶节点了，直接更新</span></span><br><span class="line">    <span class="keyword">if</span>( begin == end ) &#123;</span><br><span class="line">        segTree[node] += add;</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> m = ( left + right ) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(ind &lt;= m)</span><br><span class="line">        Updata(node * <span class="number">2</span>,left, m, ind, add);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        Updata(node * <span class="number">2</span> + <span class="number">1</span>, m + <span class="number">1</span>, right, ind, add);</span><br><span class="line">    <span class="comment">/*回溯更新父节点*/</span></span><br><span class="line">    segTree[node] = segTree[node * <span class="number">2</span>] + segTree[node * <span class="number">2</span> + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="Range-Sum-Query-Mutable"><a href="#Range-Sum-Query-Mutable" class="headerlink" title="Range Sum Query - Mutable"></a>Range Sum Query - Mutable</h5><p>Given an integer array nums, find the sum of the elements between indices i and j (i ≤ j), inclusive.</p>
+<p>The update(i, val) function modifies nums by updating the element at index i to val.<br>Example:<br>Given nums = [1, 3, 5]</p>
+<p>sumRange(0, 2) -&gt; 9<br>update(1, 2)<br>sumRange(0, 2) -&gt; 8<br>Note:</p>
+<ul>
+<li>The array is only modifiable by the update function.</li>
+<li>You may assume the number of calls to update and sumRange function is distributed evenly.</li>
+</ul>
+<p>使用直接的方法处理，在有大量的查询(O(N)复杂度)和更新时时间复杂度过高。使用线段树处理的话，查询和修改的复杂度均为O(logN). 本题中，每个节点包含左右孩子节点指示自己的范围，还包含一个表示以该节点为根的子树的所有元素的和。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NumArray</span> </span>&#123;</span><br><span class="line">	SegmentTreeNode root = <span class="keyword">null</span>;</span><br><span class="line">	<span class="comment">// 线段树的节点，包含左右孩子，和其全部孩子值的和</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">SegmentTreeNode</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum;</span><br><span class="line">        <span class="keyword">int</span> start, end;</span><br><span class="line">        <span class="keyword">public</span> SegmentTreeNode left, right;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SegmentTreeNode</span><span class="params">(<span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.start = start;</span><br><span class="line">            <span class="keyword">this</span>.end = end;</span><br><span class="line">            <span class="keyword">this</span>.left = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">this</span>.right = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">this</span>.sum = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将数据index位置的值转换成value，树中只需要更改sum值就好</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span><span class="params">(SegmentTreeNode root, <span class="keyword">int</span> index, <span class="keyword">int</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 到叶节点时，直接修改sum值</span></span><br><span class="line">        <span class="keyword">if</span> (root.start == root.end)</span><br><span class="line">            root.sum = value;</span><br><span class="line">        <span class="keyword">else</span> &#123; <span class="comment">// 非叶节点，要考虑修改树的中间结点</span></span><br><span class="line">            <span class="keyword">int</span> mid = root.start + (root.end - root.start) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (index &lt;= mid) <span class="comment">// 如果需要修改的节点在左子树，右子树不需要修改</span></span><br><span class="line">                Update(root.left, index, value);</span><br><span class="line">            <span class="keyword">else</span> <span class="comment">// 只修改右子树</span></span><br><span class="line">                Update(root.right, index, value);</span><br><span class="line">            <span class="comment">// 修改根节点的sum值</span></span><br><span class="line">            root.sum = root.left.sum + root.right.sum;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回从索引start到end的值的和</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">SumRange</span><span class="params">(SegmentTreeNode root, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// root对应的范围正好是查询的范围</span></span><br><span class="line">        <span class="keyword">if</span> (root.start == start &amp;&amp; root.end == end)</span><br><span class="line">            <span class="keyword">return</span> root.sum;</span><br><span class="line">        <span class="keyword">int</span> mid = root.start + (root.end - root.start) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 查询范围在左子树上</span></span><br><span class="line">        <span class="keyword">if</span> (end &lt;= mid)</span><br><span class="line">            <span class="keyword">return</span> SumRange(root.left, start, end);</span><br><span class="line">        <span class="comment">// 查询范围在右子树上</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (start &gt; mid)</span><br><span class="line">            <span class="keyword">return</span> SumRange(root.right, start, end);</span><br><span class="line">        <span class="comment">// 查询范围在左、右子树上</span></span><br><span class="line">        <span class="keyword">return</span> SumRange(root.left, start, mid) + SumRange(root.right, mid + <span class="number">1</span>, end);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SegmentTreeNode <span class="title">ConstructSegmentTree</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (start &gt; end)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        SegmentTreeNode ret = <span class="keyword">new</span> SegmentTreeNode(start, end);</span><br><span class="line">        <span class="keyword">if</span> (start == end) &#123;</span><br><span class="line">            ret.sum = nums[start];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> mid = start + (end - start) / <span class="number">2</span>;</span><br><span class="line">            ret.left = ConstructSegmentTree(nums, start, mid);</span><br><span class="line">            ret.right = ConstructSegmentTree(nums, mid + <span class="number">1</span>, end);</span><br><span class="line">            ret.sum = ret.left.sum + ret.right.sum;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NumArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        root = ConstructSegmentTree(nums, <span class="number">0</span>, nums.length - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        Update(root, i, val);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">sumRange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SumRange(root, i, j);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="线段-可能重合-的总长度"><a href="#线段-可能重合-的总长度" class="headerlink" title="线段(可能重合)的总长度"></a>线段(可能重合)的总长度</h5><p>思路是在线段可能出现的范围内建立线段树，节点上设置一个表示此节点是否被覆盖的属性cover，cover=1表示该结点所对应的区间被完全覆盖，cover=0表示该结点所对应的区间未被完全覆盖。如下图的线段树，添加线段[1,2][3,5][4,6]<br><img src="http://ww3.sinaimg.cn/mw690/9bcfe727jw1f751urtcoej20iq07v74p.jpg" alt=""></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/24/Segment-Tree/" data-id="cjpqxp6lb007gxgphc5t9lcrc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Binary-Indexed-Tree" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/23/Binary-Indexed-Tree/">Binary Indexed Tree</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/23/Binary-Indexed-Tree/">
+            <time datetime="2016-09-23T12:43:51.000Z" itemprop="datePublished">2016-09-23</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5><p><b>树状数组(Binary Indexed Tree, BIT)用来求区间元素和，求一次区间元素和的时间效率为O(logn)</b><br>树状数组是一个可以很高效的进行区间统计的数据结构。在思想上类似于线段树，比线段树节省空间，编程复杂度比线段树低，但适用范围比线段树小。</p>
+<p>问题定义：</p>
+<pre><code>有n个元素的数组。可能的操作为
+
+1.改变数组下标k的元素
+
+2.查询下标 i~j 的元素和
+</code></pre><p>用树状数组，对操作1和2的时间复杂度都为O(logn)。</p>
+<h5 id="算法内容"><a href="#算法内容" class="headerlink" title="算法内容"></a>算法内容</h5><h6 id="利用树状数组求前i个元素的和S-i"><a href="#利用树状数组求前i个元素的和S-i" class="headerlink" title="利用树状数组求前i个元素的和S[i]"></a>利用树状数组求前i个元素的和S[i]</h6><p><b><img src="http://ww4.sinaimg.cn/mw690/9bcfe727jw1f83t9l1oc3j20cu078jro.jpg" alt=""></b><br>对给定序列：A[1]~A[8]，构建一个树状数组，如上图，其中，C[]是树状数组，S[k]表示从1-k的元素和。<br>分析C[]的组成如下：</p>
+<pre><code>C[1]=A[1];
+C[2]=A[1]+A[2];
+C[3]=A[3];
+C[4]=A[1]+A[2]+A[3]+A[4];
+C[5]=A[5];
+C[6]=A[5]+A[6];
+C[7]=A[7];
+C[8]= A[1]+A[2]+A[3]+A[4]+A[5]+A[6]+A[7]+A[8];
+</code></pre><p>将数组下标转换成二进制，可得：</p>
+<pre><code>1 --&gt; 00000001
+2 --&gt; 00000010
+3 --&gt; 00000011
+4 --&gt; 00000100
+5 --&gt; 00000101
+6 --&gt; 00000110
+7 --&gt; 00000111
+8 --&gt; 00001000
+</code></pre><p>结论：下标i的二进制中的从右往左数有连续的x个“0”，那么C[i]为序列A[]中的第i-2^x+1到第i个元素的和，即：</p>
+<pre><code>C[i] = A[i-2^x+1] + … + A[i], 其中x为i的二进制中的从右往左数有连续“0”的个数
+</code></pre><p>对于每个i，求x的方法是：<b>2^x = i &amp; (-i)</b></p>
+<p>证明：设A’为A的二进制反码，i的二进制表示成A1B，其中A不管，B为全0序列。那么-i=A’0B’+1。由于B为全0序列，那么B’就是全1序列，所以-i=A’1B，所以：i&amp;(-i)= A1B&amp; A’1B=1B，即2^x的值。</p>
+<p>所以，S[i]的方法是：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回前i个元素和</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Sum</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> s=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        s += C[i];</span><br><span class="line">        i -= i &amp; (-i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="更新C"><a href="#更新C" class="headerlink" title="更新C[]"></a>更新C[]</h6><p>如果A[i]被改变了，那么所有包含A[i]的C[]都要更改，比如，A[3]被改变了，C[3], C[4], C[8]都得修改。<br>如果A[i]被改变了，那么C[i]必须要更改，并且假设C[k]是C[i]的直接父亲，那么C[k]包含的元素是C[i]包含的元素的2倍，所以：</p>
+<pre><code>k = i + 2^x（x是i的元素数）。
+</code></pre><p>所以更新的方法是：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A[i]的改变值为value</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> value)</span>  </span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(i&lt;=n) &#123;</span><br><span class="line">		C[i] += value;</span><br><span class="line">		i += i &amp; (-i);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="二维树状数组"><a href="#二维树状数组" class="headerlink" title="二维树状数组"></a>二维树状数组</h5><p>BIT可用为二维数据结果。假设你有一个带有点的平面(有非负的坐标)。合理的操作有三种：</p>
+<pre><code>1.在(x , y)设置点
+2.从(x , y)移除点
+3.在矩形(0 , 0), (x , y)计算点数 - 其中(0 , 0)为左下角，(x , y)为右上角，而边是平行于x轴和y轴。
+</code></pre><p>对于1操作，在（x,y）处设置点，即Update(x,y,1)，因为x，y坐标是离散的，所以我们分别对x,y进行更新即可，函数如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y,<span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(x&lt;=n) &#123;</span><br><span class="line">		<span class="keyword">int</span> y1 = y;</span><br><span class="line">		 <span class="keyword">while</span> (y1 &lt;= n) &#123;</span><br><span class="line">			C[x][y1] += val;</span><br><span class="line">			y1 += y1 &amp; (-y1);</span><br><span class="line">		&#125;</span><br><span class="line">		x += x &amp; (-x);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>根据Update可以推得：GetSum函数为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">GetSum</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> sum=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (x &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">int</span> y1 = y;</span><br><span class="line">		<span class="keyword">while</span> (y1 &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			sum += C[x][y1];</span><br><span class="line">			y1 -= y1 &amp; (-y1);</span><br><span class="line">		&#125;</span><br><span class="line">		x -= x &amp; (-x);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h5><h6 id="POJ-2352-Stars"><a href="#POJ-2352-Stars" class="headerlink" title="POJ 2352 Stars"></a>POJ 2352 Stars</h6><p>给定星星的坐标（y递增，若y相等，x递增），每个星星都有一个等级，规定它的<b>等级就是在它左下方的星星的个数</b>。<br>输入所有星星后，依次输出等级为0到n-1的星星的个数。</p>
+<p>解法：</p>
+<ul>
+<li>因为数据按y排序（y相等按x排序），所以对第i个星星，之前的星星没有y值大于当前y值的，如果之前的星星k的x值小于当前x值，那么星星k就是对星星i的等级贡献1。并且，星星i后面的星星不可能贡献星星i的等级。</li>
+<li>所以，计算一个星星的等级就应该在这个星星没正式加入之前，计算之前哪些星星在它左下角，y值严格非递减就不用考虑了，只计数x坐标小于等于当前的个数，可以令A[i]的值是已经加入星星中x坐标为i的星星的数量，i的等级即为 Sum(i);</li>
+<li>每次加入一个星星，加入星星i之前，计算星星i的贡献，即出现在星星i左下角的星星个数，也即数组A[]中小于等于i的元素和。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line">#define n 32001</span><br><span class="line"><span class="keyword">int</span> c[n+<span class="number">5</span>], total[n+<span class="number">5</span>];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Lowbit</span><span class="params">(<span class="keyword">int</span> t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> t&amp;(t^(t-<span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Sum</span><span class="params">(<span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        sum += c[end];</span><br><span class="line">        end -= Lowbit(end);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> li, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(li&lt;=n) &#123;</span><br><span class="line">        c[li] += val;</span><br><span class="line">        li += Lowbit(li);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j, x, y, nn;</span><br><span class="line">    scanf(<span class="string">"%d"</span>, &amp;nn);</span><br><span class="line">    memset(c, <span class="number">0</span>, sizeof(c));</span><br><span class="line">    memset(total, <span class="number">0</span>, sizeof(total));</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">1</span>; i&lt;=nn; i++) &#123;</span><br><span class="line">        scanf(<span class="string">"%d%d"</span>, &amp;x, &amp;y);  <span class="comment">//由于坐标x可能为0，因此输入坐标要+1，不然会超时0&amp;(-0)=0;</span></span><br><span class="line">        add(x+<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        total[Sum(x+<span class="number">1</span>)-<span class="number">1</span>]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;nn; i++)</span><br><span class="line">        printf(<span class="string">"%d\n"</span>, total[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本题用<b>线段树</b>也可以做，用静态数组结构，开始时就把所有的元素当成0，加入节点，就是一种更新操作。在把A[]抽象出来后，每次加入一个点时，计算Sum，然后更新节点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"><span class="keyword">int</span> sum[<span class="number">200000</span>];</span><br><span class="line">struct node &#123;</span><br><span class="line">    <span class="keyword">int</span> x,y;</span><br><span class="line">&#125; p[<span class="number">20000</span>];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">push_up</span><span class="params">(<span class="keyword">int</span> root)</span> </span>&#123;</span><br><span class="line">    sum[root]=sum[root*<span class="number">2</span>]+sum[root*<span class="number">2</span>+<span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">int</span> root,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> p,<span class="keyword">int</span> v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mid=(l+r)/<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span>(l==r) &#123;</span><br><span class="line">        sum[root]++;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(p&lt;=mid)update(root*<span class="number">2</span>,l,mid,p,v);</span><br><span class="line">    <span class="keyword">else</span> update(root*<span class="number">2</span>+<span class="number">1</span>,mid+<span class="number">1</span>,r,p,v);</span><br><span class="line">    push_up(root);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">q_sum</span><span class="params">(<span class="keyword">int</span> root,<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> ql,<span class="keyword">int</span> qr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(ql&gt;r||qr&lt;l)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(ql&lt;=l&amp;&amp;r&lt;=qr)<span class="keyword">return</span> sum[root];</span><br><span class="line">    <span class="keyword">int</span> mid=(l+r)/<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> q_sum(root*<span class="number">2</span>,l,mid,ql,qr)+q_sum(root*<span class="number">2</span>+<span class="number">1</span>,mid+<span class="number">1</span>,r,ql,qr);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n,i,j,m=<span class="number">32000</span>;</span><br><span class="line">    <span class="keyword">int</span> _hash[<span class="number">20000</span>];</span><br><span class="line">    scanf(<span class="string">"%d"</span>,&amp;n);</span><br><span class="line">    memset(_hash,<span class="number">0</span>,sizeof(_hash));</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        scanf(<span class="string">"%d%d"</span>,&amp;p[i].x,&amp;p[i].y);</span><br><span class="line">        _hash[q_sum(<span class="number">1</span>,<span class="number">0</span>,m,<span class="number">0</span>,p[i].x)]++;</span><br><span class="line">        update(<span class="number">1</span>,<span class="number">0</span>,m,p[i].x,<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">        printf(<span class="string">"%d\n"</span>,_hash[i]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="二维树状数组-1"><a href="#二维树状数组-1" class="headerlink" title="二维树状数组"></a>二维树状数组</h5><p>问题描述：</p>
+<pre><code>一个由数字构成的大矩阵，能进行两种操作
+1) 对矩阵里的某个数加上一个整数（可正可负）
+2) 查询某个子矩阵里所有数字的和,要求对每次查询，输出结果
+</code></pre><p>一维扩展到二维的情况：(lowbit(x)=x&amp;(-x))</p>
+<pre><code>C[x][y] = ∑ a[i][j], 其中
+    x-lowbit(x) + 1 &lt;= i &lt;= x
+    y-lowbit(y) + 1 &lt;= j &lt;= y
+</code></pre><p>在这样的定义下有：</p>
+<pre><code>Sun(1,1)=C[1][1];  Sun(1,2)=C[1][2]; Sun(1,3)=C[1][3]+C[1][2];...
+ Sun(2,1)=C[2][1];  Sun(2,2)=C[2][2]; Sun(2,3)=C[2][3]+C[2][2];...
+ Sun(3,1)=C[3][1]+C[2][1]; Sun(3,2)=C[3][2]+C[2][2];
+</code></pre><p>求和Sum：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Sum</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> x = i; x &gt; <span class="number">0</span>; x -= lowbit(x)) &#123;</span><br><span class="line">    	<span class="keyword">for</span>(<span class="keyword">int</span> y = j; y &gt; <span class="number">0</span>; y -= lowbit(y)) &#123;</span><br><span class="line">        	result += C[x][y];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>更新update<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Modify</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> delta)</span></span>&#123;</span><br><span class="line">	A[i][j]+=delta;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> x = i; x&lt; A.length; x += lowbit(x)) &#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> y = j; y &lt;A[i].length; y += lowbit(y)) &#123;</span><br><span class="line">			C[x][y] += delta;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="POJ-2155"><a href="#POJ-2155" class="headerlink" title="POJ 2155"></a>POJ 2155</h6><p>给定MxN矩阵，每个元素取值{0, 1}，合法的操作如下：</p>
+<ul>
+<li>将左上角坐标为(x1, y1)，右下角坐标为(x2, y2)的矩形区域内的所有元素反转（0-&gt;1, 1-&gt;0）</li>
+<li>查询A[i][j]的值</li>
+</ul>
+<p>在树状数组中存储该节点的变换次数，因为数值只是0或1，所以奇数次的效果是一样的，偶数次的效果也是一样的。如下图所示：<br>    反转[(x1, y1), (x2, y2)]等价于：<br>    分别反转 [(x1, y1), (n,n)], [(x2+1, y2+1), (n,n)], [(x1, y2+1), (n,n)], [(x1+1, y2), (n,n)]<br><b><img src="http://ww2.sinaimg.cn/mw690/9bcfe727jw1f84ijeapf1j20dw0gotbu.jpg" alt=""></b></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MAX = <span class="number">1010</span>;</span><br><span class="line"><span class="keyword">int</span> c[MAX][MAX];</span><br><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Lowbit</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x &amp; (-x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 是将以(n,n)为右下角，(x,y)为左上角的矩形区域反转</span></span><br><span class="line"><span class="comment">// 需要把所有包含(x, y)的c数组元素更新</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Updata</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i,k;</span><br><span class="line">	<span class="keyword">for</span>(i=x; i&lt;=n; i+=Lowbit(i))</span><br><span class="line">		<span class="keyword">for</span>(k=y; k&lt;=n; k+=Lowbit(k))</span><br><span class="line">			c[i][k]++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 包含点(x, y)的所有区间的总反转次数</span></span><br><span class="line"><span class="comment">// 因为反转都是左上-&gt;右下，所以包含点(x, y)的区间端点不会在(x, y)右、下角</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Get</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i,k,sum = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=x; i&gt;<span class="number">0</span>; i-=Lowbit(i))</span><br><span class="line">		<span class="keyword">for</span>(k=y; k&gt;<span class="number">0</span>; k-=Lowbit(k))</span><br><span class="line">			sum += c[i][k];</span><br><span class="line">	<span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> ncases,m;</span><br><span class="line">	<span class="keyword">int</span> x1,y1,x2,y2;</span><br><span class="line">	<span class="keyword">char</span> ch[<span class="number">2</span>];</span><br><span class="line">	scanf(<span class="string">"%d"</span>,&amp;ncases);</span><br><span class="line">	<span class="keyword">while</span>( ncases-- ) &#123;</span><br><span class="line">		memset(c,<span class="number">0</span>,sizeof(c));</span><br><span class="line">		scanf(<span class="string">"%d%d"</span>,&amp;n,&amp;m);</span><br><span class="line">		<span class="keyword">while</span>( m-- ) &#123;</span><br><span class="line">			scanf(<span class="string">"%s"</span>,ch);</span><br><span class="line">			<span class="keyword">if</span>( ch[<span class="number">0</span>] == <span class="string">'C'</span> ) &#123;</span><br><span class="line">				scanf(<span class="string">"%d%d%d%d"</span>,&amp;x1,&amp;y1,&amp;x2,&amp;y2);</span><br><span class="line">				x1++; y1++; x2++; y2++;</span><br><span class="line">				Updata(x2,y2);</span><br><span class="line">				Updata(x1-<span class="number">1</span>,y1-<span class="number">1</span>);</span><br><span class="line">				Updata(x1-<span class="number">1</span>,y2);</span><br><span class="line">				Updata(x2,y1-<span class="number">1</span>);</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				scanf(<span class="string">"%d%d"</span>,&amp;x1,&amp;y1);</span><br><span class="line">				printf(<span class="string">"%d/n"</span>,Get(x1,y1)%<span class="number">2</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		printf(<span class="string">"/n"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/23/Binary-Indexed-Tree/" data-id="cjpqxp6hb000bxgphsna1f39h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Water-and-Jug-Problem" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -296,7 +807,7 @@ Output: False
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="cjn8codvm008n3sph5gu0plmk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="cjpqxp6ma008zxgphr9ngflpb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -519,7 +1030,7 @@ Output: False
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/" data-id="cjn8codrq001s3sphsjxakekn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/" data-id="cjpqxp6i7001nxgph3nj4y5aq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -661,7 +1172,7 @@ and [3,4,-1,1] return 2.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/14/First-Missing-Positive/" data-id="cjn8codsi002t3sphdfkgurgv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/14/First-Missing-Positive/" data-id="cjpqxp6iq002hxgphjxv9t13q" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -803,7 +1314,7 @@ and [3,4,-1,1] return 2.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/Copy-List-with-Random-Pointer/" data-id="cjn8codrd00103sphy4jiojeq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/Copy-List-with-Random-Pointer/" data-id="cjpqxp6hx0013xgph6u94bwad" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -958,7 +1469,7 @@ solution.pick(1);
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjn8coduu007b3sph27ts8vmf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjpqxp6l9007cxgph9i3xybbr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1108,7 +1619,7 @@ A B C D A B D
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/KMP/" data-id="cjn8codt1003x3sph6zpiarkn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/KMP/" data-id="cjpqxp6jk0042xgphcd5utbea" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1275,471 +1786,7 @@ Return [&quot;eat&quot;,&quot;oath&quot;].
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/11/Word-Search/" data-id="cjn8codvu00933sph5vch2pka" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Word-Break" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/11/Word-Break/">Word Break</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/11/Word-Break/">
-            <time datetime="2016-09-11T02:00:56.000Z" itemprop="datePublished">2016-09-11</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Backtracking/">Backtracking</a>, <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Word-Break"><a href="#Word-Break" class="headerlink" title="Word Break"></a>Word Break</h4><p>给定一些单词集合dic，问给定字符串s是否可以拆分成这些单词。<br>思路如下：</p>
-<ul>
-<li>使用DP思想，f[i]表示s.substring(0,i)是否可以拆分</li>
-<li>f[i] |= (f[k] &amp;&amp; s.substring(k,i) in dic)对于所有的k in [0,i]</li>
-</ul>
-<h4 id="Word-Break-II"><a href="#Word-Break-II" class="headerlink" title="Word Break II"></a>Word Break II</h4><p>在上题的基础上，要求给出所有可能的拆分，单词之间用空格隔开</p>
-<pre><code>For example, given
-s = &quot;catsanddog&quot;,
-dict = [&quot;cat&quot;, &quot;cats&quot;, &quot;and&quot;, &quot;sand&quot;, &quot;dog&quot;].
-
-A solution is [&quot;cats and dog&quot;, &quot;cat sand dog&quot;].
-</code></pre><p>解题思路：</p>
-<ul>
-<li>由于需要给出所有的结果，上面的DP就不行了</li>
-<li>解法是使用递归求解，<b>对于已经处理过的子串，要用哈希表保存其结果，再次遇到可以直接使用</b><br>代码如下：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	HashMap&lt;String, List&lt;String&gt; &gt;map = <span class="keyword">new</span> HashMap&lt;String, List&lt;String&gt; &gt;();</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">wordBreak</span><span class="params">(String s, Set&lt;String&gt; dict)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (map.containsKey(s) == <span class="keyword">true</span>) <span class="comment">// 已经处理过的子串</span></span><br><span class="line">			<span class="keyword">return</span> map.get(s);</span><br><span class="line">		List&lt;String&gt; ret = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=s.length(); i++) &#123;</span><br><span class="line">			String tmp1 = s.substring(<span class="number">0</span>, i), tmp2 = s.substring(i);</span><br><span class="line">			<span class="keyword">if</span> (dict.contains(tmp1) == <span class="keyword">true</span>) &#123; <span class="comment">// 第一段是word的话</span></span><br><span class="line">				<span class="keyword">if</span> (tmp2.length() == <span class="number">0</span>)</span><br><span class="line">					ret.add(tmp1);</span><br><span class="line">				<span class="keyword">else</span> &#123;</span><br><span class="line">					List&lt;String&gt; l = wordBreak(tmp2, dict); <span class="comment">// 获取第二段的组成方式</span></span><br><span class="line">					<span class="keyword">for</span> (String str:l)</span><br><span class="line">						ret.add(tmp1+<span class="string">" "</span>+str); <span class="comment">//拼接</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="comment">// 否则进入下一次循环</span></span><br><span class="line">		&#125;</span><br><span class="line">		map.put(s, ret);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/11/Word-Break/" data-id="cjn8codvp008u3sphtioynui5" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Subsets" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/10/Subsets/">Subsets</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/10/Subsets/">
-            <time datetime="2016-09-10T08:28:50.000Z" itemprop="datePublished">2016-09-10</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/bit/">bit</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>Given a set of distinct integers, nums, return all possible subsets.</p>
-<p>Note: The solution set must not contain duplicate subsets. &lt;无重复假设&gt;</p>
-<p>For example,<br>If nums = [1,2,3], a solution is:</p>
-<pre><code>[
-  [3],
-  [1],
-  [2],
-  [1,2,3],
-  [1,3],
-  [2,3],
-  [1,2],
-  []
-]
-</code></pre><h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><p>递归的做法很明显，不赘述了。<br>这里介绍使用bit思想的方法</p>
-<ul>
-<li>一个长度为n的无重复数组，其子集的个数为2^n个，每一个元素可能出现或者不出现。</li>
-<li>所以我们从0到2^n-1，逐个递增。对每个数，按位位移然后&amp;1就可以得到每一位的值，然后根据每一位是0还是1确定对应的数组元素是否加入。这种方法的优势在于不用递归调用栈。代码略！</li>
-</ul>
-<p>下面的代码是这样的思想</p>
-<ul>
-<li>先生成2^n个空的集合</li>
-<li>每一个元素都会在2^(n-1)个子集中出现</li>
-<li>第一个元素每隔一个集合出现一次，第二个元素每4个元素出现连续2次，第三个元素每8个元素出现连续4次</li>
-<li>所以第j个集合中，第i个元素是否出现可以由 j &gt;&gt; i &amp; 1 决定</li>
-</ul>
-<p>下面是例子[1,2,3]<br>    [], [], [], [], [], [], [], []</p>
-<pre><code>[], [1], [], [1], [], [1], [], [1]
-
-[], [1], [2], [1, 2], [], [1], [2], [1, 2]
-
-[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]
-</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="keyword">int</span>&gt; &gt; subsets(vector&lt;<span class="keyword">int</span>&gt; &amp;S) &#123;</span><br><span class="line">        sort (S.begin(), S.end());</span><br><span class="line">        <span class="keyword">int</span> elem_num = S.size();</span><br><span class="line">        <span class="keyword">int</span> subset_num = pow (<span class="number">2</span>, elem_num);</span><br><span class="line">        vector&lt;vector&lt;<span class="keyword">int</span>&gt; &gt; subset_set (subset_num, vector&lt;<span class="keyword">int</span>&gt;());</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; elem_num; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; subset_num; j++)</span><br><span class="line">                <span class="keyword">if</span> ((j &gt;&gt; i) &amp; <span class="number">1</span>)</span><br><span class="line">                    subset_set[j].push_back (S[i]);</span><br><span class="line">        <span class="keyword">return</span> subset_set;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="数组允许重复的情况"><a href="#数组允许重复的情况" class="headerlink" title="数组允许重复的情况"></a>数组允许重复的情况</h6><p>在数组允许重复时，使用递归做的话，可以先排序，然后在遇到num[i] == num[i-1]时，直接跳过去就好</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; subsetsWithDup(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">    	List&lt;List&lt;Integer&gt;&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    	List&lt;Integer&gt; each = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    	helper(res, each, <span class="number">0</span>, nums);</span><br><span class="line">    	<span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">helper</span><span class="params">(List&lt;List&lt;Integer&gt;&gt; res, List&lt;Integer&gt; each, <span class="keyword">int</span> pos, <span class="keyword">int</span>[] n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pos &lt;= n.length) &#123;</span><br><span class="line">            res.add(each);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> i = pos;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; n.length) &#123;</span><br><span class="line">            each.add(n[i]);</span><br><span class="line">            helper(res, <span class="keyword">new</span> ArrayList&lt;&gt;(each), i + <span class="number">1</span>, n);</span><br><span class="line">            each.remove(each.size() - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">while</span> (i+<span class="number">1</span> &lt; n.length &amp;&amp; n[i] == n[i + <span class="number">1</span>]) i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>迭代算法</p>
-<ul>
-<li>采用逐个插入元素的思想，对每一个新元素，将其插入到每个已存在的子集中</li>
-<li>如果当前元素是重复元素，那么只能把它插入到上一次插入位置的后面</li>
-<li>比如说1,2,3,3，在插入最后一个3时，不能在[1],[2],[]这些集合中插入，因为第一个3插入时已经找到了这些子集，只能在第一个包含3的集合开始，所以需要插入第二个3的集合有[3],[1,3],[2,3],[1,2,3]。如果有3个3也是一样，第三个3只能插进包含2个3的子集。</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;vector&lt;<span class="keyword">int</span>&gt; &gt; subsetsWithDup(vector&lt;<span class="keyword">int</span>&gt; &amp;S) &#123;</span><br><span class="line">    sort(S.begin(), S.end());</span><br><span class="line">    <span class="comment">// 包含空集的集合</span></span><br><span class="line">    vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt; ret = &#123;&#123;&#125;&#125;;</span><br><span class="line">    <span class="keyword">int</span> size = <span class="number">0</span>, startIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; S.size(); i++) &#123;</span><br><span class="line">    	<span class="comment">// startIndex从上一次开始插入的地方开始，不是重复元素则从0开始</span></span><br><span class="line">        startIndex = i &gt;= <span class="number">1</span> &amp;&amp; S[i] == S[i - <span class="number">1</span>] ? size : <span class="number">0</span>;</span><br><span class="line">        size = ret.size();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = startIndex; j &lt; size; j++) &#123;</span><br><span class="line">            vector&lt;<span class="keyword">int</span>&gt; temp = ret[j];</span><br><span class="line">            temp.push_back(S[i]);</span><br><span class="line">            ret.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/10/Subsets/" data-id="cjn8codv7007z3sphhlvlyqm6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Repeated-DNA-Sequences" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/10/Repeated-DNA-Sequences/">Repeated DNA Sequences</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/10/Repeated-DNA-Sequences/">
-            <time datetime="2016-09-10T08:03:17.000Z" itemprop="datePublished">2016-09-10</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Sliding-window/">Sliding window</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>All DNA is composed of a series of nucleotides abbreviated as A, C, G, and T, for example: “ACGAATTCCG”. When studying DNA, it is sometimes useful to identify repeated sequences within the DNA.</p>
-<p>Write a function to find all the <b>10-letter-long sequences</b> (substrings) that occur more than once in a DNA molecule.</p>
-<p>For example,</p>
-<pre><code>Given s = &quot;AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT&quot;,
-
-Return:
-[&quot;AAAAACCCCC&quot;, &quot;CCCCCAAAAA&quot;].
-</code></pre><h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><p>滑动窗口和哈希表的思想很明显，不过直接将子串作为key放入哈希表中会超出内存限制<br>所以，关键是要减少内存使用量，一个可行的办法如下：</p>
-<ul>
-<li>由于A,C,G,T这四个字母的二进制值的最后三位是不一样的，所以他们&amp;111的值也是不同的，也就是说三位二进制就能区分出这四个字母</li>
-<li>因为window的长度是10，所以表示长度为10的子串需要30位的长度，int型长度是32位(前两位需要设置为0，可以&amp;3fffffff达到效果)，满足条件</li>
-<li>随着窗口移动，左边的退出，右边的加入，我们使用的int数可以每次向左移动三位</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">findRepeatedDnaSequences</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">		List&lt;String&gt; ret = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">		<span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">		HashMap&lt;Integer,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;Integer,Integer&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); i++) &#123;</span><br><span class="line">			<span class="comment">// 3 bits can indicates one letter. so we total need 30 bits to represent a 10-letter string</span></span><br><span class="line">			<span class="comment">// while int is 32 bits long, so, &amp;0x3FFFFFFF helps set the first 2 bits to 0.</span></span><br><span class="line">			<span class="comment">// res&lt;&lt;3 : move the header.</span></span><br><span class="line">			<span class="comment">// s.charAt(i)&amp;7 : add a new letter.</span></span><br><span class="line">			res = res &lt;&lt; <span class="number">3</span> &amp; <span class="number">0x3FFFFFFF</span> | (s.charAt(i) &amp; <span class="number">7</span>);   <span class="comment">//get rid of the header and add the tailer.</span></span><br><span class="line">			<span class="keyword">if</span> (map.containsKey(res)==<span class="keyword">true</span>) &#123;</span><br><span class="line">				<span class="keyword">if</span> (map.get(res) == <span class="number">1</span>)</span><br><span class="line">					ret.add(s.substring(i-<span class="number">9</span>, i+<span class="number">1</span>));</span><br><span class="line">                map.put(res, map.get(res)+<span class="number">1</span>);</span><br><span class="line">        	&#125; <span class="keyword">else</span></span><br><span class="line">				map.put(res, <span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>更加节省空间的方法也有，<b>区分四个数其实只需要2bit</b>。先看下ACGT的二进制后三位</p>
-<pre><code>A : 001
-C : 011
-G : 111
-T : 100
-</code></pre><p>所以，对于一个字母先&amp;100，再&amp;010即可区分这四个数。（区分较难也没关系，可以写个函数搞定）</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/10/Repeated-DNA-Sequences/" data-id="cjn8codut00773spha5r8vg06" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/11/Word-Search/" data-id="cjpqxp6mc0092xgphqxl1ea1y" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1832,6 +1879,63 @@ T : 100
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
     
     
@@ -1867,63 +1971,6 @@ T : 100
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/07/30/WordRank/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
-                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
-                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
-                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1933,7 +1980,7 @@ T : 100
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
         </div>
     </div>
 
@@ -1942,7 +1989,7 @@ T : 100
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1951,7 +1998,7 @@ T : 100
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

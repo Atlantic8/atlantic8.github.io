@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>GRU and LSTM | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="GRU和LSTM都是RNNs中的特殊cell，目的是为了解决标准RNNs中的长期依赖的问题。这个问题是由于简单的RNNs求导公式中存在多个相同矩阵相乘的问题，容易造成梯度消散。使用Relu也只能说在一定程度解决了消散问题，但是会存在梯度爆炸的问题（见参考文献2）。 基本结构相似点：都是通过引入门结构来解决长期依赖问题不同点：门的数量，种类有差异 GRU每个GRU单元的输入有$x^{(t)}$、$h">
+<meta name="keywords" content="Deep Learning,Machine Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GRU and LSTM">
+<meta property="og:url" content="atlantic8.github.io/2018/12/16/GRU-and-LSTM/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="GRU和LSTM都是RNNs中的特殊cell，目的是为了解决标准RNNs中的长期依赖的问题。这个问题是由于简单的RNNs求导公式中存在多个相同矩阵相乘的问题，容易造成梯度消散。使用Relu也只能说在一定程度解决了消散问题，但是会存在梯度爆炸的问题（见参考文献2）。 基本结构相似点：都是通过引入门结构来解决长期依赖问题不同点：门的数量，种类有差异 GRU每个GRU单元的输入有$x^{(t)}$、$h">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkv73w0v5j20gy08y75m.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkv5yp61gj20a30323yt.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkw7pv9lvj20gy0c2mys.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkwdq6le8j20ay0473z1.jpg">
+<meta property="og:updated_time" content="2018-12-16T13:29:38.581Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GRU and LSTM">
+<meta name="twitter:description" content="GRU和LSTM都是RNNs中的特殊cell，目的是为了解决标准RNNs中的长期依赖的问题。这个问题是由于简单的RNNs求导公式中存在多个相同矩阵相乘的问题，容易造成梯度消散。使用Relu也只能说在一定程度解决了消散问题，但是会存在梯度爆炸的问题（见参考文献2）。 基本结构相似点：都是通过引入门结构来解决长期依赖问题不同点：门的数量，种类有差异 GRU每个GRU单元的输入有$x^{(t)}$、$h">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkv73w0v5j20gy08y75m.jpg">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                118
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                44
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-GRU-and-LSTM" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            GRU and LSTM
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2018/12/16/GRU-and-LSTM/">
+            <time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Deep-Learning/">Deep Learning</a>, <a class="tag-link" href="/tags/Machine-Learning/">Machine Learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>GRU和LSTM都是RNNs中的特殊cell，目的是为了解决标准RNNs中的长期依赖的问题。这个问题是由于简单的RNNs求导公式中存在多个相同矩阵相乘的问题，容易造成梯度消散。使用Relu也只能说在一定程度解决了消散问题，但是会存在梯度爆炸的问题（见参考文献2）。</p>
+<h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>相似点：都是通过引入门结构来解决长期依赖问题<br>不同点：门的数量，种类有差异</p>
+<h4 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h4><p>每个GRU单元的输入有$x^{(t)}$、$h^{(t-1)}$，分别表示当前步的输入和上一步的隐状态。<strong>基本思想是先构建新的memory，然后再和上一隐含状态加权得到新的隐含状态</strong>。</p>
+<p>基本结构如下图所示</p>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkv73w0v5j20gy08y75m.jpg" alt="image"></p>
+<p>GRU包含几个门，分别是</p>
+<ul>
+<li>reset($r^{(t)}$)：从构建新new memory的角度出发，$r^{(t)}$决定$h^{(t-1)}$对new memory的贡献多大</li>
+<li>new memory($\hat{h}^{(t)}$)：由当前输入和上一步的隐含状态决定，当然，上一阶段隐含状态的重要性也受到reset gate的影响</li>
+<li>update($z^{(t)}$)：决定$h^{(t-1)}$对$h^{(t)}$的贡献多大</li>
+<li>hidden state($h^{(t)}$)：有上一步的隐含状态和new memory加权得到，权重有update gate决定</li>
+</ul>
+<p>公式如下，懒得打了：</p>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkv5yp61gj20a30323yt.jpg" alt="image"></p>
+<h4 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h4><p>同样地，每个LSTM单元的输入有$x^{(t)}$、$h^{(t-1)}$，分别表示当前步的输入和上一步的隐状态。需要注意的是，<strong>LSTM cell中的流动数据不仅包括隐含状态，还包括final memory</strong> 。然后生成final memory，这个过程需要input gate和forget gate。最后<strong>由output gate辅助生成当前的隐含状态(GRU没有这一步)</strong>。结构图如下</p>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkw7pv9lvj20gy0c2mys.jpg" alt="image"></p>
+<ul>
+<li>new memory：由当前输入和前一步的隐含状态决定，前一步的隐含状态贡献度由</li>
+<li>final memory：由上一步的final memory和当前的new memory生成。其中上一步final memory的贡献度由forget gate决定，当前new memory的贡献度由input gate决定</li>
+<li>input gate：作用在上面已经说明了，由上一步隐含状态和当前输入决定</li>
+<li>forget gate：同input gate</li>
+<li>output gate：决定final memory对当前隐层状态的贡献</li>
+</ul>
+<p>贴一下公式</p>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwkwdq6le8j20ay0473z1.jpg" alt="image"></p>
+<p>需要注意的是，上面公式倒数第二个写错了，forget gate决定的是$c^{(t-1)}$.</p>
+<p>关于LSTM、GRU是如何避免梯度问题的，关键是将简单RNN的求导过程中的乘法变成了加法，之前的记忆不会受到乘法的影响，因此不会过分衰减。同时又通过其他的门结构保证灵活性。</p>
+<hr>
+<p><strong>引用</strong></p>
+<p>[1]. <a href="https://blog.csdn.net/u012223913/article/details/77724621" target="_blank" rel="noopener">LSTM 和GRU的区别</a></p>
+<p>[2]. <a href="https://blog.csdn.net/hx14301009/article/details/80401227" target="_blank" rel="noopener">理解RNN梯度消失和弥散以及LSTM为什么能解决</a></p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="cjpqxp6iv002rxgphfq1mhb5a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2018/12/16/Hough-Transform/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    Hough Transform
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2018/12/16/how-does-shazam-work/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">how does shazam work</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

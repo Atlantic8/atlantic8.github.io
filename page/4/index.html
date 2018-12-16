@@ -170,11 +170,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                115
+                118
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                41
+                44
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +233,510 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Sliding-Window-Maximum" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/02/16/Sliding-Window-Maximum/">Sliding Window Maximum</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/02/16/Sliding-Window-Maximum/">
+            <time datetime="2017-02-16T07:31:45.000Z" itemprop="datePublished">2017-02-16</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Sliding-window/">Sliding window</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定数组<code>nums</code>，和滑动窗口的长度<code>k</code>，输出滑动窗口一次一个元素地向前滑动时每一时刻滑动窗口内的最大值。要求在<code>O(n)</code>复杂度内完成。</p>
+<pre><code>nums = [1,3,-1,-3,5,3,6,7],  k = 3
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+---------------               -----
+output [3,3,5,5,6,7]
+</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>滑动窗口内添加新元素简单，但是删除时比较麻烦，所以简单使用堆的思路不行。</p>
+<p>双端队列对滑动窗口有比较好的模拟，其尾部、头部都可以添加和删除元素（也有受限的应用版本）。</p>
+<p>本题使用的方法也称作<strong>单调队列</strong>，其定义如下：</p>
+<pre><code>队列中元素之间的关系具有单调性，而且，队首和队尾都可以进行出队操作，只有队尾可以进行入队操作
+</code></pre><p>以单调不减队列为例，队列内的元素$(e_1,e_2,…,e_n)$存在$(e_1\le e_2\le…\le e_n)$的关系，所以队首元素$e_1$一定是最小的元素。与优先队列不同的是，<strong>当有一个新的元素$e$入队时，先要将队尾的所有大于$e$的元素弹出，以保证单调性，再让元素$e$入队尾</strong>。</p>
+<p>所以本题的方法描述如下：</p>
+<ul>
+<li>队列元素如果超过了k的限制，那么从队头剔除</li>
+<li>从队尾起，如果队尾的元素小于当前需要添加的元素，那么剔除队尾元素（它不可能成为最大值），直到队尾元素大于等于当前需要添加的元素。</li>
+<li>此时，队列是非递减队列，所以队头元素就是最大值</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">maxSlidingWindow</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; ret;</span><br><span class="line">	deque&lt;<span class="keyword">int</span>&gt; window;</span><br><span class="line">	<span class="keyword">if</span> (nums.size()&lt;<span class="number">1</span> || k&lt;=<span class="number">0</span>) <span class="keyword">return</span> ret;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!window.empty() &amp;&amp; window.front()&lt;i-k+<span class="number">1</span>)</span><br><span class="line">			window.pop_front();</span><br><span class="line">		<span class="keyword">while</span> (!window.empty() &amp;&amp; nums[window.back()]&lt;nums[i])</span><br><span class="line">			window.pop_back();</span><br><span class="line">		window.push_back(i);</span><br><span class="line">		<span class="keyword">if</span> (i &gt;= k-<span class="number">1</span>) ret.push_back(nums[window.front()]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/02/16/Sliding-Window-Maximum/" data-id="cjpqxp6lc007jxgphmvfv6elr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Java-Future" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/01/18/Java-Future/">Java Future</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/01/18/Java-Future/">
+            <time datetime="2017-01-18T02:25:54.000Z" itemprop="datePublished">2017-01-18</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Java/">Java</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="Callable与Runnable"><a href="#Callable与Runnable" class="headerlink" title="Callable与Runnable"></a>Callable与Runnable</h6><p>Java中的多线程实现可以通过继承<code>Thread</code>或者实现<code>Runnable</code>接口来实现，但是这两种方法都不能将执行结果取回。<code>Runnable</code>接口定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于<code>run()</code>方法返回值为void类型，所以在执行完任务之后无法返回任何结果。</p>
+<p><code>Callable</code>位于java.util.concurrent包下，它也是一个泛型接口，在它里面也只声明了一个方法<code>call()</code>，返回的类型就是传递进来的<code>V</code>类型：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Computes a result, or throws an exception if unable to do so.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> computed result</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception if unable to compute a result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Callable</code>一般情况下是配合<code>ExecutorService</code>来使用的，在<code>ExecutorService</code>接口中声明了若干个<code>submit</code>方法的重载版本：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line"></span><br><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Runnable task, T result)</span></span>;</span><br><span class="line"></span><br><span class="line">Future&lt;?&gt; submit(Runnable task);</span><br></pre></td></tr></table></figure></p>
+<p>这三个方法中，常用的是第一个和第三个。</p>
+<hr>
+<h6 id="Future"><a href="#Future" class="headerlink" title="Future"></a>Future</h6><p><code>Future</code>是一个接口，位于<code>java.util.concurrent</code>包下，定义如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">cancel</span><span class="params">(<span class="keyword">boolean</span> mayInterruptIfRunning)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isCancelled</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isDone</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, ExecutionException</span>;</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException, TimeoutException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Future</code>就是对于具体的<code>Runnable</code>或者<code>Callable</code>任务的执行结果进行取消、查询是否完成、获取结果。必要时可以通过<code>get</code>方法获取执行结果，此方法会阻塞直到任务返回结果。上述方法中：</p>
+<hr>
+<p>1 <code>cancel</code>方法用来取消任务，如果取消任务成功则返回true，如果取消任务失败则返回false。参数<code>mayInterruptIfRunning</code>表示是否允许取消正在执行却没有执行完毕的任务，如果设置true，则表示可以取消正在执行过程中的任务。如果任务已经完成，则无论<code>mayInterruptIfRunning</code>为true还是false，此方法肯定返回false，即如果取消已经完成的任务会返回false；如果任务正在执行，若<code>mayInterruptIfRunning</code>设置为true，则返回true，若<code>mayInterruptIfRunning</code>设置为false，则返回false；如果任务还没有执行，则无论<code>mayInterruptIfRunning</code>为true还是false，肯定返回true</p>
+<p>2 <code>isCancelled</code>方法表示任务是否被取消成功，如果在任务正常完成前被取消成功，则返回 true</p>
+<p>3 <code>isDone</code>方法表示任务是否已经完成，若任务完成，则返回true</p>
+<p>4 <code>get()</code>方法用来获取执行结果，这个方法会产生阻塞，会一直等到任务执行完毕才返回</p>
+<p>5 <code>get(long timeout, TimeUnit unit)</code>用来获取执行结果，如果在指定时间内，还没获取到结果，就直接返回null</p>
+<hr>
+<h6 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a>FutureTask</h6><p>由于<code>Future</code>是个接口，所以其不能实例化，<code>FutureTask</code>应运而生，也是<code>Future</code>接口的唯一实现类。</p>
+<p>FutureTask类实现了RunnableFuture接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureTask</span>&lt;<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt; </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">Runnable</span>, <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>RunnableFuture</code>继承了<code>Runnable</code>接口和<code>Future</code>接口，而<code>FutureTask</code>实现了<code>RunnableFuture</code>接口，关系如图所示。所以它既可以作为<code>Runnable</code>被线程执行，又可以作为<code>Future</code>得到<code>Callable</code>的返回值。</p>
+<center>![关系图](http://wx1.sinaimg.cn/mw690/9bcfe727ly1fbumuzrzbaj20hz0dhq31.jpg)</center>
+
+<p>FutureTask提供了2个构造器<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FutureTask</span><span class="params">(Callable&lt;V&gt; callable)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FutureTask</span><span class="params">(Runnable runnable, V result)</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h6 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h6><p>使用<code>Callable + Future</code>获取执行结果<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService executor = Executors.newCachedThreadPool();</span><br><span class="line">Task task = <span class="keyword">new</span> Task();</span><br><span class="line">Future&lt;Integer&gt; result = executor.submit(task);</span><br><span class="line">executor.shutdown();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">"task运行结果"</span>+result.get());</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Integer</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"子线程在进行计算"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++)</span><br><span class="line">            sum += i;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>使用<code>Callable + FutureTask</code>获取执行结果<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService executor = Executors.newCachedThreadPool();</span><br><span class="line">Task task = <span class="keyword">new</span> Task();</span><br><span class="line">FutureTask&lt;Integer&gt; futureTask = <span class="keyword">new</span> FutureTask&lt;Integer&gt;(task);</span><br><span class="line"></span><br><span class="line">executor.submit(futureTask);</span><br><span class="line">executor.shutdown();</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    System.out.println(<span class="string">"task运行结果"</span>+futureTask.get());</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Integer</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"子线程在进行计算"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++)</span><br><span class="line">            sum += i;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/01/18/Java-Future/" data-id="cjpqxp6jb003qxgph3nqguj1f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Java-Thread-Pool" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/01/17/Java-Thread-Pool/">Java Thread Pool</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/01/17/Java-Thread-Pool/">
+            <time datetime="2017-01-17T06:43:08.000Z" itemprop="datePublished">2017-01-17</time>
+        </a>
+    </div>
+
+
+                        
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Java/">Java</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="ThreadPoolExecutor"><a href="#ThreadPoolExecutor" class="headerlink" title="ThreadPoolExecutor"></a>ThreadPoolExecutor</h5><hr>
+<h6 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h6><p><code>java.uitl.concurrent.ThreadPoolExecutor</code>类是线程池中最核心的一个类，继承自<code>AbstractExecutorService</code>，<code>AbstractExecutorService</code>是一个抽象类，它实现了ExecutorService接口。<code>ThreadPoolExecutor</code>的构造方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolExecutor</span> <span class="keyword">extends</span> <span class="title">AbstractExecutorService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize,<span class="keyword">long</span> keepAliveTime,TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">            BlockingQueue&lt;Runnable&gt; workQueue)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize,<span class="keyword">long</span> keepAliveTime,TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">            BlockingQueue&lt;Runnable&gt; workQueue,ThreadFactory threadFactory)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize,<span class="keyword">long</span> keepAliveTime,TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">            BlockingQueue&lt;Runnable&gt; workQueue,RejectedExecutionHandler handler)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,<span class="keyword">int</span> maximumPoolSize,<span class="keyword">long</span> keepAliveTime,TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">        BlockingQueue&lt;Runnable&gt; workQueue,ThreadFactory threadFactory,RejectedExecutionHandler handler)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>前面三个构造器都是调用的第四个构造器进行的初始化工作，参数介绍如下：</p>
+<hr>
+<p>1 <code>corePoolSize</code> : 核心池的大小。默认情况下，在创建了线程池后，线程池中的线程数为0，当有任务来之后，就会创建一个线程去执行任务，当线程池中的线程数目达到<code>corePoolSize</code>后，就会把到达的任务放到缓存队列当中。（正式工）<br>2 <code>maximumPoolSize</code> : 线程池最大线程数，表示在线程池中最多能创建多少个线程。最大线程数意味着当核心池不够用时可以额外开辟新线程，但这些新加入的线程在空闲时可以销毁（临时工）。<br>3 <code>keepAliveTime</code> : 线程没有任务执行时最多保持多久时间会终止。默认情况下，只有当线程池中的线程数大于<code>corePoolSize</code>时，<code>keepAliveTime</code>才会起作用，直到线程池中的线程数不大于<code>corePoolSize</code>，即当线程池中的线程数大于<code>corePoolSize</code>时，如果一个线程空闲的时间达到<code>keepAliveTime</code>，则会终止，直到线程池中的线程数不超过<code>corePoolSize</code>。但是如果调用了<code>allowCoreThreadTimeOut(boolean)</code>方法，在线程池中的线程数不大于<code>corePoolSize</code>时，<code>keepAliveTime</code>参数也会起作用，直到线程池中的线程数为0。<br>4 <code>unit</code> : <code>keepAliveTime</code>的时间单位. 包括</p>
+<pre><code>TimeUnit.DAYS
+TimeUnit.HOURS
+TimeUnit.MINUTES
+TimeUnit.SECONDS
+TimeUnit.MILLISECONDS
+TimeUnit.MICROSECONDS
+TimeUnit.NANOSECONDS
+</code></pre><p>5 <code>workQueue</code> : 一个阻塞队列，用来存储等待执行的任务。可以是如下三种，其中<code>ArrayBlockingQueue</code>和<code>PriorityBlockingQueue</code>使用较少，一般使用<code>LinkedBlockingQueue</code>和<code>Synchronous</code>。线程池的排队策略与BlockingQueue有关。</p>
+<pre><code>ArrayBlockingQueue：基于数组的先进先出队列，此队列创建时必须指定大小
+LinkedBlockingQueue：基于链表的先进先出队列，如果创建时没有指定此队列大小，则默认为Integer.MAX_VALUE
+SynchronousQueue：不会保存提交的任务，而是将直接新建一个线程来执行新来的任务
+PriorityBlockingQueue
+</code></pre><p>6 <code>threadFactory</code> ：线程工厂，主要用来创建线程<br>7 <code>handler</code> ：表示当拒绝处理任务时的策略，可以是</p>
+<pre><code>ThreadPoolExecutor.AbortPolicy:丢弃任务并抛出RejectedExecutionException异常
+ThreadPoolExecutor.DiscardPolicy：也是丢弃任务，但是不抛出异常
+ThreadPoolExecutor.DiscardOldestPolicy：丢弃队列最前面的任务，然后重新尝试执行任务（重复此过程）
+ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务
+</code></pre><hr>
+<h6 id="继承结构"><a href="#继承结构" class="headerlink" title="继承结构"></a>继承结构</h6><p><code>Executor</code>是一个顶层接口，在它里面只声明了一个方法<code>execute(Runnable)</code>，返回值为void，参数为<code>Runnable</code>类型，从字面意思可以理解，就是用来执行传进去的任务的。</p>
+<p><code>ExecutorService</code>接口继承了<code>Executor</code>接口，并声明了一些方法：<code>submit</code>、<code>invokeAll</code>、<code>invokeAny</code>以及<code>shutDown</code>等。</p>
+<p>抽象类<code>AbstractExecutorService</code>实现了<code>ExecutorService</code>接口，基本实现了<code>ExecutorService</code>中声明的所有方法。</p>
+<p><code>ThreadPoolExecutor</code>继承了类<code>AbstractExecutorService</code>。在<code>ThreadPoolExecutor</code>类中有几个非常重要的方法：</p>
+<hr>
+<p>1 <code>execute()</code> : <code>execute()</code>方法实际上是<code>Executor</code>中声明的方法，在<code>ThreadPoolExecutor</code>进行了具体的实现，这个方法是<code>ThreadPoolExecutor</code>的核心方法，通过这个方法可以向线程池提交一个任务，交由线程池去执行。</p>
+<p>2 <code>submit()</code> : <code>submit()</code>方法是在<code>ExecutorService</code>中声明的方法，在<code>AbstractExecutorService</code>就已经有了具体的实现，在<code>ThreadPoolExecutor</code>中并没有对其进行重写，这个方法也是用来向线程池提交任务的，但是它和<code>execute()</code>方法不同，它能够返回任务执行的结果(<code>Future</code>)</p>
+<p>3 <code>shutdown()</code> : 关闭线程池，不再接受新的任务，等到所有线程完成任务关闭线程池</p>
+<p>4 <code>shutdownNow()</code> : 立即结束所有线程，关闭线程池</p>
+<hr>
+<h5 id="线程池实现原理"><a href="#线程池实现原理" class="headerlink" title="线程池实现原理"></a>线程池实现原理</h5><hr>
+<h6 id="线程状态"><a href="#线程状态" class="headerlink" title="线程状态"></a>线程状态</h6><p><code>ThreadPoolExecutor</code>中定义了一个<code>volatile</code>变量<code>volatile int runState</code>表示当前线程池的状态，它是一个volatile变量用来保证线程之间的可见性。还有几个<code>static final</code>变量表示<code>runState</code>可能的几个取值：</p>
+<pre><code>static final int RUNNING    = 0;
+static final int SHUTDOWN   = 1;
+static final int STOP       = 2;
+static final int TERMINATED = 3;
+</code></pre><p>创建线程池后，初始时，线程池处于<code>RUNNING</code>状态。<br>调用了<code>shutdown()</code>方法，则线程池处于<code>SHUTDOWN</code>状态，此时线程池不能够接受新的任务，它会等待所有任务执行完毕。<br>调用了<code>shutdownNow()</code>方法，则线程池处于<code>STOP</code>状态，此时线程池不能接受新的任务，并且会去尝试终止正在执行的任务。<br>当线程池处于<code>SHUTDOWN</code>或<code>STOP</code>状态，并且所有工作线程已经销毁，任务缓存队列已经清空或执行结束后，线程池被设置为<code>TERMINATED</code>状态。</p>
+<hr>
+<h6 id="任务执行"><a href="#任务执行" class="headerlink" title="任务执行"></a>任务执行</h6><p><code>ThreadPoolExecutor</code>类中其他的一些比较重要成员变量如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> BlockingQueue&lt;Runnable&gt; workQueue;  <span class="comment">//任务缓存队列，用来存放等待执行的任务</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ReentrantLock mainLock = <span class="keyword">new</span> ReentrantLock(); <span class="comment">//线程池的主要状态锁，对线程池状态（比如线程池大小、runState等）的改变都要使用这个锁</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HashSet&lt;Worker&gt; workers = <span class="keyword">new</span> HashSet&lt;Worker&gt;();  <span class="comment">//用来存放工作集</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">long</span>  keepAliveTime;    <span class="comment">//线程存货时间</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> allowCoreThreadTimeOut;   <span class="comment">//是否允许为核心线程设置存活时间</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span>   corePoolSize;     <span class="comment">//核心池的大小（即线程池中的线程数目大于这个参数时，提交的任务会被放进任务缓存队列）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span>   maximumPoolSize;   <span class="comment">//线程池最大能容忍的线程数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span>   poolSize;       <span class="comment">//线程池中当前的线程数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> RejectedExecutionHandler handler; <span class="comment">//任务拒绝策略</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> ThreadFactory threadFactory;   <span class="comment">//线程工厂，用来创建线程</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> largestPoolSize;   <span class="comment">//用来记录线程池中曾经出现过的最大线程数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> completedTaskCount;   <span class="comment">//用来记录已经执行完毕的任务个数</span></span><br></pre></td></tr></table></figure></p>
+<p>任务提交执行依靠<code>execute()</code>方法，<code>submit()</code>也是提交任务的方法，但是它也是调用了<code>execute()</code>方法。<code>execute()</code>方法处理方法的逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (command == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    <span class="keyword">if</span> (poolSize &gt;= corePoolSize || !addIfUnderCorePoolSize(command)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (runState == RUNNING &amp;&amp; workQueue.offer(command)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (runState != RUNNING || poolSize == <span class="number">0</span>)</span><br><span class="line">                ensureQueuedTaskHandled(command);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!addIfUnderMaximumPoolSize(command))</span><br><span class="line">            reject(command); <span class="comment">// is shutdown or saturated</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，判断提交的任务<code>command</code>是否为<code>null</code>，若是<code>null</code>，则抛出空指针异常。接着还是一个判断语句，如果线程池中当前线程数不小于核心池大小，直接执行判断语句中的代码；否则执行<code>addIfUnderCorePoolSize(command)</code>，如果返回false，则继续执行判断语句中的代码，否则整个方法就直接执行完毕了。</p>
+<p>第二层判断语句中，如果当前线程池处于RUNNING状态，则将任务放入任务缓存队列(<code>workQueue.offer(command)</code>就是将任务放入缓存队列)；如果当前线程池不处于RUNNING状态或者任务放入缓存队列失败，则执行<code>addIfUnderMaximumPoolSize(command)</code>，如果执行<code>addIfUnderMaximumPoolSize</code>方法失败，则执行<code>reject()</code>方法进行任务拒绝处理。</p>
+<p>如果说当前线程池处于RUNNING状态且将任务放入任务缓存队列成功，则继续执行第三层判断语句<code>if (runState != RUNNING || poolSize == 0)</code>，这句判断是为了防止在将此任务添加进任务缓存队列的同时其他线程突然调用<code>shutdown</code>或者<code>shutdownNow</code>方法关闭了线程池的一种应急措施，如果是这样就需要应急处理<code>ensureQueuedTaskHandled(command)</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">addIfUnderCorePoolSize</span><span class="params">(Runnable firstTask)</span> </span>&#123;</span><br><span class="line">    Thread t = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> ReentrantLock mainLock = <span class="keyword">this</span>.mainLock;</span><br><span class="line">    mainLock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (poolSize &lt; corePoolSize &amp;&amp; runState == RUNNING)</span><br><span class="line">            t = addThread(firstTask);        <span class="comment">//创建线程去执行firstTask任务</span></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        	mainLock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (t == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    t.start();</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面提到的<code>addIfUnderCorePoolSize</code>方法，由字面意思是当低于核心池大小时执行的方法，因为涉及线程池的变化，所以需要加锁。if语句判断当前线程池中的线程数目是否小于核心池大小，虽然前面在<code>execute()</code>方法中已经判断过了，但是没有加锁。因此可能在<code>execute</code>方法判断的时候<code>poolSize</code>小于<code>corePoolSize</code>，而判断完之后，在其他线程中又向线程池提交了任务，就可能导致<code>poolSize</code>不小于<code>corePoolSize</code>了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Thread <span class="title">addThread</span><span class="params">(Runnable firstTask)</span> </span>&#123;</span><br><span class="line">    Worker w = <span class="keyword">new</span> Worker(firstTask);</span><br><span class="line">    Thread t = threadFactory.newThread(w);  <span class="comment">//创建一个线程，执行任务</span></span><br><span class="line">    <span class="keyword">if</span> (t != <span class="keyword">null</span>) &#123;</span><br><span class="line">        w.thread = t;            <span class="comment">//将创建的线程的引用赋值为w的成员变量</span></span><br><span class="line">        workers.add(w);</span><br><span class="line">        <span class="keyword">int</span> nt = ++poolSize;     <span class="comment">//当前线程数加1</span></span><br><span class="line">        <span class="keyword">if</span> (nt &gt; largestPoolSize)</span><br><span class="line">            largestPoolSize = nt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于<code>runState</code>的判断也是类似的。满足条件的话，通过<code>addThread</code>方法创建线程，创建成功则启动线程。在<code>addThread</code>方法中，首先用提交的任务创建了一个<code>Worker</code>对象，然后调用线程工厂<code>threadFactory</code>创建了一个新的线程<code>t</code>，然后将线程<code>t</code>的引用赋值给了<code>Worker</code>对象的成员变量<code>thread</code>，接着通过<code>workers.add(w)</code>将<code>Worker</code>对象添加到工作集当中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Runnable task = firstTask;</span><br><span class="line">        firstTask = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">while</span> (task != <span class="keyword">null</span> || (task = getTask()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            runTask(task);</span><br><span class="line">            task = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        workerDone(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Worker</code>类实现了<code>Runnable</code>接口，在其<code>run</code>函数中首先执行的是通过构造器传进来的任务<code>firstTask</code>，在调用<code>runTask()</code>执行完<code>firstTask</code>之后，在<code>while</code>循环里面不断通过<code>getTask()</code>去取新的任务来执行，<code>getTask</code>是<code>ThreadPoolExecutor</code>类中的方法，从任务缓存队列中取。</p>
+<p>任务提交后，线程池的处理策略总结如下：</p>
+<ul>
+<li>如果当前线程池中的线程数目小于<code>corePoolSize</code>，则每来一个任务，就会创建一个线程去执行这个任务；</li>
+<li>如果当前线程池中的线程数目&gt;=<code>corePoolSize</code>，则每来一个任务，会尝试将其添加到任务缓存队列当中，若添加成功，则该任务会等待空闲线程将其取出去执行；若添加失败（一般来说是任务缓存队列已满），则会尝试创建新的线程去执行这个任务；</li>
+<li>如果当前线程池中的线程数目达到<code>maximumPoolSize</code>，则会采取任务拒绝策略进行处理；</li>
+<li>如果线程池中的线程数量大于<code>corePoolSize</code>时，如果某线程空闲时间超过<code>keepAliveTime</code>，线程将被终止，直至线程池中的线程数目不大于<code>corePoolSize</code>；如果允许为核心池中的线程设置存活时间，那么核心池中的线程空闲时间超过<code>keepAliveTime</code>，线程也会被终止。</li>
+</ul>
+<hr>
+<h6 id="线程初始化"><a href="#线程初始化" class="headerlink" title="线程初始化"></a>线程初始化</h6><p>默认情况下，创建线程池之后，线程池中是没有线程的，需要提交任务之后才会创建线程。如果需要线程池创建之后立即创建线程，可以通过以下两个方法办到：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化一个核心线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">prestartCoreThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> addIfUnderCorePoolSize(<span class="keyword">null</span>); <span class="comment">//注意传进去的参数是null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化所有核心线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">prestartAllCoreThreads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (addIfUnderCorePoolSize(<span class="keyword">null</span>))<span class="comment">//注意传进去的参数是null</span></span><br><span class="line">        ++n;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面传入参数为null，最后执行线程会阻塞在<code>getTask</code>方法中的<code>workQueue.take()</code>，等待直到任务队列中有任务。</p>
+<hr>
+<h6 id="容量的动态调整"><a href="#容量的动态调整" class="headerlink" title="容量的动态调整"></a>容量的动态调整</h6><pre><code>setCorePoolSize：设置核心池大小
+setMaximumPoolSize：设置线程池最大能创建的线程数目大小
+</code></pre><hr>
+<h5 id="线程池应用"><a href="#线程池应用" class="headerlink" title="线程池应用"></a>线程池应用</h5><hr>
+<h6 id="ThreadPoolExecutor-1"><a href="#ThreadPoolExecutor-1" class="headerlink" title="ThreadPoolExecutor"></a>ThreadPoolExecutor</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 缓存任务队列大小为8，核心池大小为5</span></span><br><span class="line">ThreadPoolExecutor executor = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">5</span>, <span class="number">10</span>, <span class="number">200</span>, TimeUnit.MILLISECONDS, <span class="keyword">new</span> ArrayBlockingQueue&lt;Runnable&gt;(<span class="number">8</span>));</span><br><span class="line">executor.execute(myTask);</span><br><span class="line"><span class="comment">// myTask 应该是显示了Runnable的类的对象</span></span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
+<hr>
+<h6 id="推荐实现"><a href="#推荐实现" class="headerlink" title="推荐实现"></a>推荐实现</h6><p>Java官方不推荐直接使用<code>ThreadPoolExecutor</code>，而是使用<code>Executors</code>类中提供的几个静态方法来创建线程池。分别是<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Executors.newCachedThreadPool();        <span class="comment">//创建一个缓冲池，缓冲池容量大小为Integer.MAX_VALUE</span></span><br><span class="line">Executors.newSingleThreadExecutor();   <span class="comment">//创建容量为1的缓冲池</span></span><br><span class="line">Executors.newFixedThreadPool(<span class="keyword">int</span>);    <span class="comment">//创建固定容量大小的缓冲池</span></span><br><span class="line">Executors.newScheduledThreadPool(<span class="keyword">int</span>); <span class="comment">//创建固定容量的延迟连接池</span></span><br></pre></td></tr></table></figure></p>
+<p>这三种方法也都是调用了<code>ThreadPoolExecutor</code>，支持参数设定不同而已。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                  <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                  <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ExecutorService pool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">Thread t1 = <span class="keyword">new</span> MyThread();</span><br><span class="line">Thread t2 = <span class="keyword">new</span> MyThread();</span><br><span class="line">pool.execute(t1);</span><br><span class="line">pool.execute(t2);</span><br><span class="line">pool.shutdown();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</span><br><span class="line">&#125;</span><br><span class="line">ExecutorService pool = Executors.newSingleThreadExecutor();</span><br><span class="line">Thread t1 = <span class="keyword">new</span> MyThread();</span><br><span class="line">pool.execute(t1);</span><br><span class="line">pool.shutdown();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                  <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                  <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br><span class="line">ExecutorService pool = Executors.newCachedThreadPool();</span><br><span class="line">Thread t1 = <span class="keyword">new</span> MyThread();</span><br><span class="line">Thread t2 = <span class="keyword">new</span> MyThread();</span><br><span class="line">pool.execute(t1);</span><br><span class="line">pool.execute(t2);</span><br><span class="line">pool.shutdown();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ScheduledExecutorService pool = Executors.newScheduledThreadPool(<span class="number">2</span>);</span><br><span class="line">Thread t1 = <span class="keyword">new</span> MyThread();</span><br><span class="line">Thread t2 = <span class="keyword">new</span> MyThread();</span><br><span class="line">Thread t3 = <span class="keyword">new</span> MyThread();</span><br><span class="line"></span><br><span class="line">pool.execute(t1);</span><br><span class="line"></span><br><span class="line">pool.schedule(t2, <span class="number">1000</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">pool.schedule(t3, <span class="number">10</span>, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">pool.shutdown();</span><br></pre></td></tr></table></figure>
+<p><code>newFixedThreadPool</code>创建的线程池<code>corePoolSize</code>和<code>maximumPoolSize</code>值是相等的，它使用的<code>LinkedBlockingQueue</code>；</p>
+<p><code>newSingleThreadExecutor</code>将<code>corePoolSize</code>和<code>maximumPoolSize</code>都设置为1，也使用的<code>LinkedBlockingQueue</code>；</p>
+<p><code>newCachedThreadPool</code>将<code>corePoolSize</code>设置为0，将<code>maximumPoolSize</code>设置为<code>Integer.MAX_VALUE</code>，使用的<code>SynchronousQueue</code>，也就是说来了任务就创建线程运行，当线程空闲超过60秒，就销毁线程。</p>
+<hr>
+<p>感谢<a href="http://www.cnblogs.com/dolphin0520/p/3932921.html" target="_blank" rel="noopener">原文</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/01/17/Java-Thread-Pool/" data-id="cjpqxp6jf003wxgphjdumm9fb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Boosting" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -434,7 +938,7 @@ h_t(x) = \arg\min_{h} E_{x\sim \mathcal{D}_t} [I(f(x) \neq h(x))]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjn8codr3000n3sph800gjyzk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjpqxp6hl000jxgph7zt1xy5n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -615,7 +1119,7 @@ H^{oe}(x)=\arg\max_{y\in Y} \sum_{t=1}^T I(h_t(x)=y)\times I(x\not\in D_t)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjn8codrx00233sphqvgqyznl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjpqxp6ie0021xgpheb5xogzp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -778,7 +1282,7 @@ P(k)=\frac{e^{\frac{Q(k)}{\tau}}} {\sum_{i=1}^K e^{\frac{Q(k)}{\tau}}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjn8codty005f3sphfss2g5qf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjpqxp6kd005rxgphh48qfwaq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1004,7 +1508,7 @@ y^{(i)} \gets R(s)+\gamma \max_{a} E_{s^{'}\sim P_{sa}}[V(s_{'}]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjn8codth004r3sph55zn72gj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjpqxp6k1004zxgphbz9yr4xe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1233,7 +1737,7 @@ p(X,y_t=i|\lambda)&=\sum_{i=1}^N \theta_t(i)\beta_t(i)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjn8codsp00373sphk28wd0qg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjpqxp6j5003cxgphfyd25sg3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1548,7 +2052,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjn8codvh008d3sph0c2hnbio" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjpqxp6m3008pxgphqmte3yrq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1716,494 +2220,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjn8codv4007w3sphwzhti7ri" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Manifold-Learning" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/18/Manifold-Learning/">Manifold Learning</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/18/Manifold-Learning/">
-            <time datetime="2016-12-18T03:50:16.000Z" itemprop="datePublished">2016-12-18</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="流形"><a href="#流形" class="headerlink" title="流形"></a>流形</h6><pre><code>流形学习是一类借鉴了拓扑流行概念的概念降维方法
-直观上来讲，一个流形好比是一个 d 维的空间
-在一个 m 维的空间中 (m &gt; d) 被扭曲之后的结果
-</code></pre><p>比如说一块布，可以把它看成一个二维平面，这是一个二维的欧氏空间，现在我们（在三维）中把它扭一扭，它就变成了一个流形（当然，不扭的时候，它也是一个流形，欧氏空间是流形的一种特殊情况），地球表面其实也只是一个二维流形。</p>
-<pre><code>流形的一个特点是：流形是在局部与欧式空间 同胚 的空间
-即局部上具有欧式空间的特性，距离度量可以使用欧氏距离
-</code></pre><p>所以，低维流形嵌入到高维空间中，数据样本在高维空间中的分布看上去会比较复杂，但在局部上具有欧式空间的特性。因此，可以容易地在局部建立降维映射关系，然后设法将局部关系映射到全局。<b>此种降维方法可被用于数据可视化</b>。</p>
-<hr>
-<h6 id="等度量映射（Isometric-Mapping）"><a href="#等度量映射（Isometric-Mapping）" class="headerlink" title="等度量映射（Isometric Mapping）"></a>等度量映射（Isometric Mapping）</h6><p>Isomap的出发点是：低维嵌入流形上两点距离是“测地线距离”（地理上的概念，比如地球上两点的距离就不是欧氏距离）<br>但是利用流形的局部与欧式空间同胚特性，我们就能<b>在局部空间内找到每个点的近邻点，从而建立一个近邻连接图。<br>所以，“测地线距离”就是图中的最短距离</b>。最短路径算法可以使用Dijkstra算法或者Floyd算法。<br>有了距离度量表示，就可以降维了，降维方法可以使用MDS算法（当然也可以使用其他方法）</p>
-<p>Isomap算法描述如下：</p>
-<hr>
-<p>输入：样本集$D= \lbrace x_1,x_2,…,x_m \rbrace $; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
-<hr>
-<p>1 $for\quad i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad x_i$与其$k$近邻的距离设置为其欧氏距离，与其他点的距离设置为无穷大<br>4 $end \quad for$<br>5 调用最短距离路径算法计算任意两点之间的距离$dist(x_i,x_j)$<br>6 将$dist(x_i,x_j)$作为MDS算法的输入，输出结果$Z$</p>
-<hr>
-<p>输出：样本集$D$在低维空间的投影$Z$</p>
-<hr>
-<h6 id="局部线性嵌入（Locally-Linear-Embedding）"><a href="#局部线性嵌入（Locally-Linear-Embedding）" class="headerlink" title="局部线性嵌入（Locally Linear Embedding）"></a>局部线性嵌入（Locally Linear Embedding）</h6><p>Isomap 希望保持任意两点之间的测地线距离，保存的信息量大，但是计算量随着节点数量的增长爆炸增长（Dijkstra算法$O(n^2)$或者Floyd算法$O(n^3)$）。<br>LLE 希望保持局部线性关系，信息量较小，但是对数据量较大的情形则比较有效。</p>
-<p>LLE假设$x_i$能够通过其邻域内的样本$x_j,x_k,x_l$线性表出，即<script type="math/tex">x_i=\omega_{ij}x_j+\omega_{ik}x_k+\omega_{il}x_l</script>所以，LLE需要先找出每个样本$x_i$的近邻下标集合$Q_i$，然后计算出基于$Q_i$中的样本对$x_i$进行线性重构的系数$\omega_i$：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{\omega_1,\omega_2,...,\omega_m} \sum_{i=1}^m \left\Vert x_i-\sum_{j \in Q_i}\omega_{ij}x_j \right\Vert^2 \\
-s.t. \quad \sum_{j \in Q_i}\omega_{ij}=1
-\end{aligned}</script><p>这里令$C_{jk}=(x_i-x_j)^T(x_i-x_k)$，$\omega_{ij}$有闭式解</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\omega_{ij}=\frac{\sum_{k\in Q_i}C_{jk}^{-1}}{\sum_{l,s\in Q_i}C_{ls}^{-1}}
-\end{aligned}</script><p>因为LLE假设在低维空间中保持$\omega_i$保持不变，令$Z=(z_1,z_2,…,z_m)\in R^{d^{‘}\times m},W_{ij}=\omega_{ij}$.所以$x_i$的低维坐标$z_i$可以通过</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-\sum_{j\in Q_i}\omega_{ij}z_j \right\Vert^2 \\
-\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-W_iZ \right\Vert^2
-\end{aligned}</script><p>求解，这里需要对$z_i$正规化以满足$\sum_i z_i=0,\frac{1}{m}\sum_i z_iz_i^T=I$。可以令$M=(I-W)^T(I-W)$，那么优化函数可以写成<script type="math/tex">\min_Z tr(ZMZ^T) \quad s.t \; ZZ^T=I</script>这里需要注意我们假设对$Z$正规化，才能满足$ZZ^T=I$。然后上面的优化函数可以通过特征值分解，取最小的$d^{‘}$个非零特征值对应的特征向量即为$Z^T$。</p>
-<p>LLE算法描述</p>
-<hr>
-<p>输入：样本集$D={x_1,x_2,…,x_m}$; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
-<hr>
-<p>1 $for\; i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad$求$\omega_{ij},\; j\in Q_i$, 不在$x_i$邻域内的系数为0<br>4 $end \; for$<br>5 求矩阵$M$<br>5 对$M$进行特征值分解<br>6 输出最小的$d^{‘}$个非零特征值对应的特征向量</p>
-<hr>
-<p>输出：样本集$D$在低维空间的投影$Z$</p>
-<hr>
-<h6 id="拉普拉斯特征映射-Laplacian-Eigenmaps"><a href="#拉普拉斯特征映射-Laplacian-Eigenmaps" class="headerlink" title="拉普拉斯特征映射(Laplacian Eigenmaps)"></a>拉普拉斯特征映射(Laplacian Eigenmaps)</h6><blockquote>
-<p>待更……</p>
-</blockquote>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/18/Manifold-Learning/" data-id="cjn8codtg004o3sphntihv9gx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Multiple-Dimensional-Scaling" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/18/Multiple-Dimensional-Scaling/">Multiple Dimensional Scaling</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/18/Multiple-Dimensional-Scaling/">
-            <time datetime="2016-12-18T02:22:41.000Z" itemprop="datePublished">2016-12-18</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <p>Multiple Dimensional Scaling (MDS、多维缩放)是经典的聚类算法。</p>
-<hr>
-<p>假设原始$d$维样本空间中有$m$个样本$x_1,x_2,…,x_m$，其距离矩阵为$D \in R^{m\times m}$，$dist_{ij}$为$x_i$到$x_j$的距离。MDS的出发点是获得样本在$d^{‘}$维空间内的表示$Z\in R^{d^{‘} \times m}$，新空间内样本的距离等于原始空间的距离，即<script type="math/tex">\Vert z_i-z_j \Vert = dist_{ij}</script>令$B=Z^TZ \in R^{m\times m}$，其中$B$为降维后的样本内积矩阵，$b_{ij}=z_i^Tz_j$，有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-dist_{ij}^2 &= \Vert z_i \Vert + \Vert z_j \Vert - 2z_i^Tz_j \\
-&= b_{ii}+b_{jj}-2b_{ij}
-\end{aligned}</script><p>假设样本$Z$被中心化(normalization)，即$\sum_{i=1}^m z_i=0$。于是有<script type="math/tex">\sum_{i=1}^mb_{ij}=\sum_{j=1}^mb_{ij}=0</script>。继而有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\sum_{i=1}^m dist_{ij}^2 = tr(B)+mb_{jj} \\
-\sum_{j=1}^m dist_{ij}^2 = tr(B)+mb_{ii} \\
-\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 = 2mtr(B)
-\end{aligned}</script><p>其中，$tr$表示矩阵的秩，$tr(B)=\sum_{i=1}^m \Vert z_i \Vert^2$，联立上式可得<script type="math/tex">b_{ij}=-\frac{1}{2} \left( dist_{ij}^2 - \frac{1}{m}\sum_{i=1}^m dist_{ij}^2 -\frac{1}{m}\sum_{j=1}^m dist_{ij}^2 + \frac{1}{m^2}\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 \right)</script>由此即可通过降维前后保持不变的距离矩阵$D$求取内积矩阵$B$。</p>
-<p>那么，下面就需要求$Z$了。方法是对$B$做特征值分解，得到</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-B=Z^TZ=V\Lambda V^T
-\end{aligned}</script><p>其中，$\Lambda=diag(\lambda_1,…,\lambda_{d})$为$d$个特征值构成的对角矩阵，$\lambda_1 \ge \lambda_2 \ge … \ge \lambda_d$。令$\Lambda_{*}=diag(\lambda_1,…,\lambda_{d^{*}})$为对角矩阵，$\Lambda_{*}$表示对应的特征向量矩阵，则<script type="math/tex">Z=\Lambda_{\*}^{\frac{1}{2}}V_{\*}^T \in R^{d^{\*}\times m}</script>现实中，仅需要降维后的距离与原始空间内的距离尽可能接近，不必严格相等。此时可取$d^{*}$远小于$d$求解。</p>
-<p>MDS算法描述如下：</p>
-<hr>
-<p>输入：距离矩阵$D\in R^{m\times m}$，其元素$dist_{ij}$为样本$x_i$到$x_j$的距离；低维空间维度$d^{‘}$</p>
-<hr>
-<p>1 计算矩阵$B$<br>2 对$B$做特征值分解<br>3 取$\Lambda$为$d^{‘}$个最大特征值所构成的对角矩阵，$V$为相应的特征向量矩阵</p>
-<hr>
-<p>输出：$Z=\Lambda^{\frac{1}{2}}V^T$，其中$Z$的每列对应一个样本的低维坐标</p>
-<hr>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/18/Multiple-Dimensional-Scaling/" data-id="cjn8codu4005t3sphqhzusaq8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Logistic-Regression" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/13/Logistic-Regression/">Logistic Regression</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/13/Logistic-Regression/">
-            <time datetime="2016-12-13T05:52:06.000Z" itemprop="datePublished">2016-12-13</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h5><p>Logistic Regression的思想源于<b>广义线性模型</b><script type="math/tex">y=g(\omega^Tx+b)</script>其中，函数$g()$称为联系函数。<br>逻辑回归中，联系函数其实<b>sigmoid函数</b>: <script type="math/tex">y=\frac{1}{1+e^{-z}}</script>其函数图如下：</p>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1fap4kz80uzj208w05xt8q.jpg)</center>
-
-<p>令$z=\omega^T x $，所以<script type="math/tex">y=\frac{1}{1+e^{-(\omega^T x)}}</script>其中，（通过扩展训练数据将bias部分加入，就省去了bias部分）上式可以写成<script type="math/tex">ln\frac{y}{1-y}=\omega^T x</script>如果把$y$当作正样本的后验概率$p(y=1|x)$，那么$1-y$就是负样本的后验概率$p(y=0|x)$。所以有：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(y=1|x) = \frac{e^{-(\omega^T x)}}{1+e^{-(\omega^T x)}} \\
-p(y=0|x) = \frac{1}{1+e^{-(\omega^T x)}}
-\end{aligned}</script><p>我们通过极大似然法来估计$\omega$，给定数据集${(x_i,y_i)}_{i=1}^m$，对数似然函数可以写成：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}\right)^{y_i} \cdot \left(\frac{1}{1+e^{-\omega^T x_i}}\right)^{1-y_i} \\
-&= \sum_{i=1}^m \left( y_i ln \frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} + (1-y_i) ln \frac{1}{1+e^{-\omega^T x_i}} \right)
-\end{aligned}</script><p>这里使用经典的方法，$l(\omega)$对$\omega$求导，闭式解不好表示，所以可以使用梯度上升的方法表示，其中</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\frac{dl(\omega)}{d\omega} &= \sum_{i=1}^m \left( y_ix_i-\frac{x_i e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \\
-\omega &= \omega+\frac{dl(\omega)}{d\omega}
-\end{aligned}</script><p>将批量梯度下降转换成随机梯度下降有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-& for\quad i\; \in \; \{1,2,...,m\} \\
-& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \cdot x_i
-\end{aligned}</script><h5 id="Generalized-Linear-Models"><a href="#Generalized-Linear-Models" class="headerlink" title="Generalized Linear Models"></a>Generalized Linear Models</h5><p>上面提到，广义线性模型的形式如下&lt;/b&gt;<script type="math/tex">y=g(\omega^Tx+b)</script>联系线性回归、logistic回归。广义线性模型的训练，如果满足条件，其随机梯度下降的训练方法如下：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-& for\quad i\; \in \; \{1,2,...,m\} \\
-& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-h_{\theta}(x_i) \right) \cdot x_i
-\end{aligned}</script><p>其中，$h_{\theta}(x) = g(\theta^Tx)$即是目标模型的形式.</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/13/Logistic-Regression/" data-id="cjn8codt9004a3sphok0ck4mg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjpqxp6lk007xxgphex5zidbn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2296,6 +2313,63 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
     
     
@@ -2331,63 +2405,6 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/07/30/WordRank/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
-                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
-                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
-                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2397,7 +2414,7 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
         </div>
     </div>
 
@@ -2406,7 +2423,7 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2415,7 +2432,7 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

@@ -170,11 +170,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                115
+                118
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                41
+                44
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +233,493 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Manifold-Learning" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/18/Manifold-Learning/">Manifold Learning</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/18/Manifold-Learning/">
+            <time datetime="2016-12-18T03:50:16.000Z" itemprop="datePublished">2016-12-18</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="流形"><a href="#流形" class="headerlink" title="流形"></a>流形</h6><pre><code>流形学习是一类借鉴了拓扑流行概念的概念降维方法
+直观上来讲，一个流形好比是一个 d 维的空间
+在一个 m 维的空间中 (m &gt; d) 被扭曲之后的结果
+</code></pre><p>比如说一块布，可以把它看成一个二维平面，这是一个二维的欧氏空间，现在我们（在三维）中把它扭一扭，它就变成了一个流形（当然，不扭的时候，它也是一个流形，欧氏空间是流形的一种特殊情况），地球表面其实也只是一个二维流形。</p>
+<pre><code>流形的一个特点是：流形是在局部与欧式空间 同胚 的空间
+即局部上具有欧式空间的特性，距离度量可以使用欧氏距离
+</code></pre><p>所以，低维流形嵌入到高维空间中，数据样本在高维空间中的分布看上去会比较复杂，但在局部上具有欧式空间的特性。因此，可以容易地在局部建立降维映射关系，然后设法将局部关系映射到全局。<b>此种降维方法可被用于数据可视化</b>。</p>
+<hr>
+<h6 id="等度量映射（Isometric-Mapping）"><a href="#等度量映射（Isometric-Mapping）" class="headerlink" title="等度量映射（Isometric Mapping）"></a>等度量映射（Isometric Mapping）</h6><p>Isomap的出发点是：低维嵌入流形上两点距离是“测地线距离”（地理上的概念，比如地球上两点的距离就不是欧氏距离）<br>但是利用流形的局部与欧式空间同胚特性，我们就能<b>在局部空间内找到每个点的近邻点，从而建立一个近邻连接图。<br>所以，“测地线距离”就是图中的最短距离</b>。最短路径算法可以使用Dijkstra算法或者Floyd算法。<br>有了距离度量表示，就可以降维了，降维方法可以使用MDS算法（当然也可以使用其他方法）</p>
+<p>Isomap算法描述如下：</p>
+<hr>
+<p>输入：样本集$D= \lbrace x_1,x_2,…,x_m \rbrace $; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 $for\quad i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad x_i$与其$k$近邻的距离设置为其欧氏距离，与其他点的距离设置为无穷大<br>4 $end \quad for$<br>5 调用最短距离路径算法计算任意两点之间的距离$dist(x_i,x_j)$<br>6 将$dist(x_i,x_j)$作为MDS算法的输入，输出结果$Z$</p>
+<hr>
+<p>输出：样本集$D$在低维空间的投影$Z$</p>
+<hr>
+<h6 id="局部线性嵌入（Locally-Linear-Embedding）"><a href="#局部线性嵌入（Locally-Linear-Embedding）" class="headerlink" title="局部线性嵌入（Locally Linear Embedding）"></a>局部线性嵌入（Locally Linear Embedding）</h6><p>Isomap 希望保持任意两点之间的测地线距离，保存的信息量大，但是计算量随着节点数量的增长爆炸增长（Dijkstra算法$O(n^2)$或者Floyd算法$O(n^3)$）。<br>LLE 希望保持局部线性关系，信息量较小，但是对数据量较大的情形则比较有效。</p>
+<p>LLE假设$x_i$能够通过其邻域内的样本$x_j,x_k,x_l$线性表出，即<script type="math/tex">x_i=\omega_{ij}x_j+\omega_{ik}x_k+\omega_{il}x_l</script>所以，LLE需要先找出每个样本$x_i$的近邻下标集合$Q_i$，然后计算出基于$Q_i$中的样本对$x_i$进行线性重构的系数$\omega_i$：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\omega_1,\omega_2,...,\omega_m} \sum_{i=1}^m \left\Vert x_i-\sum_{j \in Q_i}\omega_{ij}x_j \right\Vert^2 \\
+s.t. \quad \sum_{j \in Q_i}\omega_{ij}=1
+\end{aligned}</script><p>这里令$C_{jk}=(x_i-x_j)^T(x_i-x_k)$，$\omega_{ij}$有闭式解</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega_{ij}=\frac{\sum_{k\in Q_i}C_{jk}^{-1}}{\sum_{l,s\in Q_i}C_{ls}^{-1}}
+\end{aligned}</script><p>因为LLE假设在低维空间中保持$\omega_i$保持不变，令$Z=(z_1,z_2,…,z_m)\in R^{d^{‘}\times m},W_{ij}=\omega_{ij}$.所以$x_i$的低维坐标$z_i$可以通过</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-\sum_{j\in Q_i}\omega_{ij}z_j \right\Vert^2 \\
+\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-W_iZ \right\Vert^2
+\end{aligned}</script><p>求解，这里需要对$z_i$正规化以满足$\sum_i z_i=0,\frac{1}{m}\sum_i z_iz_i^T=I$。可以令$M=(I-W)^T(I-W)$，那么优化函数可以写成<script type="math/tex">\min_Z tr(ZMZ^T) \quad s.t \; ZZ^T=I</script>这里需要注意我们假设对$Z$正规化，才能满足$ZZ^T=I$。然后上面的优化函数可以通过特征值分解，取最小的$d^{‘}$个非零特征值对应的特征向量即为$Z^T$。</p>
+<p>LLE算法描述</p>
+<hr>
+<p>输入：样本集$D={x_1,x_2,…,x_m}$; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 $for\; i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad$求$\omega_{ij},\; j\in Q_i$, 不在$x_i$邻域内的系数为0<br>4 $end \; for$<br>5 求矩阵$M$<br>5 对$M$进行特征值分解<br>6 输出最小的$d^{‘}$个非零特征值对应的特征向量</p>
+<hr>
+<p>输出：样本集$D$在低维空间的投影$Z$</p>
+<hr>
+<h6 id="拉普拉斯特征映射-Laplacian-Eigenmaps"><a href="#拉普拉斯特征映射-Laplacian-Eigenmaps" class="headerlink" title="拉普拉斯特征映射(Laplacian Eigenmaps)"></a>拉普拉斯特征映射(Laplacian Eigenmaps)</h6><blockquote>
+<p>待更……</p>
+</blockquote>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/18/Manifold-Learning/" data-id="cjpqxp6jy004txgpha51djsag" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Multiple-Dimensional-Scaling" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/18/Multiple-Dimensional-Scaling/">Multiple Dimensional Scaling</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/18/Multiple-Dimensional-Scaling/">
+            <time datetime="2016-12-18T02:22:41.000Z" itemprop="datePublished">2016-12-18</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>Multiple Dimensional Scaling (MDS、多维缩放)是经典的聚类算法。</p>
+<hr>
+<p>假设原始$d$维样本空间中有$m$个样本$x_1,x_2,…,x_m$，其距离矩阵为$D \in R^{m\times m}$，$dist_{ij}$为$x_i$到$x_j$的距离。MDS的出发点是获得样本在$d^{‘}$维空间内的表示$Z\in R^{d^{‘} \times m}$，新空间内样本的距离等于原始空间的距离，即<script type="math/tex">\Vert z_i-z_j \Vert = dist_{ij}</script>令$B=Z^TZ \in R^{m\times m}$，其中$B$为降维后的样本内积矩阵，$b_{ij}=z_i^Tz_j$，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+dist_{ij}^2 &= \Vert z_i \Vert + \Vert z_j \Vert - 2z_i^Tz_j \\
+&= b_{ii}+b_{jj}-2b_{ij}
+\end{aligned}</script><p>假设样本$Z$被中心化(normalization)，即$\sum_{i=1}^m z_i=0$。于是有<script type="math/tex">\sum_{i=1}^mb_{ij}=\sum_{j=1}^mb_{ij}=0</script>。继而有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{i=1}^m dist_{ij}^2 = tr(B)+mb_{jj} \\
+\sum_{j=1}^m dist_{ij}^2 = tr(B)+mb_{ii} \\
+\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 = 2mtr(B)
+\end{aligned}</script><p>其中，$tr$表示矩阵的秩，$tr(B)=\sum_{i=1}^m \Vert z_i \Vert^2$，联立上式可得<script type="math/tex">b_{ij}=-\frac{1}{2} \left( dist_{ij}^2 - \frac{1}{m}\sum_{i=1}^m dist_{ij}^2 -\frac{1}{m}\sum_{j=1}^m dist_{ij}^2 + \frac{1}{m^2}\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 \right)</script>由此即可通过降维前后保持不变的距离矩阵$D$求取内积矩阵$B$。</p>
+<p>那么，下面就需要求$Z$了。方法是对$B$做特征值分解，得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+B=Z^TZ=V\Lambda V^T
+\end{aligned}</script><p>其中，$\Lambda=diag(\lambda_1,…,\lambda_{d})$为$d$个特征值构成的对角矩阵，$\lambda_1 \ge \lambda_2 \ge … \ge \lambda_d$。令$\Lambda_{*}=diag(\lambda_1,…,\lambda_{d^{*}})$为对角矩阵，$\Lambda_{*}$表示对应的特征向量矩阵，则<script type="math/tex">Z=\Lambda_{\*}^{\frac{1}{2}}V_{\*}^T \in R^{d^{\*}\times m}</script>现实中，仅需要降维后的距离与原始空间内的距离尽可能接近，不必严格相等。此时可取$d^{*}$远小于$d$求解。</p>
+<p>MDS算法描述如下：</p>
+<hr>
+<p>输入：距离矩阵$D\in R^{m\times m}$，其元素$dist_{ij}$为样本$x_i$到$x_j$的距离；低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 计算矩阵$B$<br>2 对$B$做特征值分解<br>3 取$\Lambda$为$d^{‘}$个最大特征值所构成的对角矩阵，$V$为相应的特征向量矩阵</p>
+<hr>
+<p>输出：$Z=\Lambda^{\frac{1}{2}}V^T$，其中$Z$的每列对应一个样本的低维坐标</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/18/Multiple-Dimensional-Scaling/" data-id="cjpqxp6kf005txgphsjgsbljs" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Logistic-Regression" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/13/Logistic-Regression/">Logistic Regression</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/13/Logistic-Regression/">
+            <time datetime="2016-12-13T05:52:06.000Z" itemprop="datePublished">2016-12-13</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h5><p>Logistic Regression的思想源于<b>广义线性模型</b><script type="math/tex">y=g(\omega^Tx+b)</script>其中，函数$g()$称为联系函数。<br>逻辑回归中，联系函数其实<b>sigmoid函数</b>: <script type="math/tex">y=\frac{1}{1+e^{-z}}</script>其函数图如下：</p>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1fap4kz80uzj208w05xt8q.jpg)</center>
+
+<p>令$z=\omega^T x $，所以<script type="math/tex">y=\frac{1}{1+e^{-(\omega^T x)}}</script>其中，（通过扩展训练数据将bias部分加入，就省去了bias部分）上式可以写成<script type="math/tex">ln\frac{y}{1-y}=\omega^T x</script>如果把$y$当作正样本的后验概率$p(y=1|x)$，那么$1-y$就是负样本的后验概率$p(y=0|x)$。所以有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y=1|x) = \frac{e^{-(\omega^T x)}}{1+e^{-(\omega^T x)}} \\
+p(y=0|x) = \frac{1}{1+e^{-(\omega^T x)}}
+\end{aligned}</script><p>我们通过极大似然法来估计$\omega$，给定数据集${(x_i,y_i)}_{i=1}^m$，对数似然函数可以写成：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}\right)^{y_i} \cdot \left(\frac{1}{1+e^{-\omega^T x_i}}\right)^{1-y_i} \\
+&= \sum_{i=1}^m \left( y_i ln \frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} + (1-y_i) ln \frac{1}{1+e^{-\omega^T x_i}} \right)
+\end{aligned}</script><p>这里使用经典的方法，$l(\omega)$对$\omega$求导，闭式解不好表示，所以可以使用梯度上升的方法表示，其中</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{dl(\omega)}{d\omega} &= \sum_{i=1}^m \left( y_ix_i-\frac{x_i e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \\
+\omega &= \omega+\frac{dl(\omega)}{d\omega}
+\end{aligned}</script><p>将批量梯度下降转换成随机梯度下降有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& for\quad i\; \in \; \{1,2,...,m\} \\
+& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \cdot x_i
+\end{aligned}</script><h5 id="Generalized-Linear-Models"><a href="#Generalized-Linear-Models" class="headerlink" title="Generalized Linear Models"></a>Generalized Linear Models</h5><p>上面提到，广义线性模型的形式如下&lt;/b&gt;<script type="math/tex">y=g(\omega^Tx+b)</script>联系线性回归、logistic回归。广义线性模型的训练，如果满足条件，其随机梯度下降的训练方法如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& for\quad i\; \in \; \{1,2,...,m\} \\
+& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-h_{\theta}(x_i) \right) \cdot x_i
+\end{aligned}</script><p>其中，$h_{\theta}(x) = g(\theta^Tx)$即是目标模型的形式.</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/13/Logistic-Regression/" data-id="cjpqxp6jp004bxgphaove7oj0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Expection-Maximization" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -358,7 +845,7 @@ hence: \lambda &= -m \\
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="cjn8cods1002a3sphbn80w2bw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="cjpqxp6ig0027xgphlmb1cfjm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -498,7 +985,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="cjn8codrz00263sphe2euak9j" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="cjpqxp6ia001uxgphq441b3b3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -634,7 +1121,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="cjn8codsg002q3sphxgirwgrm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="cjpqxp6iw002vxgph859senyb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -777,7 +1264,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="cjn8codsn00343sph3rpky0kg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="cjpqxp6j00032xgpha49pptt1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -932,7 +1419,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjn8codvt00903sphdj7bja1p" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjpqxp6m8008wxgph24uslmum" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1089,7 +1576,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="cjn8codtw005c3sphnt4ujoea" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="cjpqxp6ka005kxgphp5j65r58" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1256,476 +1743,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="cjn8codvl008k3sphehbm09v4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Flip-Game" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/24/Flip-Game/">Flip Game</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/24/Flip-Game/">
-            <time datetime="2016-11-24T13:55:34.000Z" itemprop="datePublished">2016-11-24</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/POJ/">POJ</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1fa3jk4clc9g208w07wmx0.gif)</center>
-
-<p>有一个4*4的方格，每个方格中放一粒棋子，这个棋子一面是白色，一面是黑色。游戏规则为每次任选16颗中的一颗，<b>把选中的这颗以及它四周的棋子一并反过来</b>，当所有的棋子都是同一个颜色朝上时，游戏就完成了。现在给定一个初始状态，要求输出能够完成游戏所需翻转的最小次数，如果初始状态已经达到要求输出0。如果不可能完成游戏，输出Impossible.</p>
-<h5 id="解题思想"><a href="#解题思想" class="headerlink" title="解题思想"></a>解题思想</h5><h6 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h6><p>1.如果用一个4*4的数组存储每一种状态，不但存储空间很大，而且在穷举状态时也不方便记录。因为每一颗棋子都只有两种状态，所以可以用二进制0和1表示每一个棋子的状态，则棋盘的状态就可以用一个16位的整数唯一标识。而翻转的操作也可以通过通过位操作来完成。显然当棋盘状态id为0(全白)或65535(全黑)时，游戏结束。</p>
-<p>2.对于棋盘的每一个状态，都有十六种操作，首先要判断这十六种操作之后是否有完成的情况，<b>如果没有，则再对这十六种操作的结果分别再进行上述操作</b>，显然这里就要用到队列来存储了。而且在翻转的过程中有可能会回到之前的某种状态，而这种重复的状态是不应该再次入队的，所以维护isVis[i]数组来判断id==i的状态之前是否已经出现过，如果不是才将其入队。<b>如果游戏无法完成，状态必定会形成循环，由于重复状态不会再次入队，所以最后的队列一定会是空队列</b>。</p>
-<p>3.由于0^1=1，1^1=0，所以翻转的操作可以通过异或操作来完成，而翻转的位置可以通过移位来确定。</p>
-<h6 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h6><p>4x4得棋盘最多需要翻转16次就可以完成，因为同一位置上得两次翻转等于没有翻转。<br>可以根据步数从0到16依次枚举，第一个符合条件的就是最小的步数，为了容易深搜，可以设定顺序为一行一行深搜，当一行搜完时从下一行开头搜。下面的代码也可以使用bit的思想压缩空间。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">DFS</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> dp)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// step表示当前尝试的步数上限</span></span><br><span class="line">	<span class="comment">// dp表示在step步数上限的前提下，当前的步数</span></span><br><span class="line">	<span class="keyword">if</span>(dp == step)&#123;</span><br><span class="line">		flag=range();</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(flag||i==<span class="number">4</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	turn(i,j); <span class="comment">//翻转当前位置</span></span><br><span class="line">	<span class="keyword">if</span>(j&lt;<span class="number">3</span>)</span><br><span class="line">		DFS(i,j+<span class="number">1</span>,dp+<span class="number">1</span>); <span class="comment">// 下一个列</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		DFS(i+<span class="number">1</span>,<span class="number">0</span>,dp+<span class="number">1</span>); <span class="comment">// 下一行</span></span><br><span class="line">	turn(i,j); <span class="comment">// 消除当前位置的翻转</span></span><br><span class="line">	<span class="keyword">if</span>(j&lt;<span class="number">3</span>)</span><br><span class="line">		DFS(i,j+<span class="number">1</span>,dp); <span class="comment">// 当前位置不动的情况下，到下一列</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		DFS(i+<span class="number">1</span>,<span class="number">0</span>,dp); <span class="comment">// 当前位置不动的情况下，到下一行</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	其余代码省略</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// step表示步数0到16枚举</span></span><br><span class="line">	<span class="keyword">for</span>(step=<span class="number">0</span>; step&lt;=<span class="number">16</span>; step++) &#123;</span><br><span class="line">		flag=<span class="number">0</span>;</span><br><span class="line">		<span class="comment">// 从(0,0)开始，开始第0步</span></span><br><span class="line">		dfs(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">		<span class="comment">// 如果找到了，输出即可。因为步数上限step是逐渐提高的</span></span><br><span class="line">		<span class="keyword">if</span>(flag)<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="cjn8cods8002m3sph89isrxhe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Principal-Component-Analysis" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/21/Principal-Component-Analysis/">Principal-Component-Analysis</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/21/Principal-Component-Analysis/">
-            <time datetime="2016-11-21T02:10:34.000Z" itemprop="datePublished">2016-11-21</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="主成分分析"><a href="#主成分分析" class="headerlink" title="主成分分析"></a>主成分分析</h5><p>主成分分析是很常用降维方法之一。通过对原始数据进行投影而达到将其降维、划分的作用。</p>
-<p>PCA的出发点有两个：</p>
-<ol>
-<li><p>最近重构性：样本点到投影面的距离都足够近</p>
-</li>
-<li><p>最大可分性：样本点在投影面上的投影尽可能分开</p>
-</li>
-</ol>
-<h6 id="预处理-均值和方差的正规化"><a href="#预处理-均值和方差的正规化" class="headerlink" title="预处理(均值和方差的正规化)"></a>预处理(均值和方差的正规化)</h6><p>求均值$\hat{x}=\frac{1}{m}\sum_{i=1}^mx^{(i)}$</p>
-<p>将所有$x^{(i)}$替换成$x^{(i)}-\hat{x}$.</p>
-<p>求方差 $\sigma_{j}^2=\frac{1}{m}\sum_i(x_j^{(i)})^2$</p>
-<p>将所有$x_j^{(i)}$替换成$x_j^{(i)}/\sigma_j$.</p>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9zjud8hdxj20iv0h4dg5.jpg)</center>
-
-<p>假设现在有两组二维空间的点，我们需要将他们投影到一维空间。也就是要找到一个单位投影向量$\mu$，使<b>投影后的点方差最大</b>，分的最开，上图中，右下角的方法比右上角的差。点$x^{(i)}$投影过后到原点的距离是$\mu^T x^{(i)}$，那么所有的投影过的数据的均值就是$\frac{1}{m}\sum_i \mu^T x^{(i)}=\frac{1}{m} \mu^T \sum_i x^{(i)}$，因为我们已经对原数据进行了正规化，所以投影过的数据均值是$0$. 因此，我们的目标函数就是最大化：<script type="math/tex">\frac{1}{m}\sum_{i=1}^m (\mu^T x^{(i)})^2=\mu^T \left( \frac{1}{m}\sum_{i=1}^mx^{(i)}(x^{(i)})^T \right) \mu \quad .s.t. \quad \mu^T\mu =1</script> <b>上式中括号括起来的也就是原始数据的协方差矩阵$\Sigma=\frac{1}{m}\sum_{i=1}^mx^{(i)}(x^{(i)})^T$，最大化这个公式也就是求解$\Sigma$的特征向量(拉格朗日乘子法)。所以如果需要将原始空间的数据降到k维，那么只需要取$\Sigma$前k大的特征值对应的特征向量作为投影向量即可。</b></p>
-<p>PCA的算法描述如下：</p>
-<pre><code>输入：样本集D,和目标维度k
-
-1. 对所有样本正规化
-
-2. 计算样本的协方差矩阵
-
-3. 对协方差矩阵做特征值分解
-
-4. 降序排序特征值，取前k个特征值对应的特征向量组成投影矩阵
-</code></pre><h5 id="Robust主成分分析"><a href="#Robust主成分分析" class="headerlink" title="Robust主成分分析"></a>Robust主成分分析</h5><p>PCA假设数据的噪声是高斯的，对于大的噪声或者严重的离群点，PCA会被它影响，导致无法正常工作。而<b>鲁棒PCA只假设噪声是稀疏的</b>。所以，RPCA的出发点是将原数据分解成两个矩阵，一个是稀疏的（噪声点），另一个是低秩的（内部有一定的结构信息，造成各行或列间是线性相关的）。也就是：<script type="math/tex">\min_{A,E}rank(A)+\lambda \Vert E \Vert_0 \quad .s.t. \; X=A+E</script> 其中，$rank$是矩阵求秩的意思。但是上式有着非凸和非平滑等问题，可以转化成优化<script type="math/tex">\min_{A,E}\Vert A \Vert_{*}+\lambda \Vert E \Vert_1 \quad .s.t. \; X=A+E</script>求秩操作可以近似为求核范数，L0范数可以用L1范数逼近。求解出来上式，然后在对矩阵A运行PCA算法就可以得到对噪声有着比较好的鲁棒性的结果。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="cjn8codui006o3sphy5qmgysy" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Norm-Rule-of-Machine-Learning" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/17/Norm-Rule-of-Machine-Learning/">Norm Rule of Machine Learning</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/17/Norm-Rule-of-Machine-Learning/">
-            <time datetime="2016-11-17T03:05:32.000Z" itemprop="datePublished">2016-11-17</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <pre><code>L0范数是指向量中非0的元素的个数。
-L1范数是指向量中各个元素绝对值之和，也称为“稀疏规则算子”（Lasso regularization）
-L2范数是指向量各元素的平方和然后求平方根
-核范数是指矩阵奇异值的和
-</code></pre><h6 id="L0和L1范数"><a href="#L0和L1范数" class="headerlink" title="L0和L1范数"></a>L0和L1范数</h6><p>L0和L1范数都有使得参数变得稀疏的作用，因为L0范数的求解困难（NP难），所以一般使用L1范数来逼近L0范数。<br>稀疏的重要性在于：</p>
-<ol>
-<li>特征选择</li>
-<li>可解释性（减小多种特征带来的复杂性）</li>
-</ol>
-<h6 id="L2范数"><a href="#L2范数" class="headerlink" title="L2范数"></a>L2范数</h6><p>L2范数也是使用颇为广泛的范数，再回归里使用L2范数的叫做<b>“岭回归”</b><br><b>condition number<b></b></b></p>
-<pre><code>condition number是一个矩阵（或者它所描述的线性系统）的稳定性或者敏感度的度量
-如果一个矩阵的condition number在1附近，那么它就是well-conditioned的
-如果远大于1，那么它就是ill-conditioned的，如果一个系统是ill-conditioned的
-比如：AX=b方程，稍微改动矩阵A的值，b就有很大变化，那么这个方程是ill-conditioned的
-</code></pre><p>非奇异方阵的condition number定义为：<script type="math/tex">k(A)=\Vert A \Vert \times \Vert A^{-1} \Vert</script>.</p>
-<p>L2范数的重要性在于</p>
-<ol>
-<li>改善过拟合现象</li>
-<li>处理 condition number不好的情况下矩阵求逆很困难的问题</li>
-</ol>
-<p>关于2的解释<br>因为目标函数如果是二次的，对于线性回归来说，那实际上是有解析解的，求导并令导数等于零即可得到最优解为: <script type="math/tex">w=(X^TX)^{-1}X^Ty</script><br>当样本X的数目比每个样本的维度还要小的时候，矩阵$X^TX$将会不是满秩的，也就是不可逆，所以$w$就没办法直接计算出来了，也可以说是有无穷多个解。这就是发生了<b>过拟合</b>。</p>
-<p>但是如果加入了L2范数约束，就有：<script type="math/tex">w=(X^TX+\lambda I)^{-1}X^Ty</script> 这样求逆就简单些了。</p>
-<h6 id="L1范数容易产生稀疏解的原因"><a href="#L1范数容易产生稀疏解的原因" class="headerlink" title="L1范数容易产生稀疏解的原因"></a>L1范数容易产生稀疏解的原因</h6><center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9yxypfys9j20hb0a7q60.jpg)</center>
-
-<h6 id="核范数"><a href="#核范数" class="headerlink" title="核范数"></a>核范数</h6><p>低秩矩阵：如果矩阵的秩远小于它的行数和列数，那么它就是低秩矩阵。<br>核范数是指<b>矩阵奇异值的和</b>，可以用来<b>近似低秩矩阵的秩</b>。<br>低秩的应用：</p>
-<ol>
-<li>矩阵填充，矩阵各行(列)之间的线性相关求出丢失的元素</li>
-<li>鲁棒PCA</li>
-<li>背景建模</li>
-<li>低秩纹理映射算法</li>
-</ol>
-<h6 id="近似梯度下降-Proximal-Gradient-Descent"><a href="#近似梯度下降-Proximal-Gradient-Descent" class="headerlink" title="近似梯度下降(Proximal Gradient Descent)"></a>近似梯度下降(Proximal Gradient Descent)</h6><p>近似梯度下降是解决L1优化问题的算法，优化问题的定义形式如下：<script type="math/tex">\min_x f(x)+\lambda \Vert x \Vert_1</script>其中$f(x)$是凸函数并且可微，而$\lambda \Vert x \Vert_1$是凸函数但是不可微(non-differentiable)，所以不能按照岭回归那样求解。若$f(x)$可导，且$\nabla f$满足L-Lipschitz条件，即存在常数$L&gt;0$使得<script type="math/tex">\Vert \nabla f(x_1)-\nabla f(x) \Vert_2^2 \le L \Vert x_1-x \Vert,\; (\forall x,x_1)</script>在$x_k$附近将$f(x)$通过二阶泰勒展开式可以写成：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-f(x) &\simeq f(x_k)+\nabla f(x_k)(x-x_k)+\frac{ \frac{\nabla f(x)-\nabla f(x_k)}{x-x_k} }{2} \Vert x-x_k \Vert^2 \\
-&= f(x_k)+\nabla f(x_k)(x-x_k)+\frac{L}{2} \Vert x-x_k \Vert^2 \\
-&= \frac{L}{2} \left\Vert x-\left( x_k-\frac{1}{L}\nabla f(x_k) \right) \right\Vert_2^2 + \varphi (x_k)
-\end{aligned}</script><p>其中，最后一步将关于$x$的项集中到一起，以及一个$\varphi (x_k)$只包含$x_k$不包含$x$。$\varphi (x_k)$可通过将最后一个式子拆开并和倒数第二个式子比较得到。这样，上式的最小值即为<script type="math/tex">x_{k+1}=x_k-\frac{1}{L}\nabla f(x_k)</script>这就是梯度下降的思想，梯度下降的每次迭代其实是在最小化原目标的一个二次近似函数。</p>
-<p>将这种转化$f(x)$的思想应用到L1优化的目标函数上，可得每一步迭代其实是<script type="math/tex">x_{k+1}=arg\min_x \frac{L}{2} \left\Vert x-\left( x_k-\frac{1}{L}\nabla f(x_k) \right) \right\Vert_2^2 + \lambda \Vert x \Vert_1</script>即在每一步对$f(x)$进行梯度下降的时候同时考虑优化L1范数。<br>此时，可以先计算$z=x_k-\frac{1}{L}\nabla f(x_k)$，然后求解</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-x_{k+1} = arg\min_x \frac{L}{2} \Vert x-z \Vert_2^2 + \lambda \Vert x \Vert_1
-\end{aligned}</script><p>这里考虑整个$x$就不合适了，考虑$x$的每个分量不会相互影响，即没有$x^ix^j$项。对于第$i$个分量$x^i$所以有<script type="math/tex">x_{k+1}^i = arg\min_x \frac{L}{2} (x^i-z_i)^2+\lambda \vert x^i \vert</script>所以每个分量的更新方法为（高中知识，二次函数、分类讨论）</p>
-<script type="math/tex; mode=display">
-x_{k+1}^i=\begin{cases}
-z^i-\frac{\lambda}{L}    & { \frac{\lambda}{L}<z^i } \\
-0                        & { \vert z^i \vert \le \frac{\lambda}{L}} \\
-z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
-\end{cases}</script><p>上面就是PGD方法的详细说明，通过PGD就可以求解L1优化问题。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="cjn8codu6005w3sph1yq3grtw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="cjpqxp6lz008lxgphcbthc9k0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1818,6 +1836,63 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
     
     
@@ -1853,63 +1928,6 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/07/30/WordRank/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/07/30/WordRank/" class="title">WordRank</a></p>
-                            <p class="item-date"><time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/28/Course-Schedule/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/28/Course-Schedule/" class="title">Course Schedule</a></p>
-                            <p class="item-date"><time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/06/17/Sliding-Window-Median/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
-                            <p class="item-title"><a href="/2017/06/17/Sliding-Window-Median/" class="title">Sliding Window Median</a></p>
-                            <p class="item-date"><time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1919,7 +1937,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">37</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
         </div>
     </div>
 
@@ -1928,7 +1946,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1937,7 +1955,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 10px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Binary-search/" style="font-size: 10px;">Binary search</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

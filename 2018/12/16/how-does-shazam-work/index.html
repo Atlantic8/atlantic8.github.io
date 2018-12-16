@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>how does shazam work | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="音乐信息检索是一个复杂的工作，需要涉及信号处理、计算机算法等知识。以下是粗略介绍。 基本概念声音的物理特性中学物理告诉我们，声音来源于振动，声音需要在介质中传播。声音有纯音（pure tone）和实音（real tone）之分，前者是标准的正弦波，后者则是前者的复杂组合。中学数学告诉我们，正弦波有两个主要的特质，分别是振幅dB（amplitude）和频率（frequency）。 音乐简单背景音符（">
+<meta name="keywords" content="MIR,music information retrieval">
+<meta property="og:type" content="article">
+<meta property="og:title" content="how does shazam work">
+<meta property="og:url" content="atlantic8.github.io/2018/12/16/how-does-shazam-work/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="音乐信息检索是一个复杂的工作，需要涉及信号处理、计算机算法等知识。以下是粗略介绍。 基本概念声音的物理特性中学物理告诉我们，声音来源于振动，声音需要在介质中传播。声音有纯音（pure tone）和实音（real tone）之分，前者是标准的正弦波，后者则是前者的复杂组合。中学数学告诉我们，正弦波有两个主要的特质，分别是振幅dB（amplitude）和频率（frequency）。 音乐简单背景音符（">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww1agvvlfj20gf0cct93.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww2n0ujtbj20gl05ja9y.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww56abkmdj20yj0mfq2w.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww5bbcq5qj20yf0m7747.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww5bvw5srj20yh0m5jri.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwcb9f0sdj20g50cg0th.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwcc3kgsmj20g10cfq2x.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwhngsh0ij20en0ft74z.jpg">
+<meta property="og:updated_time" content="2018-12-16T13:20:22.960Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="how does shazam work">
+<meta name="twitter:description" content="音乐信息检索是一个复杂的工作，需要涉及信号处理、计算机算法等知识。以下是粗略介绍。 基本概念声音的物理特性中学物理告诉我们，声音来源于振动，声音需要在介质中传播。声音有纯音（pure tone）和实音（real tone）之分，前者是标准的正弦波，后者则是前者的复杂组合。中学数学告诉我们，正弦波有两个主要的特质，分别是振幅dB（amplitude）和频率（frequency）。 音乐简单背景音符（">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww1agvvlfj20gf0cct93.jpg">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png" />
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/f35.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/f35.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                118
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                44
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-how-does-shazam-work" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            how does shazam work
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2018/12/16/how-does-shazam-work/">
+            <time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/MIR/">MIR</a>, <a class="tag-link" href="/tags/music-information-retrieval/">music information retrieval</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>音乐信息检索是一个复杂的工作，需要涉及信号处理、计算机算法等知识。以下是粗略介绍。</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="声音的物理特性"><a href="#声音的物理特性" class="headerlink" title="声音的物理特性"></a>声音的物理特性</h4><p>中学物理告诉我们，声音来源于振动，声音需要在介质中传播。声音有纯音（pure tone）和实音（real tone）之分，前者是标准的正弦波，后者则是前者的复杂组合。中学数学告诉我们，正弦波有两个主要的特质，分别是振幅dB（amplitude）和频率（frequency）。</p>
+<h4 id="音乐简单背景"><a href="#音乐简单背景" class="headerlink" title="音乐简单背景"></a>音乐简单背景</h4><h5 id="音符（musical-notes）"><a href="#音符（musical-notes）" class="headerlink" title="音符（musical notes）"></a>音符（musical notes）</h5><p>乐谱是由多个音符构成的，每个音符都有持续时间（duration）和响度（loudness）这两个性质。乐谱的音符可以划分成八度音阶（octaves），每个八度音阶就是8个音符（A-G or Do-Si），八度音阶有如下特点：</p>
+<ul>
+<li>一个八度音阶中的音符的频率是上一个八度音阶中的音符的频率的2倍</li>
+</ul>
+<p>多数乐器都提供了不止8个音符，这些多出来的就叫做半音（半拍）。</p>
+<h5 id="音色（Timbre）"><a href="#音色（Timbre）" class="headerlink" title="音色（Timbre）"></a>音色（Timbre）</h5><p>对于同一个音符，不同乐器也会有不同的音色。乐器的声音通常都是有一个基础频率加上多种弦外之音（overtones）合成的。多数乐器都产生和声，但是打击乐器不是。</p>
+<h4 id="频谱图"><a href="#频谱图" class="headerlink" title="频谱图"></a>频谱图</h4><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww1agvvlfj20gf0cct93.jpg" alt="频谱图示例"></p>
+<p>以上是频谱图示例，信息包含时间、频率和振幅，振幅大小由颜色深度指示。这种图在深度学习处理声音数据的时候也要用到。</p>
+<h4 id="傅立叶变换"><a href="#傅立叶变换" class="headerlink" title="傅立叶变换"></a>傅立叶变换</h4><p>傅立叶变换FT可以将时域信号$x(t)$转变为频域信号$f(w)$，有如下几种：</p>
+<h5 id="连续时间傅立叶变换"><a href="#连续时间傅立叶变换" class="headerlink" title="连续时间傅立叶变换"></a>连续时间傅立叶变换</h5><script type="math/tex; mode=display">
+\begin{aligned}
+f(w)=\int_{-\infty}^{+\infty}x(t)e^{-jwt}\,dt
+\end{aligned}</script><p>具体原理推导省略，其逆变换为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+x(t)=\int_{-\infty}^{+\infty}f(w)e^{-jwt}\,dw
+\end{aligned}</script><h5 id="离散时间傅立叶变换"><a href="#离散时间傅立叶变换" class="headerlink" title="离散时间傅立叶变换"></a>离散时间傅立叶变换</h5><p>以上公式是连续时间信号的变换，离散信号的变换可以使用离散傅立叶变换DFT，公式如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(w)=\sum_{t=-\infty}^{+\infty}x(t)e^{-jwt}
+\end{aligned}</script><p>为了在科学计算和数字信号处理等领域使用计算机进行傅里叶变换，必须将函数定义在离散点上而非连续域内，且须满足有限性或周期性条件。这种情况下有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
+\end{aligned}</script><p>N个结果，表示N个频率（每个k对应一个频率）以及其对应的振幅。也就是说其计算复杂度为O(N^2)，每个结果都是复数，其模就是对应的振幅。</p>
+<h3 id="基本过程"><a href="#基本过程" class="headerlink" title="基本过程"></a>基本过程</h3><p>音频检索的基本思想和生物信息检索的思路比较类似，都是在server端建立大量样本构成的数据库，client发送检索请求后，server端提取请求特征，然后在数据库中进行检索匹配，最后将结果返回给client。</p>
+<p>在音频检索的场景下，这里面比较重要的部分是</p>
+<ul>
+<li>适用于部分匹配的特征提取</li>
+<li>样本存储（上千万的歌曲）</li>
+<li>高效、健壮的检索</li>
+</ul>
+<p>由于部分匹配要求存在，所以音频检索的特征提取算法不可能使用MD5、SHA等，并且要能处理不同格式的音乐（MP2、WMA等）。shazam选择从声音的频谱图中提取特征。</p>
+<h4 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h4><p>和信号处理的大多数case一样，人声输入是连续的音频，比如一段mp3，是连续信号，需要对信号进行采样、数字化。采样要做的就是信号损失和存储压力之间的tradeoff，奈奎斯特定理指出，<strong>要以大于2倍于原始信号的采样频率，才能从数字信号中恢复出原始信</strong>。人类听觉上限大约是20kHZ，所以标准的数字音乐采样频率是44.1kHZ，是20kHZ的两倍多一点。</p>
+<h4 id="量化"><a href="#量化" class="headerlink" title="量化"></a>量化</h4><p>采样是针对频率上的数字化，振幅的数字化则需要量化来完成。振幅的大小受到设备音量的影响。所以振幅的表示则有相对量表示，可以选定整个音乐中振幅的最值，并将其离散化，然后用这些离散值表示。标准的量化方法将振幅范围编码为16个bit，也就是65536个level，这时的信息损失已经很小了。</p>
+<h4 id="脉冲编码调制"><a href="#脉冲编码调制" class="headerlink" title="脉冲编码调制"></a>脉冲编码调制</h4><p>经过采样、量化两个步骤之后，设备会对数据进行编码（称为PCM信号）并且送到耳机/扬声器进行播放，PCM的样例如下：</p>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww2n0ujtbj20gl05ja9y.jpg" alt="16位的PCM信号数据"></p>
+<p>采样率为44.1kHZ的音乐，每秒钟有44100个这样的数据。</p>
+<h4 id="生成频谱图"><a href="#生成频谱图" class="headerlink" title="生成频谱图"></a>生成频谱图</h4><p>本节讲的是如何由一段数字信号生成频谱图，需要用到离散傅立叶变换技术。将时序信号等时间间隔划分成多个bin，在每个bin内使用DFT得到其频率。</p>
+<p>这里有个概念，每个bin在频率上的表示也是有固定间隔的，这个值叫做<strong>频率分辨率</strong>（frequency resolution），计算方法是：</p>
+<blockquote>
+<p>frequency resolution = 采样率 / 窗口大小</p>
+</blockquote>
+<p>这里窗口大小是每个bin内采样窗口（window）。比如在44.1kHZ的标准采样率情况下，4096个样本的窗口对应的频率分辨率是10.7HZ。所以一个窗口的时长大约是4096/44100=0.1s，也就是说每隔0.1s就能检测出一个变化。</p>
+<p>为了处理一个1s长度的音频，就需要分别处理10个bin的数据。实际上也就是是用了<strong>窗口函数</strong>（处理第一个bin的时候其他的系数为0）。简单的窗口函数是矩形，也还有hamming窗口和blackbox窗口，图示如下：<br><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww56abkmdj20yj0mfq2w.jpg" alt="窗口函数"></p>
+<p>不同的窗口效果不同，如下所示，左图是完美的图，右图是是用了不同的窗口函数的图像，可以看到，右图中存在被称为<strong>频谱泄漏</strong>的现象，即真是频率对应的数据蔓延到邻居点。</p>
+<figure class="half">
+    <img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww5bbcq5qj20yf0m7747.jpg" width="400">
+    <img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fww5bvw5srj20yh0m5jri.jpg" width="400">
+</figure>
+
+<p>图中blackman窗口函数的效果要优于其他窗口函数，但是换一个大小不同的窗口也许就不一样了，他们的特性如下：</p>
+<ul>
+<li>矩形窗口函数：可比振幅的正弦曲线效果较好，完全不同的振幅情况则比较差（音乐的振幅变动就比较大）</li>
+<li>blackman窗口函数：擅长处理<strong>频谱泄漏时出现的强频率掩盖弱频率的问题</strong>，同时也导致了噪声会掩盖更多的频率</li>
+<li>hamming窗口函数：上面两者的均衡</li>
+</ul>
+<hr>
+<p>DFT的计算复杂度较高，在数量为1000的曲库上计算可能需要数天甚至上月才能完成。这里可以使用两个方面的优化：</p>
+<ol>
+<li>使用快速傅立叶变换FFT</li>
+<li>降采样：因为一首歌中大多数重要的部分都在0-5kHZ区间上，所以我们只需要11kHZ的采样率即可（奈奎斯特）。为了保持相同的频率分辨率，窗口大小降为1024即可。可以将之前4个sample的数据求均值作为一个，采样频率降为原来的1/4</li>
+</ol>
+<blockquote>
+<p>0.1s的bin size, bin的频率分辨率10.7HZ，512个可能的频率（5kHZ/10.7HZ），频率范围0-5kHZ</p>
+</blockquote>
+<p>这里我们就得到了频谱图，考虑到对噪声的鲁棒性问题，可以将振幅最大的音符留下，但是这样会存在如下问题：</p>
+<ul>
+<li>许多歌曲中都会包含一些人耳不容易听见的声音（&lt;500HZ），发行前都会特意加强这些音符。只保留振幅最大的可能导致保留的都是这些人耳不容易听见的声音</li>
+<li>频谱泄露问题导致不存在的频率出现，要确保不会选中不存在的</li>
+</ul>
+<p>解决上述问题的方法如下</p>
+<ol>
+<li>对每一个FFT结果（N个），把512个当成6个bands（6是超参数），bands由振幅区间划分，把这些结果放到这些bin中</li>
+<li>每个band只保留最大值</li>
+<li>计算6个band中最大值的均值（由于开头、结尾可能振幅较小，均值较小，但是我们并不想要这部分频率，所以可以考虑计算整首歌振幅最大的6个的均值）</li>
+<li>保留大于均值的band值作为结果（可以乘一个参数）</li>
+</ol>
+<p>以下是示例：</p>
+<figure class="half">
+    <img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwcb9f0sdj20g50cg0th.jpg" width="400">
+    <img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwcc3kgsmj20g10cfq2x.jpg" width="400">
+</figure>
+
+<hr>
+<h4 id="特征存储与匹配"><a href="#特征存储与匹配" class="headerlink" title="特征存储与匹配"></a>特征存储与匹配</h4><p>如上图所示，特征数据是<code>&lt;time, frequency&gt;</code>对，根据时长进行滑动窗口逐一匹配的复杂度过高。shazam中使用多个点同时匹配的方法，引入target zone的概念。</p>
+<p>阐述方便，将目标区域的大小固定为5，将二维数据线性化，需要严格的先后顺序保持唯一性，比如time相同时，frequency小的在前面。所以m个<code>&lt;time, frequency&gt;</code>对的数据，可以生成m-4个目标区域。</p>
+<p>下一步是为每个目标区域创建一个地址，当然这是在server端做的。我们还需要一个anchor锚点，anchor的选取不限制，只要是可重复的即可（比如当前目标区域之前的一个点或者前三个啥的）。把每个目标位置当做一个key<code>&lt;anchor频率, 首位频率, 首位和anchor的时间差&gt;</code>，每个key映射到一个地址，地址的形式为<code>&lt;anchor在歌曲中的绝对位置/时间, 歌曲ID&gt;</code>。</p>
+<p>在检索阶段，对输入的音频，算法生成一个个<code>&lt;&lt;anchor频率, 首位频率, 首位和anchor的时间差&gt;, 锚点在音频中的绝对位置&gt;</code>，并上传到server端。server进行检索，可能会返回大量结果，这里由于没有逐一比较target zone的每个数据点，所以即使命中了也可能不一样，但是这样节省了时间，也能过滤掉大部分negative样本。细致的比较下面继续。</p>
+<p>对于上一步得到的结果，我们需要进一步比较，策略如下</p>
+<ul>
+<li>去除没有target zone完全匹配的结果</li>
+<li>卡一下阈值</li>
+</ul>
+<hr>
+<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwwhngsh0ij20en0ft74z.jpg" alt="image"></p>
+<p>最后还需要考虑时间先后的问题，必要性见上图，这时需要</p>
+<ul>
+<li>计算候选歌曲中的音符及其在歌曲中的绝对位置</li>
+<li>计算输入音频中的音符及其在输入中的绝对位置</li>
+<li>匹配的音符应该满足：音符在歌曲中的绝对位置=音符在输入中的绝对位置+匹配开始的位置。对于每首歌，我们需要找到匹配音节最多的开始位置</li>
+<li>返回音符匹配最多的候选</li>
+</ul>
+<hr>
+<p>引用</p>
+<p>[1]. <a href="http://coding-geek.com/how-shazam-works/" target="_blank" rel="noopener">How does Shazam work</a></p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="cjpqxp6mn009lxgph4f8wzj21" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2018/12/16/GRU-and-LSTM/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    GRU and LSTM
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/08/27/Conditional-Random-Field/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Conditional Random Field</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
+                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
