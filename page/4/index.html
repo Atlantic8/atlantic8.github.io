@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     
     <title>atlantic8</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="A note is preferable to the best memory">
 <meta property="og:type" content="website">
 <meta property="og:title" content="atlantic8">
@@ -20,7 +20,7 @@
     
 
     
-        <link rel="icon" href="/css/images/logo.png" />
+        <link rel="icon" href="/css/images/logo.png">
     
 
     <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
@@ -56,7 +56,7 @@ var _hmt = _hmt || [];
 
 
 </head>
-
+</html>
 <body>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
         <header id="header">
@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                118
+                119
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -233,6 +233,141 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Partition" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/02/21/Partition/">Partition</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/02/21/Partition/">
+            <time datetime="2017-02-21T05:38:18.000Z" itemprop="datePublished">2017-02-21</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Sort/">Sort</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="partition函数"><a href="#partition函数" class="headerlink" title="partition函数"></a>partition函数</h5><p><code>partition</code>函数是快速排序的核心部分，选定一个基准，然后将大于和小于基准的数分别放置于基准的两边，有多种实现方式，以下是参考</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// start, end表明作用范围</span></span><br><span class="line"><span class="comment">// pivotIndex表示基准的位置</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">partition</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp; A, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = start, j = end;</span><br><span class="line">    <span class="keyword">int</span> pivotIndex = rand() % (end-start+<span class="number">1</span>) + start; <span class="comment">// 随机选择基准位置</span></span><br><span class="line">    <span class="keyword">int</span> pivot = A[pivotIndex];</span><br><span class="line">    <span class="comment">// 把基准换到最后</span></span><br><span class="line">    swap&lt;<span class="keyword">int</span>&gt;(A[end], A[pivotIndex]);</span><br><span class="line">    <span class="keyword">while</span>(i &lt; j)&#123;</span><br><span class="line">        <span class="keyword">while</span>(i &lt; j &amp;&amp; A[i] &lt; pivot) ++i;</span><br><span class="line">        <span class="keyword">if</span> (i &gt; j) <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">while</span>(i &lt; j &amp;&amp; A[j] &gt;= pivot) --j;</span><br><span class="line">        <span class="keyword">if</span> (i &gt; j) <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span>(i &lt; j) swap&lt;<span class="keyword">int</span>&gt;(A[i], A[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    swap&lt;<span class="keyword">int</span>&gt;(A[end], A[i]);</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再提供另一种实现方式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// arr[]为数组，start、end分别为数组第一个元素和最后一个元素的索引</span></span><br><span class="line"><span class="comment">// povitIndex为数组中任意选中的数的索引</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> start, <span class="keyword">int</span> end, <span class="keyword">int</span> pivotIndex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pivot = arr[pivotIndex];</span><br><span class="line">    swap(arr[pivotIndex], arr[end]);</span><br><span class="line">    <span class="keyword">int</span> storeIndex = start;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = start; i &lt; end; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span>(arr[i] &lt; pivot) &#123;</span><br><span class="line">            swap(arr[i], arr[storeIndex]);</span><br><span class="line">            ++storeIndex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    swap(arr[storeIndex], arr[end]);</span><br><span class="line">    <span class="keyword">return</span> storeIndex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Partition函数的应用"><a href="#Partition函数的应用" class="headerlink" title="Partition函数的应用"></a>Partition函数的应用</h5><h6 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp;A, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mid = partition(A, start, end);</span><br><span class="line">    <span class="keyword">if</span> (mid-start &gt; <span class="number">2</span>) quick_sort(A, start, mid-<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (end-mid &gt; <span class="number">2</span>) quick_sort(A, mid+<span class="number">1</span>, end);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Top-K问题"><a href="#Top-K问题" class="headerlink" title="Top K问题"></a>Top K问题</h6><p>给定未排序数组A，求排好序的数组中的第k个大个数。因为上面的<code>partition</code>函数是左小右大，所以我们考虑寻找第<code>A.size()-k</code>小的数。<br>思路是<strong>调用partition函数，返回基准位置，如果基准位置正好是k，那么返回其对应的值<br>否则，如果基准在k左侧，则考虑基准右边的元素；否则考虑左边的元素。</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findKthLargest</span> <span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp;A, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> start=<span class="number">0</span>, end=A.size()-<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (start &lt; end) &#123;</span><br><span class="line">    	<span class="keyword">int</span> mid = partition(A, start, end);</span><br><span class="line">    	<span class="keyword">if</span> (mid == k-<span class="number">1</span>) <span class="keyword">return</span> A[k-<span class="number">1</span>];</span><br><span class="line">    	<span class="keyword">else</span> <span class="keyword">if</span> (mid &lt; k-<span class="number">1</span>) start = mid+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> end = mid-<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/02/21/Partition/" data-id="cjzoan2g5006g8wphudpo9z5l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Sliding-Window-Maximum" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -310,7 +445,7 @@ output [3,3,5,5,6,7]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/02/16/Sliding-Window-Maximum/" data-id="cjpqxp6lc007jxgphmvfv6elr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/02/16/Sliding-Window-Maximum/" data-id="cjzoan2hl008l8wphialpkh9k" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -459,7 +594,7 @@ output [3,3,5,5,6,7]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/18/Java-Future/" data-id="cjpqxp6jb003qxgph3nqguj1f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/18/Java-Future/" data-id="cjzoan2el003q8wph7bhuu9lt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -661,7 +796,7 @@ setMaximumPoolSize：设置线程池最大能创建的线程数目大小
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/17/Java-Thread-Pool/" data-id="cjpqxp6jf003wxgphjdumm9fb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/17/Java-Thread-Pool/" data-id="cjzoan2ew00498wphmdzzw2tf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -938,7 +1073,7 @@ h_t(x) = \arg\min_{h} E_{x\sim \mathcal{D}_t} [I(f(x) \neq h(x))]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjpqxp6hl000jxgph7zt1xy5n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjzoan2cu000p8wpht4qmm8kz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1119,7 +1254,7 @@ H^{oe}(x)=\arg\max_{y\in Y} \sum_{t=1}^T I(h_t(x)=y)\times I(x\not\in D_t)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjpqxp6ie0021xgpheb5xogzp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjzoan2dp00288wph70cymymp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1282,7 +1417,7 @@ P(k)=\frac{e^{\frac{Q(k)}{\tau}}} {\sum_{i=1}^K e^{\frac{Q(k)}{\tau}}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjpqxp6kd005rxgphh48qfwaq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjzoan2fq005r8wphfpv1whol" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1508,7 +1643,7 @@ y^{(i)} \gets R(s)+\gamma \max_{a} E_{s^{'}\sim P_{sa}}[V(s_{'}]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjpqxp6k1004zxgphbz9yr4xe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjzoan2f7004t8wphgrif8x53" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1737,7 +1872,7 @@ p(X,y_t=i|\lambda)&=\sum_{i=1}^N \theta_t(i)\beta_t(i)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjpqxp6j5003cxgphfyd25sg3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjzoan2eg003j8wphlokb1fu9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2052,175 +2187,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjpqxp6m3008pxgphqmte3yrq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Sparse-Coding" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/20/Sparse-Coding/">Sparse Coding</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/20/Sparse-Coding/">
-            <time datetime="2016-12-20T02:26:20.000Z" itemprop="datePublished">2016-12-20</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="字典学习"><a href="#字典学习" class="headerlink" title="字典学习"></a>字典学习</h5><p>字典学习是与稀疏性相关的学习方法，它被用来寻找一组“超完备”基向量来更高效地表示样本数据。稀疏性会降低计算和存储的开销，并且会提高模型的可解释性。</p>
-<pre><code>稀疏表示侧重于学习一个字典
-</code></pre><p>给定数据集$\lbrace x_1,x_2,…,x_m \rbrace$，字典学习的简单形式如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B,\alpha_i} \sum_{i=1}^m \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1
-\end{aligned}</script><p>其中$B\in R^{d\times k}$为字典矩阵，$k$称为字典的词汇量，$\alpha_i \in R^k$是样本$x_i$的稀疏表示。实际中，根据应用场景的要求，第二项中的$\lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1$也可以替换成别的代价函数。</p>
-<h6 id="奇异值分解简述SVD"><a href="#奇异值分解简述SVD" class="headerlink" title="奇异值分解简述SVD"></a>奇异值分解简述SVD</h6><p>对任意矩阵奇异值分解<script type="math/tex">M=U\Sigma V^T</script>其中，$\Sigma$是对角矩阵，对角线上是矩阵的奇异值，$U$中的每一列是经过$M$转化后的标准正交基组成之一，而$V$表示了原始域的标准正交基，每一列是一个向量。</p>
-<blockquote>
-<p>以后应该还有关于SVD的解释</p>
-</blockquote>
-<h6 id="训练方法"><a href="#训练方法" class="headerlink" title="训练方法"></a>训练方法</h6><p>上式的训练目标参数有$\alpha_i,B$，可以用<b>交替优化的方法</b>。</p>
-<hr>
-<p>1 为每个样本$x_i$找到相应的$\alpha_i$，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{\alpha_i} \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \Vert \alpha_i \Vert_1
-\end{aligned}</script><p>这一步可以使用lasso的优化方法。</p>
-<hr>
-<p>2 以$\alpha_i$为初值来更新字典$B$，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B} \Vert X-BA \Vert_F^2
-\end{aligned}</script><p>其中，$X=(x_1,x_2,…,x_m)\in R^{d\times m},A=(\alpha_1,\alpha_2,…,\alpha_m)\in R^{k\times m}$，矩阵的F范数是矩阵每个元素的平方和再开方。</p>
-<p>上式的常用优化方法为<b>KSVD</b>，这是基于逐列更新的方法。令$b_i$表示字典$B$的第$i$列，$\alpha^i$表示稀疏矩阵$A$的第$i$行($\alpha_i$表示稀疏矩阵$A$的第$i$列)，$b_i\alpha^i$其实是个矩阵。则上式可以重写成</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B} \Vert X-BA \Vert_F^2 &= \min_{b_i} \left\Vert X-\sum_{j=1}^k b_ja^j \right\Vert_F^2 \\
-&= \min_{b_i} \left\Vert X-\sum_{j=1,j\not i}^k b_ja^j - b_i\alpha^i \right\Vert_F^2 \\
-&= \min_{b_i} \Vert E_i-b_i\alpha^i \Vert_F^2
-\end{aligned}</script><p>更新字典第$i$列时，$E_i$是固定的，$E_i$表示没有$b_i$时表示的误差。所以最小化上式原则上就是对$E_i$进行奇异值分解(SVD)取得最大奇异值所对应的正交向量。对$E_i$进行奇异值分解$E_i=U\Sigma V^T$，那么$b_i$是$U$中最大奇异值对应的正交向量，但此时$\alpha^i$也需要更新，这就会破坏$\alpha^i$的稀疏性质。</p>
-<p>为了避免这种情况，KSVD做如下处理。注意到要保持稀疏性，我们不能将$\alpha_i$原来为0的位置变成非零数。$b_i \alpha^i$是一个矩阵，它的第$j$列是$b_i\alpha_j^i$。如果原来$\alpha_j^i=0$，那么$b_i\alpha_j^i$就是全为0的列向量。这里，我们可以把$E_i$对应位置的列变成全0，这样奇异值分解后的结果就不会破坏$A$的稀疏性。然后，对$E_i$进行奇异值分解，更新$b_i$为$U$中最大奇异值对应的正交向量，更新$\alpha^i$为$V$中最大奇异值对应的正交向量(列向量)乘以最大奇异值。</p>
-<hr>
-<h5 id="稀疏编码"><a href="#稀疏编码" class="headerlink" title="稀疏编码"></a>稀疏编码</h5><p>稀疏编码是字典学习的下一步，在学习到了字典$B$后，给定一个新的样本$x_k$，只需要通过优化</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{\alpha_i}  \Vert x_k-B\alpha_k \Vert_2^2 + \lambda \Vert \alpha_k \Vert_1
-\end{aligned}</script><p>来找到$\alpha_k$，即求解出了基于字典$B$的关于$x_k$的稀疏表示。上式的优化方法即经典的Lasso优化问题，使用Proximal Gradient Descent方法。</p>
-<p>比如说：</p>
-<center>![](http://img.my.csdn.net/uploads/201304/09/1365483491_9524.jpg)</center>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjpqxp6lk007xxgphex5zidbn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjzoan2i9009v8wphl14y8ft1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2313,6 +2280,25 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2019/08/23/BM-1/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/08/23/BM-1/" class="title">BM</a></p>
+                            <p class="item-date"><time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -2386,25 +2372,6 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2423,7 +2390,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2473,7 +2440,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2018 Atlantic8<br>
+            &copy; 2019 Atlantic8<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

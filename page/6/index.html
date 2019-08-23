@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     
     <title>atlantic8</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="A note is preferable to the best memory">
 <meta property="og:type" content="website">
 <meta property="og:title" content="atlantic8">
@@ -20,7 +20,7 @@
     
 
     
-        <link rel="icon" href="/css/images/logo.png" />
+        <link rel="icon" href="/css/images/logo.png">
     
 
     <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
@@ -56,7 +56,7 @@ var _hmt = _hmt || [];
 
 
 </head>
-
+</html>
 <body>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
         <header id="header">
@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                118
+                119
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -233,6 +233,173 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Tile-Cover-Problem" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/11/25/Tile-Cover-Problem/">Tile Cover Problem</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/11/25/Tile-Cover-Problem/">
+            <time datetime="2016-11-25T01:42:46.000Z" itemprop="datePublished">2016-11-25</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/POJ/">POJ</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><p>POJ 2411<br>编程之美<br>用 1 x 2 的瓷砖覆盖 n x m 的地板，问共有多少种覆盖方式？</p>
+<h5 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h5><p>这是个<b>状态压缩DP问题</b>，意思就是把状态用比特位的形式表示出来，然后使用DP求解</p>
+<pre><code>每个位置，有砖为1，无砖为0
+由于转是1x2规格的，规定：
+横着铺是连续两个都设成1
+竖着铺时上面的设为0，下面的为1（因为上面的砖头对第二行有影响，如果上面的为0，那么下面的必须为1）
+把每一行看作是一个二进制整数，这个整数就表示状态(有多少种01序列就有多少种状态)
+因此每行都有很多状态，状态即为这一行01序列对应的值
+</code></pre><ul>
+<li><b>DP[i][j]表示第i行状态为j时有多少种方法</b>。</li>
+<li><b>如果上一行的某个状态DP(i-1,k) 可以达到 DP(i, j) 那么两个状态是兼容的</b>。</li>
+<li><b>如果DP(i-1,k)和DP(i, j)兼容并且 DP(i-1, k)有S种铺设方案，那么DP(i, j)就可以从DP(i-1, k)这条路径中获得S个方案</b>。</li>
+</ul>
+<p><b>兼容性：</b><br>兼容性指的是上一行和下一行的关系。Concretely，<b>x和y兼容指的是x、y对应的二进制串对应的状态是兼容的</b>。<br>检测兼容性的方法是从左到右依次检测每一列是否兼容，具体检查内容包括：(假如现在铺设第i行x列)</p>
+<pre><code>     x  x+1
+i-1
+  i  0
+</code></pre><p>如果第i行x列上的值(i,x)是0， 那么第 i-1行x列上一定是1</p>
+<pre><code>     x  x+1
+i-1
+  i  1
+</code></pre><p>如果(i,x)为1，那么</p>
+<ul>
+<li>(i-1,x)为0，竖着铺的，下一步检测(i, x+1)</li>
+<li>(i-1,x)为1，下一步检测(i, x+2).因为(i,x)是横着铺，跨越两个格子。</li>
+</ul>
+<p>第一行得兼容性</p>
+<ul>
+<li>如果 (0,x) 是1，那么 (0,x+1) 也一定是1，然后测试到 (0,x+2)</li>
+<li>如果(0,x)是0， 那么直接测试下一个(0,x+1)</li>
+<li>因为是第一行，所以兼容只能获得一个方案</li>
+</ul>
+<p>所以具体思路就是：</p>
+<pre><code>对每一行，遍历其所有可能得状态
+检查其与上一行所有状态得兼容性，兼容则获取上一行状态所对应的方案数
+第一行单独处理
+最后一行结束后，返回DP[n-1][2^m-1]，因为最后一行必须全部为1
+</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;memory.h&gt;</span><br><span class="line">#include &lt;math.h&gt;</span><br><span class="line">#include &lt;algorithm&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define MAX_ROW 11</span><br><span class="line">#define MAX_STATUS 2048</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> DP[MAX_ROW][MAX_STATUS];</span><br><span class="line"><span class="keyword">int</span> g_Width, g_Height;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test the first line</span></span><br><span class="line"><span class="function">bool <span class="title">TestFirstLine</span><span class="params">(<span class="keyword">int</span> nStatus)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// 状态的每一个位</span></span><br><span class="line">	<span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line">		<span class="keyword">if</span>(nStatus &amp; (<span class="number">0x1</span> &lt;&lt; i)) &#123;</span><br><span class="line">			<span class="keyword">if</span>( i == g_Width -<span class="number">1</span> || (nStatus &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			i += <span class="number">2</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			i++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test if status (i, nStatusA) and (i-1, nStatusB) is compatable.</span></span><br><span class="line"><span class="function">bool <span class="title">CompatablityTest</span><span class="params">(<span class="keyword">int</span> nStatusA, <span class="keyword">int</span> nStatusB)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; i))  == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			i++;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span> )</span><br><span class="line">				i++;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span>( (i == g_Width - <span class="number">1</span>) || ! ( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) &amp;&amp; (nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; (i + <span class="number">1</span>)))) )</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				i += <span class="number">2</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i,j;</span><br><span class="line">	<span class="keyword">int</span> k;</span><br><span class="line">	<span class="keyword">while</span>(scanf(<span class="string">"%d%d"</span>, &amp;g_Height, &amp;g_Width) != EOF ) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(g_Width == <span class="number">0</span> &amp;&amp; g_Height == <span class="number">0</span>)</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(g_Width &gt; g_Height)</span><br><span class="line">			swap(g_Width, g_Height);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span> nAllStatus = <span class="number">1</span> &lt;&lt; g_Width;</span><br><span class="line">		memset(DP, <span class="number">0</span>, sizeof(DP));</span><br><span class="line">		<span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">			<span class="keyword">if</span>(TestFirstLine(j))</span><br><span class="line">				DP[<span class="number">0</span>][j] = <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span>( i = <span class="number">1</span>; i &lt; g_Height; i++) &#123; </span><br><span class="line">			<span class="comment">// iterate all status for line i</span></span><br><span class="line">			<span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">				<span class="comment">// iterate all status for line i-1</span></span><br><span class="line">				<span class="keyword">for</span>( k = <span class="number">0</span>; k &lt; nAllStatus; k++) &#123;</span><br><span class="line">					<span class="keyword">if</span>(CompatablityTest(j, k))</span><br><span class="line">						DP[i][j] += DP[i-<span class="number">1</span>][k];</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		printf(<span class="string">"%lld\n"</span>, DP[g_Height-<span class="number">1</span>][nAllStatus - <span class="number">1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="cjzoan2i6009p8wphns4af1hl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Flip-Game" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -293,7 +460,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="cjpqxp6it002oxgphazez62sx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="cjzoan2e600328wphko07b5w6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -448,7 +615,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="cjpqxp6ky006wxgphlno6vjsx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="cjzoan2hd00898wphc0tk60aa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -626,7 +793,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="cjpqxp6kk0064xgph2php1b2f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="cjzoan2fw00618wph9m4lsmmk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -764,7 +931,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="cjpqxp6he000cxgphpwmec73n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="cjzoan2ck000c8wphdgmytx5k" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -932,7 +1099,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="cjpqxp6iy002yxgphvinl8ds4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="cjzoan2e4002y8wphmsvted8l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1079,7 +1246,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="cjpqxp6gp0000xgphezkejpnt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="cjzoan2cf00078wphno163xk9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1225,7 +1392,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/" data-id="cjpqxp6ij002exgphno2061d0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/" data-id="cjzoan2du002i8wphwc753it2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1373,7 +1540,7 @@ Output:
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/10/02/Split-Array-Largest-Sum/" data-id="cjpqxp6ln0080xgphfx3qbjp7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/10/02/Split-Array-Largest-Sum/" data-id="cjzoan2i0009c8wph90klr6q8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1539,144 +1706,7 @@ Return 4.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/10/02/Trapping-Rain-Water/" data-id="cjpqxp6m5008sxgphoyztxy0q" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Factorial" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/27/Factorial/">Factorial</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/27/Factorial/">
-            <time datetime="2016-09-27T15:19:41.000Z" itemprop="datePublished">2016-09-27</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Math/">Math</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="问题-POJ-1401"><a href="#问题-POJ-1401" class="headerlink" title="问题 POJ 1401"></a>问题 POJ 1401</h5><p>给一个数n，  求出n！ 有多少个后导零</p>
-<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><p>因为n!中的5因子比2多，所以只需要找5的个数就好。</p>
-<pre><code>令f(x)表示正整数x末尾所含有的“0”的个数，则有：
-      当0 &lt; n &lt; 5时，f(n!) = 0;
-      当n &gt;= 5时，f(n!) = k + f(k!), 其中 k = n / 5（取整）
-</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">countZero</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">  	<span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">  	<span class="keyword">while</span> (N) &#123;</span><br><span class="line">    	ret += N/<span class="number">5</span>;</span><br><span class="line">   		N /= <span class="number">5</span>;</span><br><span class="line">  	&#125;</span><br><span class="line">  	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果是要求n!中k因子的个数，那么有：</p>
-<pre><code>f(n) = x + f(x), where x = n / k.
-</code></pre>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/27/Factorial/" data-id="cjpqxp6ii002axgphykg4043g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/10/02/Trapping-Rain-Water/" data-id="cjzoan2ic009y8wphc1bmniko" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1769,6 +1799,25 @@ Return 4.
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2019/08/23/BM-1/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/08/23/BM-1/" class="title">BM</a></p>
+                            <p class="item-date"><time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -1842,25 +1891,6 @@ Return 4.
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1879,7 +1909,7 @@ Return 4.
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1929,7 +1959,7 @@ Return 4.
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2018 Atlantic8<br>
+            &copy; 2019 Atlantic8<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

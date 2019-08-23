@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     
     <title>atlantic8</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="A note is preferable to the best memory">
 <meta property="og:type" content="website">
 <meta property="og:title" content="atlantic8">
@@ -20,7 +20,7 @@
     
 
     
-        <link rel="icon" href="/css/images/logo.png" />
+        <link rel="icon" href="/css/images/logo.png">
     
 
     <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
@@ -56,7 +56,7 @@ var _hmt = _hmt || [];
 
 
 </head>
-
+</html>
 <body>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
         <header id="header">
@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                118
+                119
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -233,6 +233,143 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Factorial" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/27/Factorial/">Factorial</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/27/Factorial/">
+            <time datetime="2016-09-27T15:19:41.000Z" itemprop="datePublished">2016-09-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Math/">Math</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="问题-POJ-1401"><a href="#问题-POJ-1401" class="headerlink" title="问题 POJ 1401"></a>问题 POJ 1401</h5><p>给一个数n，  求出n！ 有多少个后导零</p>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><p>因为n!中的5因子比2多，所以只需要找5的个数就好。</p>
+<pre><code>令f(x)表示正整数x末尾所含有的“0”的个数，则有：
+      当0 &lt; n &lt; 5时，f(n!) = 0;
+      当n &gt;= 5时，f(n!) = k + f(k!), 其中 k = n / 5（取整）
+</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">countZero</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">  	<span class="keyword">int</span> ret = <span class="number">0</span>;</span><br><span class="line">  	<span class="keyword">while</span> (N) &#123;</span><br><span class="line">    	ret += N/<span class="number">5</span>;</span><br><span class="line">   		N /= <span class="number">5</span>;</span><br><span class="line">  	&#125;</span><br><span class="line">  	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果是要求n!中k因子的个数，那么有：</p>
+<pre><code>f(n) = x + f(x), where x = n / k.
+</code></pre>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/27/Factorial/" data-id="cjzoan2dj001x8wphiqs8f2g8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Wildcard-Matching" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -309,7 +446,7 @@ isMatch(&quot;aab&quot;, &quot;c*a*b&quot;) → false
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/24/Wildcard-Matching/" data-id="cjpqxp6me0095xgph153b8rqd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/24/Wildcard-Matching/" data-id="cjzoan2ik00ac8wph6u3chu2i" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -468,7 +605,7 @@ isMatch(&quot;aab&quot;, &quot;c*a*b&quot;) → false
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/24/Segment-Tree/" data-id="cjpqxp6lb007gxgphc5t9lcrc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/24/Segment-Tree/" data-id="cjzoan2hk008i8wphjz03xvvu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -668,7 +805,7 @@ C[8]= A[1]+A[2]+A[3]+A[4]+A[5]+A[6]+A[7]+A[8];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/23/Binary-Indexed-Tree/" data-id="cjpqxp6hb000bxgphsna1f39h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/23/Binary-Indexed-Tree/" data-id="cjzoan2ce00068wphi1f2uikw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -807,7 +944,7 @@ Output: False
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="cjpqxp6ma008zxgphr9ngflpb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="cjzoan2ie00a18wph3lnyevys" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1030,7 +1167,7 @@ Output: False
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/" data-id="cjpqxp6i7001nxgph3nj4y5aq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/" data-id="cjzoan2dh001u8wphj3lszdo4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1172,7 +1309,7 @@ and [3,4,-1,1] return 2.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/14/First-Missing-Positive/" data-id="cjpqxp6iq002hxgphjxv9t13q" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/14/First-Missing-Positive/" data-id="cjzoan2dy002p8wph1d7jegux" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1314,7 +1451,7 @@ and [3,4,-1,1] return 2.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/Copy-List-with-Random-Pointer/" data-id="cjpqxp6hx0013xgph6u94bwad" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/Copy-List-with-Random-Pointer/" data-id="cjzoan2d8001d8wphdpejwm2d" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1469,7 +1606,7 @@ solution.pick(1);
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjpqxp6l9007cxgph9i3xybbr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjzoan2hp008r8wphpceyzx61" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1619,174 +1756,7 @@ A B C D A B D
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/KMP/" data-id="cjpqxp6jk0042xgphcd5utbea" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Word-Search" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/11/Word-Search/">Word Search</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/11/Word-Search/">
-            <time datetime="2016-09-11T02:23:58.000Z" itemprop="datePublished">2016-09-11</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/DFS/">DFS</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Word-Search"><a href="#Word-Search" class="headerlink" title="Word Search"></a>Word Search</h4><p>Given a 2D board and a word, find if the word exists in the grid.</p>
-<p>The word can be constructed from letters of sequentially adjacent cell, where “adjacent” cells are those horizontally or vertically neighboring. <b>The same letter cell may not be used more than once.</b></p>
-<pre><code>For example,
-Given board =
-
-[
-  [&#39;A&#39;,&#39;B&#39;,&#39;C&#39;,&#39;E&#39;],
-  [&#39;S&#39;,&#39;F&#39;,&#39;C&#39;,&#39;S&#39;],
-  [&#39;A&#39;,&#39;D&#39;,&#39;E&#39;,&#39;E&#39;]
-]
-word = &quot;ABCCED&quot;, -&gt; returns true,
-word = &quot;SEE&quot;, -&gt; returns true,
-word = &quot;ABCB&quot;, -&gt; returns false.
-</code></pre><p>解题思路</p>
-<ul>
-<li>典型的DFS题</li>
-<li>每到一个点，将其做标记（可以通过异或操作减少空间浪费），然后继续递归，递归完成后，把这个点的值还原</li>
-</ul>
-<h4 id="Word-Search-1"><a href="#Word-Search-1" class="headerlink" title="Word Search"></a>Word Search</h4><p>在上一题的基础上，给定一个单词集合words，找到words中的能由board构建的全部单词。对每个单词，假设board的每个格子只能用1次。</p>
-<pre><code>For example,
-Given words = [&quot;oath&quot;,&quot;pea&quot;,&quot;eat&quot;,&quot;rain&quot;] and board =
-
-[
-  [&#39;o&#39;,&#39;a&#39;,&#39;a&#39;,&#39;n&#39;],
-  [&#39;e&#39;,&#39;t&#39;,&#39;a&#39;,&#39;e&#39;],
-  [&#39;i&#39;,&#39;h&#39;,&#39;k&#39;,&#39;r&#39;],
-  [&#39;i&#39;,&#39;f&#39;,&#39;l&#39;,&#39;v&#39;]
-]
-Return [&quot;eat&quot;,&quot;oath&quot;].
-</code></pre><p>解题思路</p>
-<ul>
-<li>还是要用dfs的思想</li>
-<li>关于words的形式，trie树显然是最natural的</li>
-<li>trie树节点包含26个指针，指向其可能存在的子节点，还包含一个string属性，此属性只在根节点上有用，表示以这个根结点结尾的word</li>
-<li>对board的每一个节点，调用dfs算法，dfs算法根据trie树经行搜索。遇到根结点的话，将对应的结果存储</li>
-<li>结果对重复的word并不计算，所以要考虑去重</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">findWords</span><span class="params">(<span class="keyword">char</span>[][] board, String[] words)</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    TrieNode root = buildTrie(words);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; board.length; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; board[<span class="number">0</span>].length; j++) &#123;</span><br><span class="line">            dfs(board, i, j, root, res);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">char</span>[][] board, <span class="keyword">int</span> i, <span class="keyword">int</span> j, TrieNode p, List&lt;String&gt; res)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c = board[i][j];</span><br><span class="line">    <span class="keyword">if</span>(c == <span class="string">'#'</span> || p.next[c - <span class="string">'a'</span>] == <span class="keyword">null</span>) <span class="keyword">return</span>;</span><br><span class="line">    p = p.next[c - <span class="string">'a'</span>];</span><br><span class="line">    <span class="keyword">if</span> (p.word != <span class="keyword">null</span>) &#123;   <span class="comment">// 叶节点</span></span><br><span class="line">        res.add(p.word);</span><br><span class="line">        p.word = <span class="keyword">null</span>;     <span class="comment">// 记录这个单词一次就够了，以后不需要记录它</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    board[i][j] = <span class="string">'#'</span>;</span><br><span class="line">    <span class="keyword">if</span>(i &gt; <span class="number">0</span>) dfs(board, i - <span class="number">1</span>, j ,p, res);</span><br><span class="line">    <span class="keyword">if</span>(j &gt; <span class="number">0</span>) dfs(board, i, j - <span class="number">1</span>, p, res);</span><br><span class="line">    <span class="keyword">if</span>(i &lt; board.length - <span class="number">1</span>) dfs(board, i + <span class="number">1</span>, j, p, res);</span><br><span class="line">    <span class="keyword">if</span>(j &lt; board[<span class="number">0</span>].length - <span class="number">1</span>) dfs(board, i, j + <span class="number">1</span>, p, res); </span><br><span class="line">    board[i][j] = c;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> TrieNode <span class="title">buildTrie</span><span class="params">(String[] words)</span> </span>&#123;</span><br><span class="line">    TrieNode root = <span class="keyword">new</span> TrieNode();</span><br><span class="line">    <span class="keyword">for</span>(String w : words) &#123;</span><br><span class="line">        TrieNode p = root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">char</span> c : w.toCharArray()) &#123;</span><br><span class="line">            <span class="keyword">int</span> i = c - <span class="string">'a'</span>;</span><br><span class="line">            <span class="keyword">if</span>(p.next[i] == <span class="keyword">null</span>) p.next[i] = <span class="keyword">new</span> TrieNode();</span><br><span class="line">            p = p.next[i];</span><br><span class="line">       &#125;</span><br><span class="line">       p.word = w; <span class="comment">// 叶节点的word属性值为这个单词</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// trie树的定义</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TrieNode</span> </span>&#123;</span><br><span class="line">    TrieNode[] next = <span class="keyword">new</span> TrieNode[<span class="number">26</span>];</span><br><span class="line">    String word;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/11/Word-Search/" data-id="cjpqxp6mc0092xgphqxl1ea1y" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/KMP/" data-id="cjzoan2ep003w8wphdoghxnwe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1879,6 +1849,25 @@ Return [&quot;eat&quot;,&quot;oath&quot;].
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2019/08/23/BM-1/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/08/23/BM-1/" class="title">BM</a></p>
+                            <p class="item-date"><time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -1952,25 +1941,6 @@ Return [&quot;eat&quot;,&quot;oath&quot;].
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1989,7 +1959,7 @@ Return [&quot;eat&quot;,&quot;oath&quot;].
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2039,7 +2009,7 @@ Return [&quot;eat&quot;,&quot;oath&quot;].
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2018 Atlantic8<br>
+            &copy; 2019 Atlantic8<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

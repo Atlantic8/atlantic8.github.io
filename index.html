@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang=zh>
-<head>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
     
     <title>atlantic8</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="A note is preferable to the best memory">
 <meta property="og:type" content="website">
 <meta property="og:title" content="atlantic8">
@@ -20,7 +20,7 @@
     
 
     
-        <link rel="icon" href="/css/images/logo.png" />
+        <link rel="icon" href="/css/images/logo.png">
     
 
     <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
@@ -56,7 +56,7 @@ var _hmt = _hmt || [];
 
 
 </head>
-
+</html>
 <body>
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
         <header id="header">
@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                118
+                119
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -233,6 +233,125 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-BM-1" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2019/08/23/BM-1/">BM</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2019/08/23/BM-1/">
+            <time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time>
+        </a>
+    </div>
+
+
+                        
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2019/08/23/BM-1/" data-id="cjzoan2c800028wpheo861eoe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Hough-Transform" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -274,8 +393,8 @@ var _hmt = _hmt || [];
             <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>Hough转换是由Hough于1959年首次提出的，是图像分析、计算视觉中的一种特征提取算法，这个算法的目的是通过投票程序找到具有特定形状物体的不完美实例，其中投票程序在参数空间完成。在参数空间中，目标候选是选取名为累积空间的局部最大。</p>
 <p>在数字图像处理领域，存在寻找直线、圆、椭圆的子问题。许多情况下，边界检测是此问题的预处理步骤，然而，由于数据本身、边界检测算法存在的不足，可能会导致边界数据缺失、空间错位等问题。所以，需要将提取的边界特征组合成一些规则的图形（线、圆、椭圆）。<strong>Hough转换的目标就是将边界特征组合成物体候选</strong>。</p>
 <h3 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h3><p>Hough转换最简单的应用是检测直线，一条直线可以由斜率$k$和截距$b$确定，这里$<k,b>$就构成了参数空间的一个点。给定一个点，可以找到经过这个点的无数条直线，每个直线在参数空间都对应一个点。但是这种方法有个缺陷，就是直线的斜率可能无限大。所以一般都把Hesse normal形式当做参数空间。</k,b></p>
-<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1fwzx3w7zo6j207w06n0sl.jpg" alt="Hesse normal form"></p>
-<p>具体地，以$y=kx+b$为例，可以将其写成$r=x\cos\theta+y\sin\theta$，如下图所示，$r$是直线到原点的距离，所以一条直线就对应参数空间中的一个点$<r,\theta>$，这个参数空间就是直线对应的<code>Hough Space</code>。</r,\theta></p>
+<p><img src="/images/hough-transform-1.jpg" alt="parameter space"></p>
+<p>具体地，以$y=kx+b$为例，可以将其写成$r=x\cos\theta+y\sin\theta$，如上图所示，$r$是直线到原点的距离，所以一条直线就对应参数空间中的一个点$<r,\theta>$，这个参数空间就是直线对应的<code>Hough Space</code>。</r,\theta></p>
 <p>经过平面中的一个点可以确定无数条直线，每个直线都在参数空间对应一个点，这些点构成一个正弦波行。也就是说一个点在参数空间中对应一个正弦线。并且，共线的点在参数空间中会交于点$<r_0,\theta_0>$，这个点就是这个直线对应的参数空间中的点。所以，<strong>查找共线点问题可以转化为检测共点曲线问题</strong>。</r_0,\theta_0></p>
 <h3 id="数值计算方法"><a href="#数值计算方法" class="headerlink" title="数值计算方法"></a>数值计算方法</h3><p>直线检测的方法如下，以二维直线为例。构建一个二维累加器，记录对应的离散$r,\theta$对应的累加值。对每一个点及其邻居点</p>
 <ul>
@@ -288,9 +407,7 @@ var _hmt = _hmt || [];
 </blockquote>
 <p>广义的方法于1981年由Dana H. Ballard提出，见<a href="https://en.wikipedia.org/wiki/Generalised_Hough_transform" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Generalised_Hough_transform</a></p>
 <hr>
-<blockquote>
 <p>引用</p>
-</blockquote>
 <p>[1]. <a href="https://en.wikipedia.org/wiki/Hough_transform" target="_blank" rel="noopener">Hough transform. From Wikipedia, the free encyclopedia</a></p>
 
         
@@ -302,7 +419,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="cjpqxp6j30039xgphmimki3cs" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="cjzoan2hx00968wph4s6pp3c0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -463,7 +580,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="cjpqxp6iv002rxgphfq1mhb5a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="cjzoan2e2002v8wphkrnqs91l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -701,7 +818,7 @@ f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="cjpqxp6mn009lxgph4f8wzj21" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="cjzoan2ir00ap8wphuggorstn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -949,7 +1066,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="cjpqxp6hn000mxgph75wwa37u" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="cjzoan2d200138wphls0wlql3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1166,7 +1283,7 @@ p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \f
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="cjpqxp6k30053xgph7we051d1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="cjzoan2fd00538wphalwg2r79" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1373,7 +1490,7 @@ J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbra
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="cjpqxp6mh009cxgphwvklco6z" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="cjzoan2im00ag8wphk07x469x" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1519,7 +1636,7 @@ output: 3
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="cjpqxp6i5001jxgphy1pbg5rg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="cjzoan2db001k8wph8fmrsjcq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1689,7 +1806,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="cjpqxp6le007nxgpho6gnksra" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="cjzoan2hq008u8wphzww7cwfl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1971,163 +2088,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjpqxp6kh005xxgph3amlklk2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Convex-Hull" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/05/18/Convex-Hull/">Convex Hull</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/05/18/Convex-Hull/">
-            <time datetime="2017-05-18T03:57:01.000Z" itemprop="datePublished">2017-05-18</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Math/">Math</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h6><p>凸包(Convex Hull)是一个计算几何（图形学）中的概念。凸包的求解方法之一是由葛立恒(Graham)发明的。给定二维平面上的点集，<strong>凸包就是将最外层的点连接起来构成的凸多边型，它能包含点集中所有点</strong>。</p>
-<h6 id="求解方法"><a href="#求解方法" class="headerlink" title="求解方法"></a>求解方法</h6><p>选取点集中<strong>纵坐标最小</strong>的点，如果纵坐标相同则选择<strong>横坐标较小</strong>的点，设为点H（如下图）</p>
-<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpecd53h8j207l06a3yb.jpg" alt="凸包"></p>
-<p>考虑除H之外所有点和H构成的向量，按与向量$(1,0)$之间的夹角从小到大的顺序进行排序；对于夹角一样的点，则考虑其距离，如下图所示;夹角的大小由余弦值决定，因为<code>cos</code>函数在$[0,\pi]$上递减，所以<code>cos</code>值越大的点夹角越小，这里可能会遇到数值的精确度问题，开方精确度有差异的话最好比较平方大小。向量$a,b$的余弦值计算方法为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-cos(a,b)=\frac{a\cdot b}{|a||b|}
-\end{aligned}</script><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpf16x104j20fl0bot8s.jpg" alt=""></p>
-<p>$(3,0)$即为基点，这里$(4,0),(5,0)$与基点共线，$(0,3),(1,2),(2,1)$与基点共线。但是这里的处理方法是不一样的。在逆时针扫描过程中，开始阶段，共线状态的点按距离远近进行排序，近的先；而对于最后的共线点，我们需要把距离远的点放前面，$(0,3)$先于$(1,2)$先于$(2,1)$。所以统一的处理方法是，<strong>共线的点先按距离由小到大排序，然后看排在最后面的点，如果有共线的就按他们的顺序反转</strong>。（不是最后的没关系，比如上图如果还有个$(1,1)$点，那么$(1,2),(2,1)$排在$(0,3)$前面没有影响）</p>
-<p>最后一步，就是处理排好序的点集。逆时针扫描，基点和第一个点肯定在凸包中，然后逐个加入栈中。看第一个图，栈中点包括$(H,K)$时，向量$CK$相对于$KH$往逆时针方向偏，$C$入栈(方向不变也可以)，下一个点是$D$，由于$DC$相对于$CK$往顺时针方向偏，所以将$C$出栈；由于$DK$和$KH$满足条件，所以将$D$入栈，下一个点看$L$，以此类推。。。那么问题是如何判断两个向量是否是逆时针旋转关系呢？</p>
-<p>可以通过向量的叉积，向量$a\times b$的方向通过右手定则判断，具体地，四指并拢指向$a$的方向，四指转动一定角度（小于180度）指向$b$的方向，大拇指的方向就是$a\times b$的方向，如下图所示</p>
-<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpgezlj08j204t064aa9.jpg" alt="右手定则"></p>
-<p>那么如何通过计算得到方向呢？由于二维向量的叉积会产生第三个维度，所以可以假设$a=(a_1,a_2)=(a_1,a_2,0),b=(b_1,b_2)=(b_1,b_2,0)$，$a\times b$计算如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-a\times b = \left[
-\begin{matrix}
-i & j & k \\
-a_1 & a_2 & 0 \\
-b_1 & b_2 & 0
-\end{matrix}
-\right]=\left[0, 0, a_1b_2-a_2b_1\right]
-\end{aligned}</script><p>第三维的分量为$a_1b_2-a_2b_1$，举个栗子判断一下不难发现，逆时针方向转动的向量第三维分量大于0，顺时针转动的小于0.比如图中的$a\times b$指向z轴正向。所以通过计算$a_1b_2-a_2b_1$就可以知道转动方向了。</p>
-<p>以下是c++实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;Point&gt; <span class="title">outerTrees</span><span class="params">(vector&lt;Point&gt;&amp; points)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (points.size() &lt; <span class="number">4</span>) <span class="keyword">return</span> points;</span><br><span class="line">	Point bottom = points[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;points.size(); i++) &#123; <span class="comment">// search for lowest node </span></span><br><span class="line">		Point point = points[i];</span><br><span class="line">		<span class="keyword">if</span> (point.y==bottom.y &amp;&amp; point.x&lt;bottom.x) &#123;bottom = point; index = i;&#125;</span><br><span class="line">		<span class="keyword">if</span> (point.y &lt; bottom.y) &#123;bottom = point; index = i;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	swap(points[<span class="number">0</span>], points[index]);</span><br><span class="line">	sort(points.begin()+<span class="number">1</span>, points.end(), [bottom](<span class="keyword">const</span> Point &amp;p1, <span class="keyword">const</span> Point &amp;p2)&#123;</span><br><span class="line">		<span class="keyword">double</span> d1 = (p1.x-bottom.x)*(p1.x-bottom.x)+(p1.y-bottom.y)*(p1.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> d2 = (p2.x-bottom.x)*(p2.x-bottom.x)+(p2.y-bottom.y)*(p2.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> x1 = <span class="number">1.0</span>*(p1.x-bottom.x)*abs(p1.x-bottom.x)/d1;</span><br><span class="line">		<span class="keyword">double</span> x2 = <span class="number">1.0</span>*(p2.x-bottom.x)*abs(p2.x-bottom.x)/d2;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (x1 != x2) <span class="keyword">return</span> x1 &gt; x2; <span class="comment">// angle from small to big</span></span><br><span class="line">		<span class="keyword">return</span> d1 &lt; d2; <span class="comment">// distance from close to far</span></span><br><span class="line">	&#125;);</span><br><span class="line">	<span class="keyword">int</span> rl = points.size()-<span class="number">2</span>, rr = points.size()-<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span> (rl &gt;= <span class="number">1</span>) &#123; <span class="comment">// reverse co-linear nodes from behind if necessary</span></span><br><span class="line">	    Point p1 = points[rl];</span><br><span class="line">	    Point p2 = points[rr];</span><br><span class="line">	    <span class="keyword">double</span> d1 = (p1.x-bottom.x)*(p1.x-bottom.x)+(p1.y-bottom.y)*(p1.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> d2 = (p2.x-bottom.x)*(p2.x-bottom.x)+(p2.y-bottom.y)*(p2.y-bottom.y);</span><br><span class="line">	    <span class="keyword">double</span> x1 = <span class="number">1.0</span>*(p1.x-bottom.x)*abs(p1.x-bottom.x)/d1;</span><br><span class="line">		<span class="keyword">double</span> x2 = <span class="number">1.0</span>*(p2.x-bottom.x)*abs(p2.x-bottom.x)/d2;</span><br><span class="line">		<span class="keyword">if</span> (x1 == x2) rl--;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (++rl &lt; rr &amp;&amp; rl &gt;= <span class="number">1</span>)<span class="keyword">while</span> (rl &lt; rr) swap(points[rl++], points[rr--]);</span><br><span class="line"></span><br><span class="line">	vector&lt;Point&gt; ret;</span><br><span class="line">	ret.push_back(points[<span class="number">0</span>]);</span><br><span class="line">	ret.push_back(points[<span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">2</span>; i&lt;points.size(); i++) &#123; remove clock-wize node</span><br><span class="line">	    <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span> (ret.size() &gt; <span class="number">2</span>) &#123;</span><br><span class="line">			<span class="comment">// last vector</span></span><br><span class="line">			<span class="keyword">int</span> v1x=ret[ret.size()-<span class="number">1</span>].x-ret[ret.size()-<span class="number">2</span>].x, v1y=ret[ret.size()-<span class="number">1</span>].y-ret[ret.size()-<span class="number">2</span>].y;</span><br><span class="line">			<span class="comment">// current vector</span></span><br><span class="line">			<span class="keyword">int</span> v2x=points[i].x-ret[ret.size()-<span class="number">1</span>].x, v2y=points[i].y-ret[ret.size()-<span class="number">1</span>].y;</span><br><span class="line">			<span class="comment">// cross product x1*y2-x2*y1, positive is ok</span></span><br><span class="line">			<span class="keyword">if</span> (v1x*v2y-v2x*v1y &lt; <span class="number">0</span>) ret.pop_back();</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		ret.push_back(points[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h6 id="类似题目"><a href="#类似题目" class="headerlink" title="类似题目"></a>类似题目</h6><p>LeeCode题目<a href="https://leetcode.com/problems/erect-the-fence/#/description" target="_blank" rel="noopener">Erect the Fence</a>就是求点的凸包问题。</p>
-<p>还有类似的题目：求二维平面上多个点构成的最大三角形。思路是先求多个点的凸包，然后枚举凸包中的点，找到最大三角形。（$S=\sqrt{p(p-a)(p-b)(p-c)},p=\frac{a+b+c}{2}$）.</p>
-<p><strong>引用</strong><br>[1]. <a href="http://www.cnblogs.com/devymex/archive/2010/08/09/1795392.html" target="_blank" rel="noopener">Graham’s Scan法求解凸包问题</a><br>[2]. <a href="http://baike.baidu.com/link?url=xtFaaawZVn0sbpsumowTV-hIlzVBsUOUxoPL-czVqaqmEIFU3WnU7LcMkHy6FyYJ4etWIBK3u5bYXmEQ4vZW-cZw6fKT7Sj4iyl1IZzuHHBs0QxUru5Y5F_nGa2JazZk" target="_blank" rel="noopener">百度百科-向量积</a></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="cjpqxp6hu000wxgphgmjf1c52" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjzoan2fs005v8wphhd0hynrl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2220,6 +2181,25 @@ b_1 & b_2 & 0
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2019/08/23/BM-1/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2019/08/23/BM-1/" class="title">BM</a></p>
+                            <p class="item-date"><time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -2293,25 +2273,6 @@ b_1 & b_2 & 0
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2330,7 +2291,7 @@ b_1 & b_2 & 0
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2380,7 +2341,7 @@ b_1 & b_2 & 0
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2018 Atlantic8<br>
+            &copy; 2019 Atlantic8<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>
