@@ -290,7 +290,7 @@ Return:
 <li>因为window的长度是10，所以表示长度为10的子串需要30位的长度，int型长度是32位(前两位需要设置为0，可以&amp;3fffffff达到效果)，满足条件</li>
 <li>随着窗口移动，左边的退出，右边的加入，我们使用的int数可以每次向左移动三位</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">findRepeatedDnaSequences</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">		List&lt;String&gt; ret = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">		<span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">		HashMap&lt;Integer,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;Integer,Integer&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); i++) &#123;</span><br><span class="line">			<span class="comment">// 3 bits can indicates one letter. so we total need 30 bits to represent a 10-letter string</span></span><br><span class="line">			<span class="comment">// while int is 32 bits long, so, &amp;0x3FFFFFFF helps set the first 2 bits to 0.</span></span><br><span class="line">			<span class="comment">// res&lt;&lt;3 : move the header.</span></span><br><span class="line">			<span class="comment">// s.charAt(i)&amp;7 : add a new letter.</span></span><br><span class="line">			res = res &lt;&lt; <span class="number">3</span> &amp; <span class="number">0x3FFFFFFF</span> | (s.charAt(i) &amp; <span class="number">7</span>);   <span class="comment">//get rid of the header and add the tailer.</span></span><br><span class="line">			<span class="keyword">if</span> (map.containsKey(res)==<span class="keyword">true</span>) &#123;</span><br><span class="line">				<span class="keyword">if</span> (map.get(res) == <span class="number">1</span>)</span><br><span class="line">					ret.add(s.substring(i-<span class="number">9</span>, i+<span class="number">1</span>));</span><br><span class="line">                map.put(res, map.get(res)+<span class="number">1</span>);</span><br><span class="line">        	&#125; <span class="keyword">else</span></span><br><span class="line">				map.put(res, <span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">2<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">findRepeatedDnaSequences</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">22List&lt;String&gt; ret = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">22<span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">22HashMap&lt;Integer,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;Integer,Integer&gt;();</span><br><span class="line">22<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;s.length(); i++) &#123;</span><br><span class="line">222<span class="comment">// 3 bits can indicates one letter. so we total need 30 bits to represent a 10-letter string</span></span><br><span class="line">222<span class="comment">// while int is 32 bits long, so, &amp;0x3FFFFFFF helps set the first 2 bits to 0.</span></span><br><span class="line">222<span class="comment">// res&lt;&lt;3 : move the header.</span></span><br><span class="line">222<span class="comment">// s.charAt(i)&amp;7 : add a new letter.</span></span><br><span class="line">222res = res &lt;&lt; <span class="number">3</span> &amp; <span class="number">0x3FFFFFFF</span> | (s.charAt(i) &amp; <span class="number">7</span>);   <span class="comment">//get rid of the header and add the tailer.</span></span><br><span class="line">222<span class="keyword">if</span> (map.containsKey(res)==<span class="keyword">true</span>) &#123;</span><br><span class="line">2222<span class="keyword">if</span> (map.get(res) == <span class="number">1</span>)</span><br><span class="line">22222ret.add(s.substring(i-<span class="number">9</span>, i+<span class="number">1</span>));</span><br><span class="line">                map.put(res, map.get(res)+<span class="number">1</span>);</span><br><span class="line">        	&#125; <span class="keyword">else</span></span><br><span class="line">2222map.put(res, <span class="number">1</span>);</span><br><span class="line">22&#125;</span><br><span class="line">22<span class="keyword">return</span> ret;</span><br><span class="line">2&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>更加节省空间的方法也有，<b>区分四个数其实只需要2bit</b>。先看下ACGT的二进制后三位</p>
 <pre><code>A : 001
 C : 011
@@ -307,7 +307,7 @@ T : 100
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/10/Repeated-DNA-Sequences/" data-id="cjzovkfgn0071ggpht12a2gcn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/10/Repeated-DNA-Sequences/" data-id="cjzoxm0od007sk4phia7b2psl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -615,6 +615,22 @@ T : 100
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

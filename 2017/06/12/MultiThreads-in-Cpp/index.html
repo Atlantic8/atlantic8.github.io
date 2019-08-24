@@ -350,7 +350,7 @@ var _hmt = _hmt || [];
 <li>Providers 函数：std::async()</li>
 <li>其他类型：std::future_error, std::future_errc, std::future_status, std::launch</li>
 </ul>
-<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		[] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">		std::ref(pr)</span><br><span class="line">	);</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		[] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">22std::ref(pr)</span><br><span class="line">2);</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
 <div class="table-container">
 <table>
 <thead>
@@ -399,7 +399,7 @@ var _hmt = _hmt || [];
 <li><code>std::launch::async</code>：在调用<code>async</code>就开始创建线程</li>
 <li><code>std::launch::deferred</code>：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者wait时才创建线程</li>
 </ul>
-<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[]() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">	<span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">2std::launch::async,</span><br><span class="line">2[]() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">2std::launch::async,</span><br><span class="line">2[](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">2<span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
 <h5 id="std-condition-variable"><a href="#std-condition-variable" class="headerlink" title="std::condition_variable"></a>std::condition_variable</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;condition_variable&gt;</span><br></pre></td></tr></table></figure>
 <p>std::condition_variable 是条件变量，其构造方法如下：</p>
 <div class="table-container">
@@ -440,7 +440,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjzovkfg5005zggphkkcptfq3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjzoxm0ng006fk4ph6uacby4d" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -748,6 +748,22 @@ var _hmt = _hmt || [];
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

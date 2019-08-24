@@ -307,7 +307,7 @@ kmy
 <ul>
 <li>否则，要令<code>skey</code>与p中对应的最右相同元素对齐，设p中序号为<code>k</code>的元素满足条件，<code>si</code>需要移动变成<code>skey-k=si+p.length()-pi-k</code>，同样地<code>pi=0</code></li>
 </ul>
-<h6 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h6><p><code>sunday</code>算法需要维护一个数组，记录s串中下一个字符为x时模式串移动的距离。命其名为<code>next</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_next</span><span class="params">(string p, vector&lt;<span class="keyword">int</span>&gt; &amp;next)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;p.length(); i++) &#123;</span><br><span class="line">	    next[p[i]] = p.length()-i;  <span class="comment">// 模式串有的字符</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sunday</span><span class="params">(string s, string p)</span> </span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(<span class="number">255</span>, p.length()</span>+1)</span>;  <span class="comment">// 默认不存在模式串中的字符对应的移动长度为p.length()+1</span></span><br><span class="line">	get_next();</span><br><span class="line">	<span class="keyword">int</span> si=<span class="number">0</span>, pi=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> (si+p.length() &lt; s.length()) &#123;</span><br><span class="line">	    pi = <span class="number">0</span>;</span><br><span class="line">	    <span class="keyword">for</span> (pi=<span class="number">0</span>; pi&lt;p.length(), s[si++] != p[pi]; pi++); <span class="comment">// matching</span></span><br><span class="line">		<span class="keyword">if</span> (pi == p.length())  <span class="comment">// match found</span></span><br><span class="line">		    cout &lt;&lt; <span class="string">"match found, index is "</span> &lt;&lt; si-p.length()+<span class="number">1</span> &lt;&lt; endl;</span><br><span class="line">		<span class="keyword">int</span> skey = si + p.length() - pi;</span><br><span class="line">		<span class="keyword">if</span> (skey &gt;= s.length) <span class="keyword">break</span>;</span><br><span class="line">		si += next(s[skey]) - pi;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h6><p><code>sunday</code>算法需要维护一个数组，记录s串中下一个字符为x时模式串移动的距离。命其名为<code>next</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_next</span><span class="params">(string p, vector&lt;<span class="keyword">int</span>&gt; &amp;next)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;p.length(); i++) &#123;</span><br><span class="line">2    next[p[i]] = p.length()-i;  <span class="comment">// 模式串有的字符</span></span><br><span class="line">2&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sunday</span><span class="params">(string s, string p)</span> </span>&#123;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(<span class="number">255</span>, p.length()</span>+1)</span>;  <span class="comment">// 默认不存在模式串中的字符对应的移动长度为p.length()+1</span></span><br><span class="line">2get_next();</span><br><span class="line">2<span class="keyword">int</span> si=<span class="number">0</span>, pi=<span class="number">0</span>;</span><br><span class="line">2<span class="keyword">while</span> (si+p.length() &lt; s.length()) &#123;</span><br><span class="line">2    pi = <span class="number">0</span>;</span><br><span class="line">2    <span class="keyword">for</span> (pi=<span class="number">0</span>; pi&lt;p.length(), s[si++] != p[pi]; pi++); <span class="comment">// matching</span></span><br><span class="line">22<span class="keyword">if</span> (pi == p.length())  <span class="comment">// match found</span></span><br><span class="line">22    cout &lt;&lt; <span class="string">"match found, index is "</span> &lt;&lt; si-p.length()+<span class="number">1</span> &lt;&lt; endl;</span><br><span class="line">22<span class="keyword">int</span> skey = si + p.length() - pi;</span><br><span class="line">22<span class="keyword">if</span> (skey &gt;= s.length) <span class="keyword">break</span>;</span><br><span class="line">22si += next(s[skey]) - pi;</span><br><span class="line">2&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
         
         </div>
@@ -318,7 +318,7 @@ kmy
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="cjzovkfh80089ggphca42066h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="cjzoxm0p4008sk4phsjs4p3su" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -626,6 +626,22 @@ kmy
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

@@ -299,7 +299,7 @@ output [3,3,5,5,6,7]
 <li>从队尾起，如果队尾的元素小于当前需要添加的元素，那么剔除队尾元素（它不可能成为最大值），直到队尾元素大于等于当前需要添加的元素。</li>
 <li>此时，队列是非递减队列，所以队头元素就是最大值</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">maxSlidingWindow</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">	vector&lt;<span class="keyword">int</span>&gt; ret;</span><br><span class="line">	deque&lt;<span class="keyword">int</span>&gt; window;</span><br><span class="line">	<span class="keyword">if</span> (nums.size()&lt;<span class="number">1</span> || k&lt;=<span class="number">0</span>) <span class="keyword">return</span> ret;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!window.empty() &amp;&amp; window.front()&lt;i-k+<span class="number">1</span>)</span><br><span class="line">			window.pop_front();</span><br><span class="line">		<span class="keyword">while</span> (!window.empty() &amp;&amp; nums[window.back()]&lt;nums[i])</span><br><span class="line">			window.pop_back();</span><br><span class="line">		window.push_back(i);</span><br><span class="line">		<span class="keyword">if</span> (i &gt;= k-<span class="number">1</span>) ret.push_back(nums[window.front()]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">maxSlidingWindow</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">2vector&lt;<span class="keyword">int</span>&gt; ret;</span><br><span class="line">2deque&lt;<span class="keyword">int</span>&gt; window;</span><br><span class="line">2<span class="keyword">if</span> (nums.size()&lt;<span class="number">1</span> || k&lt;=<span class="number">0</span>) <span class="keyword">return</span> ret;</span><br><span class="line">2<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;nums.size(); i++) &#123;</span><br><span class="line">22<span class="keyword">if</span> (!window.empty() &amp;&amp; window.front()&lt;i-k+<span class="number">1</span>)</span><br><span class="line">222window.pop_front();</span><br><span class="line">22<span class="keyword">while</span> (!window.empty() &amp;&amp; nums[window.back()]&lt;nums[i])</span><br><span class="line">222window.pop_back();</span><br><span class="line">22window.push_back(i);</span><br><span class="line">22<span class="keyword">if</span> (i &gt;= k-<span class="number">1</span>) ret.push_back(nums[window.front()]);</span><br><span class="line">2&#125;</span><br><span class="line">2<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
         
         </div>
@@ -310,7 +310,7 @@ output [3,3,5,5,6,7]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/02/16/Sliding-Window-Maximum/" data-id="cjzovkfgs007aggphkj4w7qx6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/02/16/Sliding-Window-Maximum/" data-id="cjzoxm0oo0086k4phxd9xy9i0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -459,7 +459,7 @@ output [3,3,5,5,6,7]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/18/Java-Future/" data-id="cjzovkff4003yggphj4v2om6p" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/18/Java-Future/" data-id="cjzoxm0lp0049k4phgvd95u92" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -661,7 +661,7 @@ setMaximumPoolSize：设置线程池最大能创建的线程数目大小
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/17/Java-Thread-Pool/" data-id="cjzovkff1003rggph7fwb2oxo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/17/Java-Thread-Pool/" data-id="cjzoxm0lw004ik4phuuvp7fn2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -938,7 +938,7 @@ h_t(x) = \arg\min_{h} E_{x\sim \mathcal{D}_t} [I(f(x) \neq h(x))]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjzovkfd5000cggph46m8usn6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/13/Boosting/" data-id="cjzoxm0gx000mk4ph40pa6m9e" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1119,7 +1119,7 @@ H^{oe}(x)=\arg\max_{y\in Y} \sum_{t=1}^T I(h_t(x)=y)\times I(x\not\in D_t)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjzovkfdz001vggphan7gq675" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/12/Ensemble-Learning/" data-id="cjzoxm0kn002rk4ph351y9xn1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1282,7 +1282,7 @@ P(k)=\frac{e^{\frac{Q(k)}{\tau}}} {\sum_{i=1}^K e^{\frac{Q(k)}{\tau}}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjzovkfg0005mggph996uog5n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Multi-armed-Bandit-Problem/" data-id="cjzoxm0ne006bk4ph6845h3n2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1508,7 +1508,7 @@ y^{(i)} \gets R(s)+\gamma \max_{a} E_{s^{'}\sim P_{sa}}[V(s_{'}]
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjzovkffg004nggph5cy9po31" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="cjzoxm0mu005ik4phts2fvndw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1737,7 +1737,7 @@ p(X,y_t=i|\lambda)&=\sum_{i=1}^N \theta_t(i)\beta_t(i)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjzovkfet003aggph1y528smz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="cjzoxm0lf003rk4phy0knciah" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2052,7 +2052,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjzovkfhh008qggphmqrl7fny" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="cjzoxm0pc0094k4phipj3qtbp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2220,7 +2220,7 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjzovkfgy007oggph3zfsnyew" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjzoxm0ou008fk4phf7bz3art" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2507,6 +2507,22 @@ k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

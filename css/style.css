@@ -134,7 +134,7 @@ code {
   padding: 3px 5px;
   font-size: 0.9em;
   border-radius: 2px;
-  font-family: "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
+  font-family: Consolas, "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
   background-color: #f8f8f8;
 }
 .outer {
@@ -999,7 +999,7 @@ a.article-title:hover {
 }
 .article-entry blockquote {
   position: static;
-  font-family: consola;
+  font-family: Georgia, "Times New Roman", "Microsoft Yahei", serif;
   font-size: 1.1em;
   margin: 0 -20px;
   padding: 10px 20px 10px 54px;
@@ -2106,7 +2106,7 @@ a.article-title:hover {
   overflow-x: auto;
   padding: 15px 20px;
   font-size: 14px;
-  font-family: "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
+  font-family: Consolas, "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace;
   line-height: 22.400000000000002px;
 }
 .highlight table {

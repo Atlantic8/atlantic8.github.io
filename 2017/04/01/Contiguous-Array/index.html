@@ -294,7 +294,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
 <li>如果后面遇到了记录过的和，位置相减就能得到满足条件的子序列长度</li>
 <li>时间复杂度为$O(n)$</li>
 </ul>
-<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">	unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">	map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">		sum += nums[i];</span><br><span class="line">		<span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">		<span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">			ret = max(ret, i-map[sum]);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">			map[sum] = i;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">2<span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">2unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">2map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">2<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">2<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">22sum += nums[i];</span><br><span class="line">22<span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">22<span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">222ret = max(ret, i-map[sum]);</span><br><span class="line">22&#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">222map[sum] = i;</span><br><span class="line">22&#125;</span><br><span class="line">2&#125;</span><br><span class="line">2<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
         
         </div>
@@ -305,7 +305,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="cjzovkfdi000tggphw9ejaxpo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="cjzoxm0jo001qk4phwac181wn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -613,6 +613,22 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

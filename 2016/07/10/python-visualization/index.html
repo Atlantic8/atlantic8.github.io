@@ -452,7 +452,7 @@ var _hmt = _hmt || [];
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df.ix[<span class="number">5</span>].plot(kind=<span class="string">'bar'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <center>![](http://pandas.pydata.org/pandas-docs/stable/_images/bar_plot_ex.png)</center>
 
-<p><b>其他用法</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame()</span><br><span class="line">$-&gt; df.plot.area    df.plot.box     df.plot.hist    df.plot.pie</span><br><span class="line">	df.plot.bar     df.plot.density df.plot.kde     df.plot.scatter</span><br><span class="line">	df.plot.barh    df.plot.hexbin  df.plot.line</span><br></pre></td></tr></table></figure></p>
+<p><b>其他用法</b><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df = pd.DataFrame()</span><br><span class="line">$-&gt; df.plot.area    df.plot.box     df.plot.hist    df.plot.pie</span><br><span class="line">2df.plot.bar     df.plot.density df.plot.kde     df.plot.scatter</span><br><span class="line">2df.plot.barh    df.plot.hexbin  df.plot.line</span><br></pre></td></tr></table></figure></p>
 <h5 id="bar-plot"><a href="#bar-plot" class="headerlink" title="bar plot"></a>bar plot</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">df.ix[<span class="number">5</span>].plot.bar()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">df2 = pd.DataFrame(np.random.rand(<span class="number">10</span>, <span class="number">4</span>), columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>, <span class="string">'d'</span>])</span><br><span class="line">df2.plot.bar()</span><br><span class="line">df2.plot.bar(stacked=<span class="keyword">True</span>)  <span class="comment"># 堆叠式</span></span><br><span class="line">df2.plot.barh(stacked=<span class="keyword">True</span>)  <span class="comment"># 横向</span></span><br></pre></td></tr></table></figure>
 <h5 id="histogram"><a href="#histogram" class="headerlink" title="histogram"></a>histogram</h5><p>Histogram can be drawn by using the <b>DataFrame.plot.hist()</b> and <b>Series.plot.hist()</b> methods<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df4 = pd.DataFrame(&#123;<span class="string">'a'</span>: np.random.randn(<span class="number">1000</span>) + <span class="number">1</span>, <span class="string">'b'</span>: np.random.randn(<span class="number">1000</span>),<span class="string">'c'</span>: np.random.randn(<span class="number">1000</span>) - <span class="number">1</span>&#125;, columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>])</span><br><span class="line">df4.plot.hist(stacked=<span class="keyword">True</span>, bins=<span class="number">20</span>) <span class="comment"># 下图</span></span><br><span class="line">df4[<span class="string">'a'</span>].plot.hist(orientation=<span class="string">'horizontal'</span>, cumulative=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure></p>
 <center>![](http://pandas.pydata.org/pandas-docs/stable/_images/hist_new_stacked.png)</center>
@@ -534,7 +534,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/07/10/python-visualization/" data-id="cjzovkfi800a5ggphkke4kvza" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/07/10/python-visualization/" data-id="cjzoxm0q800agk4phpizzex9v" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -842,6 +842,22 @@ var _hmt = _hmt || [];
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

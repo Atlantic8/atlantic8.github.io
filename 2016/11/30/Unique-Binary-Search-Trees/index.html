@@ -303,7 +303,7 @@ var _hmt = _hmt || [];
 <li>对于1-n组成的节点，每个节点都可能是root</li>
 <li>如果根结点是i，则分别求其左子树和右子树，然后所有左子树和右子树两两配对，加上根节点就是一棵树</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;TreeNode&gt; <span class="title">generateTrees</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> generateSubtrees(<span class="number">1</span>, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> List&lt;TreeNode&gt; <span class="title">generateSubtrees</span><span class="params">(<span class="keyword">int</span> s, <span class="keyword">int</span> e)</span> </span>&#123;</span><br><span class="line">    List&lt;TreeNode&gt; res = <span class="keyword">new</span> LinkedList&lt;TreeNode&gt;();</span><br><span class="line">    <span class="keyword">if</span> (s &gt; e) &#123;</span><br><span class="line">        res.add(<span class="keyword">null</span>); <span class="comment">// empty tree</span></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s; i &lt;= e; ++i) &#123;</span><br><span class="line">        List&lt;TreeNode&gt; leftSubtrees = generateSubtrees(s, i - <span class="number">1</span>);</span><br><span class="line">        List&lt;TreeNode&gt; rightSubtrees = generateSubtrees(i + <span class="number">1</span>, e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (TreeNode left : leftSubtrees) &#123;</span><br><span class="line">            <span class="keyword">for</span> (TreeNode right : rightSubtrees) &#123;</span><br><span class="line">                TreeNode root = <span class="keyword">new</span> TreeNode(i);</span><br><span class="line">                root.left = left;</span><br><span class="line">                root.right = right;</span><br><span class="line">                res.add(root);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;TreeNode&gt; <span class="title">generateTrees</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">2<span class="keyword">return</span> generateSubtrees(<span class="number">1</span>, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> List&lt;TreeNode&gt; <span class="title">generateSubtrees</span><span class="params">(<span class="keyword">int</span> s, <span class="keyword">int</span> e)</span> </span>&#123;</span><br><span class="line">    List&lt;TreeNode&gt; res = <span class="keyword">new</span> LinkedList&lt;TreeNode&gt;();</span><br><span class="line">    <span class="keyword">if</span> (s &gt; e) &#123;</span><br><span class="line">        res.add(<span class="keyword">null</span>); <span class="comment">// empty tree</span></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s; i &lt;= e; ++i) &#123;</span><br><span class="line">        List&lt;TreeNode&gt; leftSubtrees = generateSubtrees(s, i - <span class="number">1</span>);</span><br><span class="line">        List&lt;TreeNode&gt; rightSubtrees = generateSubtrees(i + <span class="number">1</span>, e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (TreeNode left : leftSubtrees) &#123;</span><br><span class="line">            <span class="keyword">for</span> (TreeNode right : rightSubtrees) &#123;</span><br><span class="line">                TreeNode root = <span class="keyword">new</span> TreeNode(i);</span><br><span class="line">                root.left = left;</span><br><span class="line">                root.right = right;</span><br><span class="line">                res.add(root);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         </div>
         <footer class="article-footer">
@@ -313,7 +313,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjzovkfhk008xggphkszvtwvp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjzoxm0pg0097k4phapufjdi4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -621,6 +621,22 @@ var _hmt = _hmt || [];
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>
