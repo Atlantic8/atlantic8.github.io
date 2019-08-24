@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                119
+                118
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -233,174 +233,6 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
-    <article id="post-Sparse-Coding" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/20/Sparse-Coding/">Sparse Coding</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/20/Sparse-Coding/">
-            <time datetime="2016-12-20T02:26:20.000Z" itemprop="datePublished">2016-12-20</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="字典学习"><a href="#字典学习" class="headerlink" title="字典学习"></a>字典学习</h5><p>字典学习是与稀疏性相关的学习方法，它被用来寻找一组“超完备”基向量来更高效地表示样本数据。稀疏性会降低计算和存储的开销，并且会提高模型的可解释性。</p>
-<pre><code>稀疏表示侧重于学习一个字典
-</code></pre><p>给定数据集$\lbrace x_1,x_2,…,x_m \rbrace$，字典学习的简单形式如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B,\alpha_i} \sum_{i=1}^m \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1
-\end{aligned}</script><p>其中$B\in R^{d\times k}$为字典矩阵，$k$称为字典的词汇量，$\alpha_i \in R^k$是样本$x_i$的稀疏表示。实际中，根据应用场景的要求，第二项中的$\lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1$也可以替换成别的代价函数。</p>
-<h6 id="奇异值分解简述SVD"><a href="#奇异值分解简述SVD" class="headerlink" title="奇异值分解简述SVD"></a>奇异值分解简述SVD</h6><p>对任意矩阵奇异值分解<script type="math/tex">M=U\Sigma V^T</script>其中，$\Sigma$是对角矩阵，对角线上是矩阵的奇异值，$U$中的每一列是经过$M$转化后的标准正交基组成之一，而$V$表示了原始域的标准正交基，每一列是一个向量。</p>
-<blockquote>
-<p>以后应该还有关于SVD的解释</p>
-</blockquote>
-<h6 id="训练方法"><a href="#训练方法" class="headerlink" title="训练方法"></a>训练方法</h6><p>上式的训练目标参数有$\alpha_i,B$，可以用<b>交替优化的方法</b>。</p>
-<hr>
-<p>1 为每个样本$x_i$找到相应的$\alpha_i$，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{\alpha_i} \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \Vert \alpha_i \Vert_1
-\end{aligned}</script><p>这一步可以使用lasso的优化方法。</p>
-<hr>
-<p>2 以$\alpha_i$为初值来更新字典$B$，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B} \Vert X-BA \Vert_F^2
-\end{aligned}</script><p>其中，$X=(x_1,x_2,…,x_m)\in R^{d\times m},A=(\alpha_1,\alpha_2,…,\alpha_m)\in R^{k\times m}$，矩阵的F范数是矩阵每个元素的平方和再开方。</p>
-<p>上式的常用优化方法为<b>KSVD</b>，这是基于逐列更新的方法。令$b_i$表示字典$B$的第$i$列，$\alpha^i$表示稀疏矩阵$A$的第$i$行($\alpha_i$表示稀疏矩阵$A$的第$i$列)，$b_i\alpha^i$其实是个矩阵。则上式可以重写成</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{B} \Vert X-BA \Vert_F^2 &= \min_{b_i} \left\Vert X-\sum_{j=1}^k b_ja^j \right\Vert_F^2 \\
-&= \min_{b_i} \left\Vert X-\sum_{j=1,j\not i}^k b_ja^j - b_i\alpha^i \right\Vert_F^2 \\
-&= \min_{b_i} \Vert E_i-b_i\alpha^i \Vert_F^2
-\end{aligned}</script><p>更新字典第$i$列时，$E_i$是固定的，$E_i$表示没有$b_i$时表示的误差。所以最小化上式原则上就是对$E_i$进行奇异值分解(SVD)取得最大奇异值所对应的正交向量。对$E_i$进行奇异值分解$E_i=U\Sigma V^T$，那么$b_i$是$U$中最大奇异值对应的正交向量，但此时$\alpha^i$也需要更新，这就会破坏$\alpha^i$的稀疏性质。</p>
-<p>为了避免这种情况，KSVD做如下处理。注意到要保持稀疏性，我们不能将$\alpha_i$原来为0的位置变成非零数。$b_i \alpha^i$是一个矩阵，它的第$j$列是$b_i\alpha_j^i$。如果原来$\alpha_j^i=0$，那么$b_i\alpha_j^i$就是全为0的列向量。这里，我们可以把$E_i$对应位置的列变成全0，这样奇异值分解后的结果就不会破坏$A$的稀疏性。然后，对$E_i$进行奇异值分解，更新$b_i$为$U$中最大奇异值对应的正交向量，更新$\alpha^i$为$V$中最大奇异值对应的正交向量(列向量)乘以最大奇异值。</p>
-<hr>
-<h5 id="稀疏编码"><a href="#稀疏编码" class="headerlink" title="稀疏编码"></a>稀疏编码</h5><p>稀疏编码是字典学习的下一步，在学习到了字典$B$后，给定一个新的样本$x_k$，只需要通过优化</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\min_{\alpha_i}  \Vert x_k-B\alpha_k \Vert_2^2 + \lambda \Vert \alpha_k \Vert_1
-\end{aligned}</script><p>来找到$\alpha_k$，即求解出了基于字典$B$的关于$x_k$的稀疏表示。上式的优化方法即经典的Lasso优化问题，使用Proximal Gradient Descent方法。</p>
-<p>比如说：</p>
-<center>![](http://img.my.csdn.net/uploads/201304/09/1365483491_9524.jpg)</center>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="cjzoan2hu00908wphs4u001zs" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
     <article id="post-Manifold-Learning" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -498,7 +330,7 @@ s.t. \quad \sum_{j \in Q_i}\omega_{ij}=1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/18/Manifold-Learning/" data-id="cjzoan2f4004p8wph1shmymi7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/18/Manifold-Learning/" data-id="cjzoura78004qygphexo2x104" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -654,7 +486,7 @@ B=Z^TZ=V\Lambda V^T
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/18/Multiple-Dimensional-Scaling/" data-id="cjzoan2g000668wphmwhic4qd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/18/Multiple-Dimensional-Scaling/" data-id="cjzoura7v005rygphnbvgvz7s" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -812,7 +644,7 @@ l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/13/Logistic-Regression/" data-id="cjzoan2f1004j8wphe1g06dma" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/13/Logistic-Regression/" data-id="cjzoura74004gygphy70a5040" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1013,7 +845,7 @@ hence: \lambda &= -m \\
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="cjzoan2dr002b8wph6q7w7r6s" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="cjzoura5s0025ygphx6gffumg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1153,7 +985,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="cjzoan2dd001o8wph2ly5gzyx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="cjzoura5v0028ygphrgw9am1q" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1289,7 +1121,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="cjzoan2e0002s8wphdqtflk0r" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="cjzoura65002pygphol2x8nlg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1432,7 +1264,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="cjzoan2e900358wphyozk767e" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="cjzoura6b002zygphbn30dit1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1587,7 +1419,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjzoan2if00a48wphsho2h8y2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="cjzouraa8009mygph2iv1otzt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1744,7 +1576,174 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="cjzoan2fl005h8wph9dlf5dsz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="cjzoura7p005eygphf5vxxekp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Tile-Cover-Problem" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/11/25/Tile-Cover-Problem/">Tile Cover Problem</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/11/25/Tile-Cover-Problem/">
+            <time datetime="2016-11-25T01:42:46.000Z" itemprop="datePublished">2016-11-25</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/POJ/">POJ</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><p>POJ 2411<br>编程之美<br>用 1 x 2 的瓷砖覆盖 n x m 的地板，问共有多少种覆盖方式？</p>
+<h5 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h5><p>这是个<b>状态压缩DP问题</b>，意思就是把状态用比特位的形式表示出来，然后使用DP求解</p>
+<pre><code>每个位置，有砖为1，无砖为0
+由于转是1x2规格的，规定：
+横着铺是连续两个都设成1
+竖着铺时上面的设为0，下面的为1（因为上面的砖头对第二行有影响，如果上面的为0，那么下面的必须为1）
+把每一行看作是一个二进制整数，这个整数就表示状态(有多少种01序列就有多少种状态)
+因此每行都有很多状态，状态即为这一行01序列对应的值
+</code></pre><ul>
+<li><b>DP[i][j]表示第i行状态为j时有多少种方法</b>。</li>
+<li><b>如果上一行的某个状态DP(i-1,k) 可以达到 DP(i, j) 那么两个状态是兼容的</b>。</li>
+<li><b>如果DP(i-1,k)和DP(i, j)兼容并且 DP(i-1, k)有S种铺设方案，那么DP(i, j)就可以从DP(i-1, k)这条路径中获得S个方案</b>。</li>
+</ul>
+<p><b>兼容性：</b><br>兼容性指的是上一行和下一行的关系。Concretely，<b>x和y兼容指的是x、y对应的二进制串对应的状态是兼容的</b>。<br>检测兼容性的方法是从左到右依次检测每一列是否兼容，具体检查内容包括：(假如现在铺设第i行x列)</p>
+<pre><code>     x  x+1
+i-1
+  i  0
+</code></pre><p>如果第i行x列上的值(i,x)是0， 那么第 i-1行x列上一定是1</p>
+<pre><code>     x  x+1
+i-1
+  i  1
+</code></pre><p>如果(i,x)为1，那么</p>
+<ul>
+<li>(i-1,x)为0，竖着铺的，下一步检测(i, x+1)</li>
+<li>(i-1,x)为1，下一步检测(i, x+2).因为(i,x)是横着铺，跨越两个格子。</li>
+</ul>
+<p>第一行得兼容性</p>
+<ul>
+<li>如果 (0,x) 是1，那么 (0,x+1) 也一定是1，然后测试到 (0,x+2)</li>
+<li>如果(0,x)是0， 那么直接测试下一个(0,x+1)</li>
+<li>因为是第一行，所以兼容只能获得一个方案</li>
+</ul>
+<p>所以具体思路就是：</p>
+<pre><code>对每一行，遍历其所有可能得状态
+检查其与上一行所有状态得兼容性，兼容则获取上一行状态所对应的方案数
+第一行单独处理
+最后一行结束后，返回DP[n-1][2^m-1]，因为最后一行必须全部为1
+</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;memory.h&gt;</span><br><span class="line">#include &lt;math.h&gt;</span><br><span class="line">#include &lt;algorithm&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define MAX_ROW 11</span><br><span class="line">#define MAX_STATUS 2048</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> DP[MAX_ROW][MAX_STATUS];</span><br><span class="line"><span class="keyword">int</span> g_Width, g_Height;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test the first line</span></span><br><span class="line"><span class="function">bool <span class="title">TestFirstLine</span><span class="params">(<span class="keyword">int</span> nStatus)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// 状态的每一个位</span></span><br><span class="line">	<span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line">		<span class="keyword">if</span>(nStatus &amp; (<span class="number">0x1</span> &lt;&lt; i)) &#123;</span><br><span class="line">			<span class="keyword">if</span>( i == g_Width -<span class="number">1</span> || (nStatus &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			i += <span class="number">2</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			i++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test if status (i, nStatusA) and (i-1, nStatusB) is compatable.</span></span><br><span class="line"><span class="function">bool <span class="title">CompatablityTest</span><span class="params">(<span class="keyword">int</span> nStatusA, <span class="keyword">int</span> nStatusB)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; i))  == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			i++;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span> )</span><br><span class="line">				i++;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span>( (i == g_Width - <span class="number">1</span>) || ! ( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) &amp;&amp; (nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; (i + <span class="number">1</span>)))) )</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				i += <span class="number">2</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i,j;</span><br><span class="line">	<span class="keyword">int</span> k;</span><br><span class="line">	<span class="keyword">while</span>(scanf(<span class="string">"%d%d"</span>, &amp;g_Height, &amp;g_Width) != EOF ) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(g_Width == <span class="number">0</span> &amp;&amp; g_Height == <span class="number">0</span>)</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span>(g_Width &gt; g_Height)</span><br><span class="line">			swap(g_Width, g_Height);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span> nAllStatus = <span class="number">1</span> &lt;&lt; g_Width;</span><br><span class="line">		memset(DP, <span class="number">0</span>, sizeof(DP));</span><br><span class="line">		<span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">			<span class="keyword">if</span>(TestFirstLine(j))</span><br><span class="line">				DP[<span class="number">0</span>][j] = <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span>( i = <span class="number">1</span>; i &lt; g_Height; i++) &#123; </span><br><span class="line">			<span class="comment">// iterate all status for line i</span></span><br><span class="line">			<span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">				<span class="comment">// iterate all status for line i-1</span></span><br><span class="line">				<span class="keyword">for</span>( k = <span class="number">0</span>; k &lt; nAllStatus; k++) &#123;</span><br><span class="line">					<span class="keyword">if</span>(CompatablityTest(j, k))</span><br><span class="line">						DP[i][j] += DP[i-<span class="number">1</span>][k];</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		printf(<span class="string">"%lld\n"</span>, DP[g_Height-<span class="number">1</span>][nAllStatus - <span class="number">1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="cjzouraaf009yygph5rb6oxam" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1837,25 +1836,6 @@ send(pkt)
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2019/08/23/BM-1/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"></p>
-                            <p class="item-title"><a href="/2019/08/23/BM-1/" class="title">BM</a></p>
-                            <p class="item-date"><time datetime="2019-08-23T15:48:28.000Z" itemprop="datePublished">2019-08-23</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -1929,6 +1909,25 @@ send(pkt)
                         </div>
                     </li>
                 
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
+                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
+                        </div>
+                    </li>
+                
             </ul>
         </div>
     </div>
@@ -1947,7 +1946,7 @@ send(pkt)
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
