@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="atlantic8">
 <meta property="og:description" content="定义最大熵模型也是判别模型，其基本思想是最大熵思想，即在给定关于概率分布不完全信息的情况下，仅有的无偏假设就是使得模型尽可能地均匀，通俗点说就是对一个随机事件的概率分布进行预测时，预测应当满足全部已知的约束，而对未知的情况不要做任何主观假设。在这种思想下，合适的模型就是在满足给定限制情况下最大化模型的熵。对于条件模型$p(y|x)$，其条件熵的定义为  \begin{aligned} H(p)=-">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-16T14:08:06.333Z">
+<meta property="og:updated_time" content="2019-08-24T02:27:17.197Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Maximum Entropy Model">
 <meta name="twitter:description" content="定义最大熵模型也是判别模型，其基本思想是最大熵思想，即在给定关于概率分布不完全信息的情况下，仅有的无偏假设就是使得模型尽可能地均匀，通俗点说就是对一个随机事件的概率分布进行预测时，预测应当满足全部已知的约束，而对未知的情况不要做任何主观假设。在这种思想下，合适的模型就是在满足给定限制情况下最大化模型的熵。对于条件模型$p(y|x)$，其条件熵的定义为  \begin{aligned} H(p)=-">
@@ -358,10 +358,10 @@ p(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y 
 \begin{equation}
 p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
 \end{equation}</script><hr>
-<p>第二步，求解$\lambda^{*}$:<br>令$\Psi_{p^{*}}= \min_{p(y|x)}\Gamma(p,\lambda)$，下一步就是</p>
+<p>第二步，求解$\lambda^{<em>}$:<br>令$\Psi_{p^{</em>}}= \min_{p(y|x)}\Gamma(p,\lambda)$，下一步就是</p>
 <script type="math/tex; mode=display">
 \begin{equation}
-\lambda^{\*}=arg\max_{\lambda} \Psi_{p^{\*}}
+\lambda^{*}=arg\max_{\lambda} \Psi_{p^{*}}
 \end{equation}</script><hr>
 <p>可以证明，最大熵模型是适定的（well-defined），其解存在且唯一。</p>
 <p><strong>参考文献</strong><br>[1]. Classical Probabilistic Models and Conditional Random Fields.pdf<br>[2]. 统计学习方法. 李航</p>
@@ -375,7 +375,7 @@ p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \f
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="cjzov0xjj00557ophjokrssu1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="cjzovkffs0055ggphzgo7m9mm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
