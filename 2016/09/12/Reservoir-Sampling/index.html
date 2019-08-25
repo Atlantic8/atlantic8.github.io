@@ -303,7 +303,7 @@ solution.pick(1);
 <li>遇到第k个目标元素，以1/k的概率替换ret值</li>
 <li>直到扫描完整个字符串</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; data;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Solution</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums)</span> </span>&#123;</span><br><span class="line">2srand((<span class="keyword">int</span>)time(NULL)); <span class="comment">// 设置时间种子，放在pick里面会导致之间间隔太短而使得随机数不随机</span></span><br><span class="line">2data = nums;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pick</span><span class="params">(<span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">2<span class="keyword">int</span> ret = <span class="number">0</span>, n = <span class="number">1</span>;</span><br><span class="line">2<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;data.size(); i++) &#123;</span><br><span class="line">22<span class="keyword">if</span> (data.at(i) != target) <span class="keyword">continue</span>;</span><br><span class="line">22<span class="keyword">else</span> <span class="keyword">if</span> (rand()%n++ == <span class="number">0</span>) ret = i;  <span class="comment">// 以以1/k的概率使用第k个target值</span></span><br><span class="line">2&#125;</span><br><span class="line">2<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; data;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Solution</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums)</span> </span>&#123;</span><br><span class="line">	srand((<span class="keyword">int</span>)time(NULL)); <span class="comment">// 设置时间种子，放在pick里面会导致之间间隔太短而使得随机数不随机</span></span><br><span class="line">	data = nums;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pick</span><span class="params">(<span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> ret = <span class="number">0</span>, n = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;data.size(); i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (data.at(i) != target) <span class="keyword">continue</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (rand()%n++ == <span class="number">0</span>) ret = i;  <span class="comment">// 以以1/k的概率使用第k个target值</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         </div>
         <footer class="article-footer">
@@ -313,7 +313,7 @@ solution.pick(1);
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjzqbjtmq007ty4phispu6c3e" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="cjzqc1jvx0085tkph4gsilq1m" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -621,22 +621,6 @@ solution.pick(1);
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

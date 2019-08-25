@@ -289,7 +289,7 @@ var _hmt = _hmt || [];
 <li>类的作用域包括：类定义中，源文件类成员函数的函数体内(<code>{}</code>之内)</li>
 <li>类的作用域中，编译器处理模板自身引用时可以不带类型名</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line"><span class="keyword">void</span> Blob&lt;T&gt;::check (<span class="keyword">const</span> T&amp; t1, <span class="keyword">const</span> T&amp; t2) &#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类作用域中</span></span><br><span class="line">Blob&lt;T&gt;&amp; func();  <span class="comment">// ok</span></span><br><span class="line">Blob&amp; func(); <span class="comment">// ok</span></span><br><span class="line"><span class="comment">// 之外</span></span><br><span class="line">Blob&amp; func &#123;   <span class="comment">// wrong</span></span><br><span class="line">    Blob ret = *<span class="keyword">this</span>; <span class="comment">// ok, in scope</span></span><br><span class="line">2...</span><br><span class="line">2<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line"><span class="keyword">void</span> Blob&lt;T&gt;::check (<span class="keyword">const</span> T&amp; t1, <span class="keyword">const</span> T&amp; t2) &#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类作用域中</span></span><br><span class="line">Blob&lt;T&gt;&amp; func();  <span class="comment">// ok</span></span><br><span class="line">Blob&amp; func(); <span class="comment">// ok</span></span><br><span class="line"><span class="comment">// 之外</span></span><br><span class="line">Blob&amp; func &#123;   <span class="comment">// wrong</span></span><br><span class="line">    Blob ret = *<span class="keyword">this</span>; <span class="comment">// ok, in scope</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h6 id="类模板和友元"><a href="#类模板和友元" class="headerlink" title="类模板和友元"></a>类模板和友元</h6><ol>
 <li><strong>如果类模板包含非模板友元，则该友元可以访问所有模板实例</strong></li>
 <li><strong>如果类模板包含模板友元，类可以授权给所有模板实例，也可以只授权给特定实例</strong></li>
@@ -345,7 +345,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="cjzqbjthb001gy4phn0xerl2o" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="cjzqc1jqz001jtkpho1ssqkan" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -653,22 +653,6 @@ var _hmt = _hmt || [];
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

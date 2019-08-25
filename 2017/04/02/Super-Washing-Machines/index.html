@@ -310,7 +310,7 @@ The range of dresses number in a super washing machine is [0, 1e5].
 </code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>首先，如果所有洗衣机的衣服总和不能被$n$整除，返回-1.<br>然后对于每个洗衣机，计算它的<code>gain/lose</code>数组，表示还需要移除多少件衣服使得自己达到平衡状态。</p>
 <p>举个栗子：<br>对于<code>[0,0,11,5]</code>，每个洗衣机应该有4件衣服，所以它的<code>gain/lose</code>数组为<code>[-4,-4,7,1]</code>。从第一个机器开始考虑，第一个要加入4件，得从第二个机器中过来，所以这个状态可以以4次移动的代价变成<code>[0,-8,7,1]</code>。同理第二个状态也可以以8次移动的代价变成状态三<code>[0,0,-1,1]</code>，最后以一次移动的代价变成<code>[0,0,0,0]</code>。</p>
 <p>因为每一次移动可以选取任意个元素，并朝左边或者右边移动一个元素，所以总共需要的移动次数就是<code>gain/lose</code>数组中出现的最大值。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">2<span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">2<span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">2<span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">2<span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">22tmp += num-n;</span><br><span class="line">22ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">2&#125;</span><br><span class="line">2<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">		tmp += num-n;</span><br><span class="line">		ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码中<code>num-n</code>没加绝对值，我的理解是对于初始<code>gain/lose</code>数组的负数，可以从两边同时添加衣服，如果是正数，那么那么每次只能移除一件衣服。而<code>tmp</code>加了绝对值，是因为<code>tmp</code>表示左边一个缺少/多的衣服数，这些衣服得从右边过来，并且一个一个达到当前位置，所以得加绝对值。</p>
 
         
@@ -322,7 +322,7 @@ The range of dresses number in a super washing machine is [0, 1e5].
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="cjzqbjtnh008ty4ph9yzid8tk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="cjzqc1jwj0096tkph93tv82u8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -630,22 +630,6 @@ The range of dresses number in a super washing machine is [0, 1e5].
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>

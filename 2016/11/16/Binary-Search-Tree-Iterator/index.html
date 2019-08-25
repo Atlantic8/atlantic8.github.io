@@ -286,7 +286,7 @@ var _hmt = _hmt || [];
 <li>使用next函数时，栈顶top节点出栈，将top节点设置为root，执行步骤1</li>
 <li>hasNext函数：查看栈是否为空即可</li>
 </ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSTIterator</span> </span>&#123;</span><br><span class="line">    stack&lt;TreeNode *&gt; myStack;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    BSTIterator(TreeNode *root) &#123;</span><br><span class="line">        pushAll(root);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> whether we have a next smallest number */</span></span><br><span class="line">    <span class="function">bool <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !myStack.empty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> the next smallest number */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        TreeNode *tmpNode = myStack.top();</span><br><span class="line">        myStack.pop();</span><br><span class="line">        pushAll(tmpNode-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> tmpNode-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">2<span class="comment">// 从root开始不断向左，将遇到的每个节点入栈</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pushAll</span><span class="params">(TreeNode *node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (; node != NULL; myStack.push(node), node = node-&gt;left);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSTIterator</span> </span>&#123;</span><br><span class="line">    stack&lt;TreeNode *&gt; myStack;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    BSTIterator(TreeNode *root) &#123;</span><br><span class="line">        pushAll(root);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> whether we have a next smallest number */</span></span><br><span class="line">    <span class="function">bool <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !myStack.empty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> the next smallest number */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        TreeNode *tmpNode = myStack.top();</span><br><span class="line">        myStack.pop();</span><br><span class="line">        pushAll(tmpNode-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> tmpNode-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="comment">// 从root开始不断向左，将遇到的每个节点入栈</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pushAll</span><span class="params">(TreeNode *node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (; node != NULL; myStack.push(node), node = node-&gt;left);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
         
         </div>
         <footer class="article-footer">
@@ -296,7 +296,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="cjzqbjtgc0006y4phtmrh803f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="cjzqc1jpz0006tkphsptmr0iy" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -604,22 +604,6 @@ var _hmt = _hmt || [];
 <!-- Custom Scripts -->
 <script src="/js/main.js"></script>
 
-    </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>
