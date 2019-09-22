@@ -170,11 +170,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                118
+                119
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                44
+                45
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +233,156 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-CherryPy-Torturial" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2019/09/21/CherryPy-Torturial/">CherryPy Torturial</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2019/09/21/CherryPy-Torturial/">
+            <time datetime="2019-09-21T15:51:48.000Z" itemprop="datePublished">2019-09-21</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Other/">Other</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/python/">python</a>, <a class="tag-link" href="/tags/web/">web</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>python有多种工具包，其中就包括一些可以提供网页服务的package，比如Django、CherryPy等。在不同的情况下一般有不同的选择，比如如果只想是通过浏览器下载服务器上的文件，那么通过SimpleHTTPServer即可<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer <span class="number">8000</span></span><br></pre></td></tr></table></figure></p>
+<p>今天介绍的是一种上手极快的工具，CherryPy，下面会通过一些例子展示如何快速搭建自己需要的简单网页。</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>pip安装即可</p>
+<h4 id="返回静态网页"><a href="#返回静态网页" class="headerlink" title="返回静态网页"></a>返回静态网页</h4><p>一般的使用方法都是封装一个app类，然后在这个类中定义函数，将函数设置为cherrypy.expose则表示可以通过url访问这个函数。生效的时候通过<code>quickstart(Test(), &#39;/&#39;, conf)</code>函数生效，这个函数有三个参数，后两个是应用的根位置和配置，为可选参数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span> <span class="comment">#给定param参数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'calling generate %s'</span> % param </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cherrypy.quickstart(Test())</span><br></pre></td></tr></table></figure></p>
+<p>上面这个例子，我们可以通过<code>http://localhost:8080/generate?param=success</code>返回<code>calling generate success</code>. </p>
+<h4 id="提交form"><a href="#提交form" class="headerlink" title="提交form"></a>提交form</h4><p>如果我们希望在网页端采集用户的输入，那么我们就需要通过form获取了。网页端用户操作的组件由html中的name属性指示<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"""&lt;html&gt;</span></span><br><span class="line"><span class="string">          &lt;head&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">          &lt;body&gt;</span></span><br><span class="line"><span class="string">            &lt;form method="get" action="generate"&gt;</span></span><br><span class="line"><span class="string">              &lt;input type="text" value="bingo" name="param" /&gt;</span></span><br><span class="line"><span class="string">              &lt;button type="submit"&gt;generate&lt;/button&gt;</span></span><br><span class="line"><span class="string">            &lt;/form&gt;</span></span><br><span class="line"><span class="string">          &lt;/body&gt;</span></span><br><span class="line"><span class="string">        &lt;/html&gt;"""</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'calling generate %s'</span> % param</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cherrypy.quickstart(Test())</span><br></pre></td></tr></table></figure></p>
+<p>如果想返回一个网页，那么直接return这个网页的内容即可。这里是通过get方式发送form数据，也可以使用post，推荐使用post</p>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>默认配置一般在Lib/site-packages/cherrypy/scaffold/site.conf中，内容如下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">global</span>]</span><br><span class="line"><span class="comment"># Uncomment this when you're done developing</span></span><br><span class="line"><span class="comment">#environment: "production"</span></span><br><span class="line"></span><br><span class="line">server.socket_host: <span class="string">"0.0.0.0"</span></span><br><span class="line">server.socket_port: <span class="number">8088</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment the following lines to run on HTTPS at the same time</span></span><br><span class="line"><span class="comment">#server.2.socket_host: "0.0.0.0"</span></span><br><span class="line"><span class="comment">#server.2.socket_port: 8433</span></span><br><span class="line"><span class="comment">#server.2.ssl_certificate: '../test/test.pem'</span></span><br><span class="line"><span class="comment">#server.2.ssl_private_key: '../test/test.pem'</span></span><br><span class="line"></span><br><span class="line">tree.myapp: cherrypy.Application(scaffold.root, <span class="string">"/"</span>, <span class="string">"example.conf"</span>)</span><br></pre></td></tr></table></figure></p>
+<h6 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h6><p>这里主要是全局【global】配置，在代码中可以通过<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cherrypy.config.update(&#123;&apos;server.socket_host&apos;: &apos;64.72.221.48&apos;,</span><br><span class="line">                        &apos;server.socket_port&apos;: 80&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>进行更改</p>
+<blockquote>
+<p>如果修改端口后浏览器上打不开网页，其他都ok的话，需要看一下这个端口是不是系统默认端口，比如9090</p>
+</blockquote>
+<h6 id="局部配置"><a href="#局部配置" class="headerlink" title="局部配置"></a>局部配置</h6><p>局部配置仅在单个app内部生效，由<code>/</code>符号开头，形式如下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[/]</span><br><span class="line">tools.trailing_slash.on = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">[/app1]</span><br><span class="line">tools.trailing_slash.on = <span class="keyword">True</span></span><br></pre></td></tr></table></figure></p>
+<p>代码中这样用<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">config = &#123;<span class="string">'/'</span>:</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">'tools.trailing_slash.on'</span>: <span class="keyword">False</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">cherrypy.tree.mount(Root(), config=config)</span><br></pre></td></tr></table></figure></p>
+<h6 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h6><p>也可以加其他配置，与上面所述配置区分开即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[Databases]</span><br><span class="line">driver: &quot;postgres&quot;</span><br><span class="line">host: &quot;localhost&quot;</span><br><span class="line">port: 5432</span><br></pre></td></tr></table></figure></p>
+<p>当然这些配置自己准备配置文件也可以</p>
+<h4 id="用户session"><a href="#用户session" class="headerlink" title="用户session"></a>用户session</h4><p>session的使用就是要记住用户的一些设置或历史数据，主要是通过<code>cherrypy.session</code>这个字典完成<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span> <span class="comment">#给定param参数</span></span><br><span class="line">        ret = <span class="string">'calling generate %s'</span> % param</span><br><span class="line">        cherrypy.session[<span class="string">'buf'</span>] = ret</span><br><span class="line">        <span class="keyword">return</span> ret</span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">display</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> cherrypy.session[<span class="string">'buf'</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    conf = &#123;</span><br><span class="line">        <span class="string">'/'</span>: &#123;</span><br><span class="line">            <span class="string">'tools.sessions.on'</span>: <span class="keyword">True</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cherrypy.quickstart(Test(), <span class="string">'/'</span>, conf)</span><br></pre></td></tr></table></figure></p>
+<h4 id="多应用"><a href="#多应用" class="headerlink" title="多应用"></a>多应用</h4><p>单个应用的时候，我们通过<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cherrypy.quickstart(Blog())</span><br></pre></td></tr></table></figure></p>
+<p>启动应用，但是多个应用的时候这个函数的capacity不够，这时候用<code>cherrypy.tree.mount</code>函数，如下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cherrypy.tree.mount(Blog(), <span class="string">'/blog'</span>, blog_conf)</span><br><span class="line">cherrypy.tree.mount(Forum(), <span class="string">'/forum'</span>, forum_conf)</span><br><span class="line"></span><br><span class="line">cherrypy.engine.start()</span><br><span class="line">cherrypy.engine.block()</span><br></pre></td></tr></table></figure></p>
+<p>实现上，mount函数是把quickstart函数的返回结果当作一个参数使用，所以mount与quickstart并不互斥</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2019/09/21/CherryPy-Torturial/" data-id="ck0tqfn0q000ja8phosb9lefo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Hough-Transform" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -300,7 +450,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="cjzqc61jp003czsphm7ib5vtu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="ck0tqfn2r003da8ph7ocecdqr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -461,7 +611,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="cjzqc61ja002vzsphxraszgvw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="ck0tqfn2j002za8phaxve8tvc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -699,7 +849,7 @@ f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="cjzqc61pe00b0zsphu59r2zh2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="ck0tqfn6f009oa8phuaj0cxqj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -947,7 +1097,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="cjzqc61ht000vzsphh9qs0gf3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="ck0tqfn11000va8phjh32rhz6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1164,7 +1314,7 @@ p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \f
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="cjzqc61l1005azspholtq3uny" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ck0tqfn3u0053a8phfxjozkgi" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1371,7 +1521,7 @@ J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbra
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="cjzqc61p100apzsph8q3m7vms" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ck0tqfn6c009ka8ph69nv80x0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1517,7 +1667,7 @@ output: 3
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="cjzqc61ib001hzsphsaim9k54" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ck0tqfn1i001aa8phgnkkgstm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1687,7 +1837,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="cjzqc61mr007jzsphn2l0i063" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ck0tqfn58007na8phur6jysxc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1879,7 +2029,7 @@ Window position                Median
 <li>Providers 函数：std::async()</li>
 <li>其他类型：std::future_error, std::future_errc, std::future_status, std::launch</li>
 </ul>
-<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		[] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">		std::ref(pr)</span><br><span class="line">	);</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        [] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">        std::ref(pr)</span><br><span class="line">    );</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
 <div class="table-container">
 <table>
 <thead>
@@ -1928,7 +2078,7 @@ Window position                Median
 <li><code>std::launch::async</code>：在调用<code>async</code>就开始创建线程</li>
 <li><code>std::launch::deferred</code>：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者wait时才创建线程</li>
 </ul>
-<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[]() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">	std::launch::async,</span><br><span class="line">	[](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">	<span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">    std::launch::async,</span><br><span class="line">    []() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">    std::launch::async,</span><br><span class="line">    [](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">    <span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
 <h5 id="std-condition-variable"><a href="#std-condition-variable" class="headerlink" title="std::condition_variable"></a>std::condition_variable</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;condition_variable&gt;</span><br></pre></td></tr></table></figure>
 <p>std::condition_variable 是条件变量，其构造方法如下：</p>
 <div class="table-container">
@@ -1969,163 +2119,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="cjzqc61ll0061zsphhv8p6q4x" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Convex-Hull" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/05/18/Convex-Hull/">Convex Hull</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/05/18/Convex-Hull/">
-            <time datetime="2017-05-18T03:57:01.000Z" itemprop="datePublished">2017-05-18</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Math/">Math</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h6><p>凸包(Convex Hull)是一个计算几何（图形学）中的概念。凸包的求解方法之一是由葛立恒(Graham)发明的。给定二维平面上的点集，<strong>凸包就是将最外层的点连接起来构成的凸多边型，它能包含点集中所有点</strong>。</p>
-<h6 id="求解方法"><a href="#求解方法" class="headerlink" title="求解方法"></a>求解方法</h6><p>选取点集中<strong>纵坐标最小</strong>的点，如果纵坐标相同则选择<strong>横坐标较小</strong>的点，设为点H（如下图）</p>
-<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpecd53h8j207l06a3yb.jpg" alt="凸包"></p>
-<p>考虑除H之外所有点和H构成的向量，按与向量$(1,0)$之间的夹角从小到大的顺序进行排序；对于夹角一样的点，则考虑其距离，如下图所示;夹角的大小由余弦值决定，因为<code>cos</code>函数在$[0,\pi]$上递减，所以<code>cos</code>值越大的点夹角越小，这里可能会遇到数值的精确度问题，开方精确度有差异的话最好比较平方大小。向量$a,b$的余弦值计算方法为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-cos(a,b)=\frac{a\cdot b}{|a||b|}
-\end{aligned}</script><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpf16x104j20fl0bot8s.jpg" alt=""></p>
-<p>$(3,0)$即为基点，这里$(4,0),(5,0)$与基点共线，$(0,3),(1,2),(2,1)$与基点共线。但是这里的处理方法是不一样的。在逆时针扫描过程中，开始阶段，共线状态的点按距离远近进行排序，近的先；而对于最后的共线点，我们需要把距离远的点放前面，$(0,3)$先于$(1,2)$先于$(2,1)$。所以统一的处理方法是，<strong>共线的点先按距离由小到大排序，然后看排在最后面的点，如果有共线的就按他们的顺序反转</strong>。（不是最后的没关系，比如上图如果还有个$(1,1)$点，那么$(1,2),(2,1)$排在$(0,3)$前面没有影响）</p>
-<p>最后一步，就是处理排好序的点集。逆时针扫描，基点和第一个点肯定在凸包中，然后逐个加入栈中。看第一个图，栈中点包括$(H,K)$时，向量$CK$相对于$KH$往逆时针方向偏，$C$入栈(方向不变也可以)，下一个点是$D$，由于$DC$相对于$CK$往顺时针方向偏，所以将$C$出栈；由于$DK$和$KH$满足条件，所以将$D$入栈，下一个点看$L$，以此类推。。。那么问题是如何判断两个向量是否是逆时针旋转关系呢？</p>
-<p>可以通过向量的叉积，向量$a\times b$的方向通过右手定则判断，具体地，四指并拢指向$a$的方向，四指转动一定角度（小于180度）指向$b$的方向，大拇指的方向就是$a\times b$的方向，如下图所示</p>
-<p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffpgezlj08j204t064aa9.jpg" alt="右手定则"></p>
-<p>那么如何通过计算得到方向呢？由于二维向量的叉积会产生第三个维度，所以可以假设$a=(a_1,a_2)=(a_1,a_2,0),b=(b_1,b_2)=(b_1,b_2,0)$，$a\times b$计算如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-a\times b = \left[
-\begin{matrix}
-i & j & k \\
-a_1 & a_2 & 0 \\
-b_1 & b_2 & 0
-\end{matrix}
-\right]=\left[0, 0, a_1b_2-a_2b_1\right]
-\end{aligned}</script><p>第三维的分量为$a_1b_2-a_2b_1$，举个栗子判断一下不难发现，逆时针方向转动的向量第三维分量大于0，顺时针转动的小于0.比如图中的$a\times b$指向z轴正向。所以通过计算$a_1b_2-a_2b_1$就可以知道转动方向了。</p>
-<p>以下是c++实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;Point&gt; <span class="title">outerTrees</span><span class="params">(vector&lt;Point&gt;&amp; points)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (points.size() &lt; <span class="number">4</span>) <span class="keyword">return</span> points;</span><br><span class="line">	Point bottom = points[<span class="number">0</span>];</span><br><span class="line">	<span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;points.size(); i++) &#123; <span class="comment">// search for lowest node </span></span><br><span class="line">		Point point = points[i];</span><br><span class="line">		<span class="keyword">if</span> (point.y==bottom.y &amp;&amp; point.x&lt;bottom.x) &#123;bottom = point; index = i;&#125;</span><br><span class="line">		<span class="keyword">if</span> (point.y &lt; bottom.y) &#123;bottom = point; index = i;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	swap(points[<span class="number">0</span>], points[index]);</span><br><span class="line">	sort(points.begin()+<span class="number">1</span>, points.end(), [bottom](<span class="keyword">const</span> Point &amp;p1, <span class="keyword">const</span> Point &amp;p2)&#123;</span><br><span class="line">		<span class="keyword">double</span> d1 = (p1.x-bottom.x)*(p1.x-bottom.x)+(p1.y-bottom.y)*(p1.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> d2 = (p2.x-bottom.x)*(p2.x-bottom.x)+(p2.y-bottom.y)*(p2.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> x1 = <span class="number">1.0</span>*(p1.x-bottom.x)*abs(p1.x-bottom.x)/d1;</span><br><span class="line">		<span class="keyword">double</span> x2 = <span class="number">1.0</span>*(p2.x-bottom.x)*abs(p2.x-bottom.x)/d2;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (x1 != x2) <span class="keyword">return</span> x1 &gt; x2; <span class="comment">// angle from small to big</span></span><br><span class="line">		<span class="keyword">return</span> d1 &lt; d2; <span class="comment">// distance from close to far</span></span><br><span class="line">	&#125;);</span><br><span class="line">	<span class="keyword">int</span> rl = points.size()-<span class="number">2</span>, rr = points.size()-<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span> (rl &gt;= <span class="number">1</span>) &#123; <span class="comment">// reverse co-linear nodes from behind if necessary</span></span><br><span class="line">	    Point p1 = points[rl];</span><br><span class="line">	    Point p2 = points[rr];</span><br><span class="line">	    <span class="keyword">double</span> d1 = (p1.x-bottom.x)*(p1.x-bottom.x)+(p1.y-bottom.y)*(p1.y-bottom.y);</span><br><span class="line">		<span class="keyword">double</span> d2 = (p2.x-bottom.x)*(p2.x-bottom.x)+(p2.y-bottom.y)*(p2.y-bottom.y);</span><br><span class="line">	    <span class="keyword">double</span> x1 = <span class="number">1.0</span>*(p1.x-bottom.x)*abs(p1.x-bottom.x)/d1;</span><br><span class="line">		<span class="keyword">double</span> x2 = <span class="number">1.0</span>*(p2.x-bottom.x)*abs(p2.x-bottom.x)/d2;</span><br><span class="line">		<span class="keyword">if</span> (x1 == x2) rl--;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (++rl &lt; rr &amp;&amp; rl &gt;= <span class="number">1</span>)<span class="keyword">while</span> (rl &lt; rr) swap(points[rl++], points[rr--]);</span><br><span class="line"></span><br><span class="line">	vector&lt;Point&gt; ret;</span><br><span class="line">	ret.push_back(points[<span class="number">0</span>]);</span><br><span class="line">	ret.push_back(points[<span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">2</span>; i&lt;points.size(); i++) &#123; remove clock-wize node</span><br><span class="line">	    <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">while</span> (ret.size() &gt; <span class="number">2</span>) &#123;</span><br><span class="line">			<span class="comment">// last vector</span></span><br><span class="line">			<span class="keyword">int</span> v1x=ret[ret.size()-<span class="number">1</span>].x-ret[ret.size()-<span class="number">2</span>].x, v1y=ret[ret.size()-<span class="number">1</span>].y-ret[ret.size()-<span class="number">2</span>].y;</span><br><span class="line">			<span class="comment">// current vector</span></span><br><span class="line">			<span class="keyword">int</span> v2x=points[i].x-ret[ret.size()-<span class="number">1</span>].x, v2y=points[i].y-ret[ret.size()-<span class="number">1</span>].y;</span><br><span class="line">			<span class="comment">// cross product x1*y2-x2*y1, positive is ok</span></span><br><span class="line">			<span class="keyword">if</span> (v1x*v2y-v2x*v1y &lt; <span class="number">0</span>) ret.pop_back();</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		ret.push_back(points[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h6 id="类似题目"><a href="#类似题目" class="headerlink" title="类似题目"></a>类似题目</h6><p>LeeCode题目<a href="https://leetcode.com/problems/erect-the-fence/#/description" target="_blank" rel="noopener">Erect the Fence</a>就是求点的凸包问题。</p>
-<p>还有类似的题目：求二维平面上多个点构成的最大三角形。思路是先求多个点的凸包，然后枚举凸包中的点，找到最大三角形。（$S=\sqrt{p(p-a)(p-b)(p-c)},p=\frac{a+b+c}{2}$）.</p>
-<p><strong>引用</strong><br>[1]. <a href="http://www.cnblogs.com/devymex/archive/2010/08/09/1795392.html" target="_blank" rel="noopener">Graham’s Scan法求解凸包问题</a><br>[2]. <a href="http://baike.baidu.com/link?url=xtFaaawZVn0sbpsumowTV-hIlzVBsUOUxoPL-czVqaqmEIFU3WnU7LcMkHy6FyYJ4etWIBK3u5bYXmEQ4vZW-cZw6fKT7Sj4iyl1IZzuHHBs0QxUru5Y5F_nGa2JazZk" target="_blank" rel="noopener">百度百科-向量积</a></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="cjzqc61i20016zsphxn2gh7ty" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ck0tqfn49005ua8phda4kqajc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2218,6 +2212,25 @@ b_1 & b_2 & 0
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2019/09/21/CherryPy-Torturial/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Other/">Other</a></p>
+                            <p class="item-title"><a href="/2019/09/21/CherryPy-Torturial/" class="title">CherryPy Torturial</a></p>
+                            <p class="item-date"><time datetime="2019-09-21T15:51:48.000Z" itemprop="datePublished">2019-09-21</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
     
     
@@ -2291,25 +2304,6 @@ b_1 & b_2 & 0
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2017/08/27/Maximum-Entropy-Model/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Maximum-Entropy-Model/" class="title">Maximum Entropy Model</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2319,7 +2313,7 @@ b_1 & b_2 & 0
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">1</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -2328,7 +2322,7 @@ b_1 & b_2 & 0
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2337,7 +2331,7 @@ b_1 & b_2 & 0
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.25px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.25px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 17.5px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 16.25px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 17.5px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.75px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.75px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.5px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.5px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.25px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 15px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.25px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 15px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.75px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.25px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.25px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.5px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.5px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.22px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
