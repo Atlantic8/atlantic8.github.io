@@ -279,7 +279,7 @@ var _hmt = _hmt || [];
             <p>python有多种工具包，其中就包括一些可以提供网页服务的package，比如Django、CherryPy等。在不同的情况下一般有不同的选择，比如如果只想是通过浏览器下载服务器上的文件，那么通过SimpleHTTPServer即可<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer <span class="number">8000</span></span><br></pre></td></tr></table></figure></p>
 <p>今天介绍的是一种上手极快的工具，CherryPy，下面会通过一些例子展示如何快速搭建自己需要的简单网页。</p>
 <h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>pip安装即可</p>
-<h4 id="返回静态网页"><a href="#返回静态网页" class="headerlink" title="返回静态网页"></a>返回静态网页</h4><p>一般的使用方法都是封装一个app类，然后在这个类中定义函数，将函数设置为cherrypy.expose则表示可以通过url访问这个函数。生效的时候通过<code>quickstart(Test(), &#39;/&#39;, conf)</code>函数生效，这个函数有三个参数，后两个是应用的根位置和配置，为可选参数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span> <span class="comment">#给定param参数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'calling generate %s'</span> % param </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cherrypy.quickstart(Test())</span><br></pre></td></tr></table></figure></p>
+<h4 id="返回静态网页"><a href="#返回静态网页" class="headerlink" title="返回静态网页"></a>返回静态网页</h4><p>一般的使用方法都是封装一个app类，然后在这个类中定义函数，将函数设置为cherrypy.expose则表示可以通过url访问这个函数。生效的时候通过<code>quickstart(Test(), &#39;/&#39;, conf)</code>函数生效，这个函数有三个参数，后两个是应用的根位置和配置词典，为可选参数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span> <span class="comment">#给定param参数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'calling generate %s'</span> % param </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cherrypy.quickstart(Test())</span><br></pre></td></tr></table></figure></p>
 <p>上面这个例子，我们可以通过<code>http://localhost:8080/generate?param=success</code>返回<code>calling generate success</code>. </p>
 <h4 id="提交form"><a href="#提交form" class="headerlink" title="提交form"></a>提交form</h4><p>如果我们希望在网页端采集用户的输入，那么我们就需要通过form获取了。网页端用户操作的组件由html中的name属性指示<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cherrypy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"""&lt;html&gt;</span></span><br><span class="line"><span class="string">          &lt;head&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">          &lt;body&gt;</span></span><br><span class="line"><span class="string">            &lt;form method="get" action="generate"&gt;</span></span><br><span class="line"><span class="string">              &lt;input type="text" value="bingo" name="param" /&gt;</span></span><br><span class="line"><span class="string">              &lt;button type="submit"&gt;generate&lt;/button&gt;</span></span><br><span class="line"><span class="string">            &lt;/form&gt;</span></span><br><span class="line"><span class="string">          &lt;/body&gt;</span></span><br><span class="line"><span class="string">        &lt;/html&gt;"""</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @cherrypy.expose</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, param=<span class="string">'bingo'</span>)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'calling generate %s'</span> % param</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    cherrypy.quickstart(Test())</span><br></pre></td></tr></table></figure></p>
 <p>如果想返回一个网页，那么直接return这个网页的内容即可。这里是通过get方式发送form数据，也可以使用post，推荐使用post</p>
@@ -307,7 +307,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2019/09/21/CherryPy-Torturial/" data-id="ck0tqfn0q000ja8phosb9lefo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2019/09/21/CherryPy-Torturial/" data-id="ck66fynvk000o0wphv3xxjrak" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -450,7 +450,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="ck0tqfn2r003da8ph7ocecdqr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="ck66fynxk003e0wphtfscg3gd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -611,7 +611,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="ck0tqfn2j002za8phaxve8tvc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="ck66fynx9002x0wphsgo0hatd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -849,7 +849,7 @@ f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="ck0tqfn6f009oa8phuaj0cxqj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="ck66fyo1j009z0wphagugoabz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -970,19 +970,19 @@ f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
             
             <h4 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h4><p>同朴素贝叶斯一样，HMM是生成式模型。它可以做线性序列预测分析，为了计算复杂度上的可行性，其<strong>假设观测变量仅依赖于隐含变量</strong>。然而，实际中<strong>观测变量之间也存在不可忽略的依赖关系</strong>，这导致HMM的假设会严重影响模型的精确性。</p>
 <p>CRF现在是自然语言处理领域中多个任务的state-of-art方法，包括分词、词性标注，浅解析（shallow parsing）等。并且在命名实体识别、基因预测、图像标注、物体识别等领域有着重要的应用。</p>
-<p>CRF是判别式模型。</p>
+<p>CRF是<strong>判别</strong>式模型。</p>
 <hr>
 <h5 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h5><p>一般地，在概率图模型中，节点表示随机变量，边表示依赖关系。概率图模型的表示的前提是对图的划分，也就是因子分解，可以按有向图和无向图分别讨论。</p>
 <h6 id="马尔可夫性"><a href="#马尔可夫性" class="headerlink" title="马尔可夫性"></a>马尔可夫性</h6><p>给定一个随机变量$y$及其联合概率分布$p(y)$和它的无向图表示$G$，下面给出关于马尔可夫性的三个等价定义。</p>
 <ul>
-<li>成对马尔可夫性：设$u,v$是无向图中没有连接的两个点，$o$是其他节点，则有$p(u,v|o)$=p(u|o)p(v|o)</li>
+<li>成对马尔可夫性：设$u,v$是无向图中没有连接的两个点，$o$是其他节点，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
 <li>局部马尔可夫性：设$u$是无向图中任意一个节点，$w$是与$u$有连接的节点，$o$是其他节点，则有$p(v,o|w)=p(v|w)p(o|w)$</li>
 <li>全局马尔可夫性：设$u,v$是被节点集$o$分隔开的任意节点集合，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
 </ul>
 <p>总结一下意思就是：<strong>无连接的变量在以中继变量为条件的情况下相互独立</strong>。</p>
 <h6 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h6><p>定义在有向图上的条件概率模型的联合分布为<strong>所有节点条件概率的乘积</strong>，比如贝叶斯网络，马尔可夫链等。</p>
 <hr>
-<h6 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h6><p>满足马尔可夫性的联合概率分布被称为概率无向图模型，也叫做马尔可夫随机场。定义在无向图上的条件概率模型的联合分布为<strong>最大团上非负函数的乘积</strong>（这也称为概率无向图模型的因子分解）。这里最大团指的是节点数量最多的团，而团指的是互有连接的节点集合。形式化定义单个节点$v$的概率为$v$在所有最大团上的乘积，即</p>
+<h6 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h6><p>满足马尔可夫性的联合概率分布被称为概率无向图模型，也叫做<strong>马尔可夫随机场</strong>。定义在无向图上的条件概率模型的联合分布为<strong>最大团上非负函数的乘积</strong>（这也称为概率无向图模型的因子分解）。这里最大团（极大团）指的是不能再添加节点的团（团指的是两两相交的节点集）。形式化定义单个节点$v$的概率为$v$在所有最大团上的乘积，即</p>
 <script type="math/tex; mode=display">
 \begin{aligned}
 p(v)=\frac{1}{Z}\prod_{c\in C}\Psi_c(v_c)
@@ -1097,7 +1097,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="ck0tqfn11000va8phjh32rhz6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="ck66fynvn000r0wphdvgtwqv4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1314,7 +1314,7 @@ p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \f
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ck0tqfn3u0053a8phfxjozkgi" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ck66fynys00550wphng7q9c6v" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1521,7 +1521,7 @@ J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbra
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ck0tqfn6c009ka8ph69nv80x0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ck66fyo1g009t0wphckogkzj0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1667,7 +1667,7 @@ output: 3
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ck0tqfn1i001aa8phgnkkgstm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ck66fynwb001i0wphn5hni8tw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1837,7 +1837,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ck0tqfn58007na8phur6jysxc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ck66fyo0b007p0wphs69zw7hc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2119,7 +2119,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ck0tqfn49005ua8phda4kqajc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ck66fynza00630wphvvvk378h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2372,7 +2372,7 @@ Window position                Median
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2019 Atlantic8<br>
+            &copy; 2020 Atlantic8<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>
