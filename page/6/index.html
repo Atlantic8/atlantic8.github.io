@@ -324,7 +324,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ck7rmf7o8008ppsph8d5kd6y3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ck82imydd008qr4phho4mux7b" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -460,7 +460,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ck7rmf7kh002opsphfhuck6jc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ck82imy8u002qr4ph3qt8zt4p" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -581,12 +581,10 @@ i-1
             
             <h5 id="主成分分析"><a href="#主成分分析" class="headerlink" title="主成分分析"></a>主成分分析</h5><p>主成分分析是很常用降维方法之一。通过对原始数据进行投影而达到将其降维、划分的作用。</p>
 <p>PCA的出发点有两个：</p>
-<ol>
-<li><p>最近重构性：样本点到投影面的距离都足够近</p>
-</li>
-<li><p>最大可分性：样本点在投影面上的投影尽可能分开</p>
-</li>
-</ol>
+<ul>
+<li>最近重构性：样本点到投影面的距离都足够近</li>
+<li>最大可分性：样本点在投影面上的投影尽可能分开</li>
+</ul>
 <h6 id="预处理-均值和方差的正规化"><a href="#预处理-均值和方差的正规化" class="headerlink" title="预处理(均值和方差的正规化)"></a>预处理(均值和方差的正规化)</h6><p>求均值$\hat{x}=\frac{1}{m}\sum_{i=1}^mx^{(i)}$</p>
 <p>将所有$x^{(i)}$替换成$x^{(i)}-\hat{x}$.</p>
 <p>求方差 $\sigma_{j}^2=\frac{1}{m}\sum_i(x_j^{(i)})^2$</p>
@@ -604,7 +602,17 @@ i-1
 3. 对协方差矩阵做特征值分解
 
 4. 降序排序特征值，取前k个特征值对应的特征向量组成投影矩阵
-</code></pre><h5 id="Robust主成分分析"><a href="#Robust主成分分析" class="headerlink" title="Robust主成分分析"></a>Robust主成分分析</h5><p>PCA假设数据的噪声是高斯的，对于大的噪声或者严重的离群点，PCA会被它影响，导致无法正常工作。而<b>鲁棒PCA只假设噪声是稀疏的</b>。所以，RPCA的出发点是将原数据分解成两个矩阵，一个是稀疏的（噪声点），另一个是低秩的（内部有一定的结构信息，造成各行或列间是线性相关的）。也就是：<script type="math/tex">\min_{A,E}rank(A)+\lambda \Vert E \Vert_0 \quad .s.t. \; X=A+E</script> 其中，$rank$是矩阵求秩的意思。但是上式有着非凸和非平滑等问题，可以转化成优化<script type="math/tex">\min_{A,E}\Vert A \Vert_{*}+\lambda \Vert E \Vert_1 \quad .s.t. \; X=A+E</script>求秩操作可以近似为求核范数，L0范数可以用L1范数逼近。求解出来上式，然后在对矩阵A运行PCA算法就可以得到对噪声有着比较好的鲁棒性的结果。</p>
+</code></pre><h5 id="白化"><a href="#白化" class="headerlink" title="白化"></a>白化</h5><p>处理图像时，相邻像素点通常是有关系，所以图像原始数据是冗余的。<strong>白化就是要降低输入的冗余性，并且保证每个特征具有相同的方差</strong>。</p>
+<p>做法是：先将图片数据经过PCA处理，维度之间的相关度变为0，然后我们对每个维度都除以那个维度的标准差，这样每个维度就具有单位方差了。PCA做白化时，可以选取前k个成分，而另一种叫ZCA的方法，会保留所有成分，并且最后会<strong>左乘一个特征向量矩阵，把特征旋转回去</strong></p>
+<script type="math/tex; mode=display">
+X_{PCA,i}=\frac{X_{root,i}}{\sqrt{\lambda_i}} \\
+X_{ZCA}=UX_{PCA}</script><p>二者差异如下：</p>
+<ul>
+<li>PCA白化需要保证数据各维度的方差为1，ZCA白化只需保证方差相等</li>
+<li>PCA白化可进行降维也可以去相关性，而ZCA白化主要用于去相关性</li>
+<li>ZCA白化相比于PCA白化使得处理后的数据更加的接近原始数据</li>
+</ul>
+<h5 id="Robust主成分分析"><a href="#Robust主成分分析" class="headerlink" title="Robust主成分分析"></a>Robust主成分分析</h5><p>PCA假设数据的噪声是高斯的，对于大的噪声或者严重的离群点，PCA会被它影响，导致无法正常工作。而<b>鲁棒PCA只假设噪声是稀疏的</b>。所以，RPCA的出发点是将原数据分解成两个矩阵，一个是稀疏的（噪声点），另一个是低秩的（内部有一定的结构信息，造成各行或列间是线性相关的）。也就是：<script type="math/tex">\min_{A,E}rank(A)+\lambda \Vert E \Vert_0 \quad .s.t. \; X=A+E</script> 其中，$rank$是矩阵求秩的意思。但是上式有着非凸和非平滑等问题，可以转化成优化<script type="math/tex">\min_{A,E}\Vert A \Vert_{*}+\lambda \Vert E \Vert_1 \quad .s.t. \; X=A+E</script>求秩操作可以近似为求核范数，L0范数可以用L1范数逼近。求解出来上式，然后在对矩阵A运行PCA算法就可以得到对噪声有着比较好的鲁棒性的结果。</p>
 
         
         </div>
@@ -615,7 +623,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ck7rmf7nb006zpsphx2puyzy2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ck82imyce006xr4phqwnpiyw3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -793,7 +801,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ck7rmf7mv0064psphp9mrnzuy" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ck82imybp005vr4phfrmfmzlw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -931,7 +939,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ck7rmf7hn0005psphz02jydxa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ck82imy6m0007r4phdis0ze0h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1099,7 +1107,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="ck7rmf7kq002ypsphval7377v" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="ck82imy8y002tr4phhh8safb0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1246,7 +1254,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="ck7rmf7hd0001psphwuc63ig2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="ck82imy6b0002r4ph46abn1re" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1392,7 +1400,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/" data-id="ck7rmf7ka002hpsphjaukhq83" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/" data-id="ck82imy8p002mr4phz2tkj25n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1540,7 +1548,7 @@ Output:
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/10/02/Split-Array-Largest-Sum/" data-id="ck7rmf7ny0087psphka7ompvq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/10/02/Split-Array-Largest-Sum/" data-id="ck82imycz0082r4phxqvduu25" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1706,7 +1714,7 @@ Return 4.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/10/02/Trapping-Rain-Water/" data-id="ck7rmf7ob008wpsphfu1bcewd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/10/02/Trapping-Rain-Water/" data-id="ck82imydi0091r4ph2ftw2j2g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
