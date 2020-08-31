@@ -76,6 +76,10 @@ var _hmt = _hmt || [];
                 
                     <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
                 
+                    <a class="main-nav-link" href="/categories/Math">Math</a>
+                
+                    <a class="main-nav-link" href="/categories/Dev">Dev</a>
+                
                     <a class="main-nav-link" href="/about">About</a>
                 
             </nav>
@@ -141,6 +145,10 @@ var _hmt = _hmt || [];
                 
                     <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
                 
+                    <td><a class="main-nav-link" href="/categories/Math">Math</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Dev">Dev</a></td>
+                
                     <td><a class="main-nav-link" href="/about">About</a></td>
                 
                 <td>
@@ -170,11 +178,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                119
+                124
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                45
+                46
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +241,1033 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Maximum-Entropy-Model" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/08/27/Maximum-Entropy-Model/">Maximum Entropy Model</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/08/27/Maximum-Entropy-Model/">
+            <time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>最大熵模型也是<strong>判别模型</strong>，其基本思想是最大熵思想，即<strong>在给定关于概率分布不完全信息的情况下，仅有的无偏假设就是使得模型尽可能地均匀</strong>，通俗点说就是<strong>对一个随机事件的概率分布进行预测时，预测应当满足全部已知的约束，而对未知的情况不要做任何主观假设</strong>。在这种思想下，合适的模型就是在满足给定限制情况下最大化模型的熵。对于条件模型$p(y|x)$，其条件熵的定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+H(p)=-\sum_{(x,y)\in Z}p(x,y)\log p(y|x)
+\end{aligned}</script><p>其中，$Z$包含$x,y$的所有可能组合。</p>
+<p>训练样本由输入、标签表征。这里引入特征函数的概念，特征函数和以前看到的特征不大一样，它是对输入和输出同时抽取特征，表示为$f(x,y)$。特征函数可以定义为二值函数，如果$x,y$满足一定的事实，那么$f(x,y)$为1，否则为0。</p>
+<h6 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h6><p>假设训练数据集$T$有$n$条数据，特征个数为$m$个，第$i$个特征对应的特征函数为$f_i(x,y)$。令由训练数据得到的经验联合分布为$\hat{p}(x,y)$，那么特征$f_i$关于经验分布的期望值为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{E}(f_i)=\sum_{(x,y)\in T}\hat{p}(x,y)f_i(x,y)=\frac{1}{n}\sum_{(x,y)\in T}f_i(x,y)
+\end{aligned}</script><p>同样地，在模型分布上的特征函数均值可以表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E(f_i)&=\sum_{(x,y)\in Z}p(x,y)f_i(x,y)=\sum_{(x,y)\in Z}p(x)p(y|x)f_i(x,y) \\
+&\approx\sum_{x,y}\hat{p}(x)p(y|x)f_i(x,y)=\frac{1}{n}\sum_{x\in T}\sum_{y\in Y}p(y|x)f_i(x,y)
+\end{aligned}</script><p>其中，$Z$是$x,y$所有可能组合。（这里因为$x,y$所有可能组合会很多，计算上不可行）。$x$仅考虑训练集中的$x$，而$y$则是所有可能的取值，但是在实际中，$y$的可能取值是有限的、比较少的，所以这里的计算也是高效的。</p>
+<p>至此，得到第一种约束。如果模型可以从数据中获取足够多的信息，就可以认为<strong>经验值约等于期望值</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{E}(f_i)\approx E(f_i)
+\end{aligned}</script><hr>
+<p>第二种约束为概率本身的限制，即：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y|x) &\ge 0 \quad for\;all\;x,y \\
+\sum_y p(y|x)&=1\quad for\;all\;x
+\end{aligned}</script><hr>
+<p>类似地，可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+H(p) = -\sum_{x,y}\hat{p}(x)p(y|x)\log p(y|x)
+\end{aligned}</script><h6 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h6><p>按照最优化问题的优化习惯，将最大化问题改写成最小化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+arg\min_{p(y|x)}&-H(p) \\
+&s.t.\quad \hat{E}(f_i) = E(f_i) \quad for\;i\;in\,\lbrace 1,..,m \rbrace  \\
+&\sum_y p(y|x)=1\quad for\;all\;x
+\end{aligned}</script><h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>带约束的优化问题可以参考拉格朗日乘子法，引入参数$\lambda=(\lambda_1,…,\lambda_{m+1})$，令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\Gamma(p,\lambda) = -H(p)+\sum_{i=1}^m\lambda_i\left(E(f_i)-\hat{E}(f_i)\right)+\lambda_{m+1}\left(\sum_{y\in Y}p(y|x)-1\right)
+\end{aligned}</script><p>考虑上式与原始优化问题之间联系，对于约束问题，如果有一个不满足条件，那么将对应的$\lambda$分量扩展到$\infty$，那么整个公式的值就变成了$+\infty$。所以可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{p(y|x)}\Gamma(p,\lambda) = \min_{p(y|x)}\max_{\lambda}\Gamma(p,\lambda)
+\end{aligned}</script><p>因为函数$\Gamma(p,\lambda)$是$p(y|x)$的凸函数，所以根据拉格朗日对偶性有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ \min_{p(y|x)}\max_{\lambda}\Gamma(p,\lambda)=\max_{\lambda} \min_{p(y|x)}\Gamma(p,\lambda)
+\end{aligned}</script><hr>
+<p>首先看$\min_{p(y|x)}\Gamma(p,\lambda)$:<br>我们可以求$\Gamma(p,\lambda)$对$p(y|x)$的导数。逐项考虑，首先</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{H(y|x)}}{\partial p(y|x)} = -\hat{p}(x)\cdot[\log p(y|x)+1]
+\end{aligned}</script><p>第二项</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\frac{\partial{\sum_{i=1}^m\lambda_i\left(E(f_i)-\hat{E}(f_i)\right)}}{\partial p(y|x)} \\
+&= \frac{\partial}{\partial p(y|x)}\sum_{i=1}^m\lambda_i \left( \sum_{(x,y)\in Z}\hat{p}(x)p(y|x)f_i(x,y) - \sum_{(x,y)\in T}\hat{p}(x,y)f_i(x,y) \right) \\
+&= \sum_{i=1}^m\lambda_i \hat{p}(x) f_i(x,y) 
+\end{aligned}</script><p>第三项比较简单，就不单独列出来了，所以$\Gamma(p,\lambda)$对$p(y|x)$的导数可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial \Gamma(p,\lambda)}{\partial p(y|x)} = -\hat{p}(x)\cdot[\log p(y|x)+1] + \sum_{i=1}^m\lambda_i \hat{p}(x) f_i(x,y) + \lambda_{m+1}
+\end{aligned}</script><p>令上式等于0可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p(y|x) =\exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \exp\left( \frac{\lambda_{m+1}}{\hat{p}(x)}-1 \right)
+\end{equation}</script><p>为了使$p(y|x)$的表达式只与特征函数有关，我们最好消去$\hat{p}(x)$。注意到$\sum_y p(y|x)=1$，将上式两边对$y$求和，可以得到</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\exp\left( \frac{\lambda_{m+1}}{\hat{p}(x)}-1 \right)=\frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><p>进一步可以得到</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><p>综上所述，最大熵模型也就是</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><hr>
+<p>第二步，求解$\lambda^{<em>}$:<br>令$\Psi_{p^{</em>}}= \min_{p(y|x)}\Gamma(p,\lambda)$，下一步就是</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\lambda^{*}=arg\max_{\lambda} \Psi_{p^{*}}
+\end{equation}</script><hr>
+<p>可以证明，最大熵模型是适定的（well-defined），其解存在且唯一。</p>
+<p><strong>参考文献</strong><br>[1]. Classical Probabilistic Models and Conditional Random Fields.pdf<br>[2]. 统计学习方法. 李航</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ckeiowf95005p4gpheq5s9v27" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-WordRank" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/07/30/WordRank/">WordRank</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/07/30/WordRank/">
+            <time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h5><p>单词向量化在近些年一直是被广泛研究的课题，虽然state-of-the-art方法（word2vec）提供了通过低维矩阵嵌入方法有效地计算词之间相似性的方法，但是他们的motivation通常是不明确的。他们通用的模式是维护单词-上下文共现矩阵，初始化向量化的单词向量$u_w$、上下文单词向量$v_c$，然后使用一个可以近似表示$X_{w,c}$（$w,c$的共现次数）的函数$f(u_w,v_c)$，通过优化这个函数不断地更新$u_w,v_c$的值。（注意<strong>上下文也是一个单词</strong>，这个单词在当前单词的上下文环境中）</p>
+<hr>
+<h5 id="wordrank"><a href="#wordrank" class="headerlink" title="wordrank"></a>wordrank</h5><p>wordrank把单词向量化定义成一个rank的问题，也就是：<strong>给定一个单词$w$，我们想要输出一个上下文列表$\lbrace c_1,c_2,…\rbrace$单词列表，并且要求与单词$w$共现的上下文单词出现在列表的前面</strong>。具体地，单词全集为$W$，上下文全集为$C$，$\Omega$是给定数据单词、上下文的共现矩阵，$\Omega_w$是与$w$共现的上下文集合，$\Omega_c$同理。</p>
+<p>定义单词$w$的词向量为$u_w\in U$，上下文$c$的向量为$v_c\in V$，<strong>词和上下文的相关性越大，他们的向量内积就越大</strong>。给定单词$w$，上下文$c$的rank可以定义为其他上下文向量与单词向量乘积比当前上下文向量与但词向量乘积大的个数，也就是有多少个上下文不必当前的”差”，即：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+rank(w,c)&=\sum_{c^{'}\in C-\lbrace c\rbrace} I(\langle u_w,v_c \rangle-\langle u_w,v_{c^{'}}\rangle) \\
+&=\sum_{c^{'}\in C-\lbrace c\rbrace}I(\langle u_w, v_c-v_{c^{'}}\rangle)
+\end{aligned}</script><p>其中函数$I(x)$是0、1损失函数，当$x\leq 0$时输出为1，否则为0。由于函数$I(x)$是不连续的函数，我们将其近似为连续函数$l(x)$，要求$l$是$I(x)$的凸上界，可以使用的候选有$l(x)=max(0,1-x)$或者$l(x)=log_2(1+2^{-x})$，所以可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+rank(w,c)\leq \overline{rank}(w,c)=\sum_{c^{'}\in C-\lbrace c\rbrace}l(\langle u_w, v_c-v_{c^{'}}\rangle)
+\end{equation}</script><p>我们希望rank模型将与当前单词有关的context的rank值变小，所以模型的目标函数可以是：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J(U,V)=\sum_{w\in W}\sum_{c\in \Omega_w}r_{w,c} \cdot \rho\left( \frac{\overline{rank}(w,c)+\beta}{\alpha} \right)
+\end{aligned}</script><p>其中$r_{w,c}$是用以量化$w,c$之间关联的权重，定义为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+r_{w,c}= \begin{cases}
+(X_{w,c}/x_{max})^{\epsilon} & X_{w,c}< x_{max} \\
+1 & otherwize
+\end{cases}
+\end{aligned}</script><p>其中，$x_{max},\epsilon$是超参数，可以看出共现次数越大，权重越大。$\rho(\cdot)$是一个<strong>单调递增的凹rank损失函数</strong>，量化rank的”好坏”，首先，递增是明显的，要求是凹函数是因为希望其一阶导数非递增，从而使得相关性低的context拥有较小的敏感度（增长得慢，attention减少，想想y=x-1和y=logx），使得模型的健壮性得到提高，是很关键的一步。可能的损失函数有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\rho(x)&=log_2(1+x) \\
+\rho(x)&=1-\frac{1}{log_2(2+x)} \\
+\rho(x)&=\frac{x^{1-t}-1}{1-t},\quad t\neq 1
+\end{aligned}</script><p>$\alpha,\beta$是超参数，控制模型“放弃rank高的上下文、注重rank低的上下文”的程度，<code>the rate at which the algorithm gives up is determined by the hyperparameters a and b</code>。</p>
+<hr>
+<h5 id="optimization"><a href="#optimization" class="headerlink" title="optimization"></a>optimization</h5><p>目标函数可以等价定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha} \right)
+\end{aligned}</script><p>这是一个包含对$\Omega$和$C$求和的公式，当语料库很大时，问题就会变得难以处理。随机梯度下降（SGD）可以解决$\Omega$这一层的问题，但是$C$这一层的却难以解决，<strong>除非函数$\rho(\cdot)$是一个线性函数</strong>。可惜的是，函数$\rho(\cdot)$的特性要求其不是线性函数。</p>
+<p>解决方法是对函数$\rho(\cdot)$进行一阶泰勒分解，由于其凹函数的性质，可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\rho(x) \le \rho(\xi)+\rho'(\xi)\cdot(x-\xi)
+\end{aligned}</script><p>对于所有的$x$和$\xi$都成立，并且当$x=\xi$时等号成立。<br>令$\Xi=\lbrace \xi_{w,c} \rbrace_{(w,c)\in\Omega}$，于是我们可以得到一个$J(U,V)$的上界</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{J}(U,V,\Xi)&=\sum_{(w,c)\in\Omega}r_{w,c}\cdot \left\lbrace \rho(\xi_{w,c})+\rho'(\xi_{w,c})\cdot \left( \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha} - \xi_{w,c} \right) \right\rbrace \\
+&=\sum_{w,c,c^{'}} r_{w,c}\cdot \left( \frac{\rho(\xi_{w,c})+\rho'(\xi_{w,c})\cdot (\frac{\beta}{\alpha}-\xi_{w,c})} {|C|-1} + \frac{1}{\alpha}\rho'(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{'}}\rangle) \right)
+\end{aligned}</script><p>其中$(w,c,c^{‘}) \in \Omega\times (C-\lbrace c \rbrace)$，等号成立的条件是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\xi_{w,c} = \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha}
+\end{aligned}</script><p>最小化上面这个函数就等于最小化原目标函数的上界，也就是最小化目标函数了。并且$\overline{J}(U,V,\Xi)$很好地支持SGD（内层不需要求和）。</p>
+<hr>
+<h5 id="algorithm"><a href="#algorithm" class="headerlink" title="algorithm"></a>algorithm</h5><hr>
+<ul>
+<li>学习率$\eta$</li>
+<li>重复<ul>
+<li><strong>阶段 1</strong></li>
+<li>重复<ul>
+<li>从$\Omega$中均匀采样$(w,c)$</li>
+<li>从$C-\lbrace c\rbrace$中均匀采样$(c^{‘})$</li>
+<li>// update</li>
+<li>$u_w\gets u_w-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot (v_c-v_{c^{‘}})$</li>
+<li>$v_c\gets v_c-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot u_w$</li>
+<li>$v_{c^{‘}}\gets v_{c^{‘}}-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot u_w$</li>
+</ul>
+</li>
+<li>直到$U$和$V$都收敛</li>
+<li><strong>阶段2</strong></li>
+<li>对所有的$(w,c)\in \Omega$<ul>
+<li>$\xi_{w,c}=\left( \sum_{c^{‘}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{‘}}\rangle)+\beta \right)/\alpha$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>直到所有的$U,V,\Xi$都收敛</li>
+</ul>
+<hr>
+<p>阶段1的时间复杂度为$O(|\Omega|)$，阶段2的时间复杂度为$O(|\Omega||C|)$，复杂度较高。考虑到阶段2其实包含矩阵乘法运算，可以考虑使用一些高效的矩阵乘法算法。训练完成后，$U,V$分别就是对应的词向量。</p>
+<p><strong>引用</strong><br>[1]. WordRank: Learning Word Embeddings via Robust Ranking</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ckeiowfbp00a44gpha72iec7h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Course-Schedule" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/06/28/Course-Schedule/">Course Schedule</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/06/28/Course-Schedule/">
+            <time datetime="2017-06-28T05:24:03.000Z" itemprop="datePublished">2017-06-28</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>课程调度这个题目一共有3个，以下分别描述其题目和解法。</p>
+<h6 id="Course-Schedule-1"><a href="#Course-Schedule-1" class="headerlink" title="Course Schedule 1"></a>Course Schedule 1</h6><p>一共有标号从0到n-1的n个课程，有些课程需要在其他课程的基础上才能学，现在给定课程总数n和先决课程对（目标课程，先决课程）。输出这些课程能否学完</p>
+<h6 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution 1"></a>Solution 1</h6><p>BFS拓扑排序可以做，DFS查找回路也可以。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canFinish</span><span class="params">(<span class="keyword">int</span> numCourses, <span class="keyword">int</span>[][] prerequisites)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (prerequisites.length==<span class="number">0</span> || prerequisites[<span class="number">0</span>].length==<span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        List&lt;Set&lt;Integer&gt;&gt; in = <span class="keyword">new</span> ArrayList&lt;&gt;(), out = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++) &#123;</span><br><span class="line">            in.add(<span class="keyword">new</span> HashSet&lt;&gt;());</span><br><span class="line">            out.add(<span class="keyword">new</span> HashSet&lt;&gt;());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;prerequisites.length; i++) &#123;</span><br><span class="line">            in.get(prerequisites[i][<span class="number">0</span>]).add(prerequisites[i][<span class="number">1</span>]); <span class="comment">// pre-course</span></span><br><span class="line">            out.get(prerequisites[i][<span class="number">1</span>]).add(prerequisites[i][<span class="number">0</span>]); <span class="comment">// later-course</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;Integer&gt; ready = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++)</span><br><span class="line">            <span class="keyword">if</span> (in.get(i).size() == <span class="number">0</span>) ready.add(i);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (ready.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> pos = ready.remove(<span class="number">0</span>);</span><br><span class="line">            Set&lt;Integer&gt; set = out.get(pos);</span><br><span class="line">            <span class="keyword">for</span> (Object it : set.toArray()) &#123;</span><br><span class="line">                in.get((<span class="keyword">int</span>)it).remove(pos);</span><br><span class="line">                <span class="keyword">if</span> (in.get((<span class="keyword">int</span>)it).size() == <span class="number">0</span>) ready.add((<span class="keyword">int</span>)it);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++)</span><br><span class="line">            <span class="keyword">if</span> (in.get(i).size() &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Course-Schedule-2"><a href="#Course-Schedule-2" class="headerlink" title="Course Schedule 2"></a>Course Schedule 2</h6><p>在上一题的基础上输出，如果可以学完，输出任意一个顺序即可，否则，输出一个空的顺序[]。</p>
+<h6 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution 2"></a>Solution 2</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] findOrder(<span class="keyword">int</span> numCourses, <span class="keyword">int</span>[][] prerequisites) &#123;</span><br><span class="line">        <span class="keyword">int</span>[] ret = <span class="keyword">new</span> <span class="keyword">int</span>[numCourses];</span><br><span class="line">        List&lt;Set&lt;Integer&gt;&gt; in = <span class="keyword">new</span> ArrayList&lt;&gt;(), out = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++) &#123;</span><br><span class="line">            in.add(<span class="keyword">new</span> HashSet&lt;&gt;());</span><br><span class="line">            out.add(<span class="keyword">new</span> HashSet&lt;&gt;());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;prerequisites.length; i++) &#123;</span><br><span class="line">            in.get(prerequisites[i][<span class="number">0</span>]).add(prerequisites[i][<span class="number">1</span>]); <span class="comment">// pre-course</span></span><br><span class="line">            out.get(prerequisites[i][<span class="number">1</span>]).add(prerequisites[i][<span class="number">0</span>]); <span class="comment">// later-course</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">        List&lt;Integer&gt; ready = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (in.get(i).size()==<span class="number">0</span> &amp;&amp; out.get(i).size()==<span class="number">0</span>) ret[k++] = i;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (in.get(i).size()==<span class="number">0</span> &amp;&amp; out.get(i).size()&gt;<span class="number">0</span>) ready.add(i);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (ready.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> pos = ready.remove(<span class="number">0</span>);</span><br><span class="line">            ret[k++] = pos;</span><br><span class="line">            Set&lt;Integer&gt; set = out.get(pos);</span><br><span class="line">            <span class="keyword">for</span> (Object it : set.toArray()) &#123;</span><br><span class="line">                in.get((<span class="keyword">int</span>)it).remove(pos);</span><br><span class="line">                <span class="keyword">if</span> (in.get((<span class="keyword">int</span>)it).size() == <span class="number">0</span>) ready.add((<span class="keyword">int</span>)it);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;numCourses; i++)</span><br><span class="line">            <span class="keyword">if</span> (in.get(i).size() &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Course-Schedule-3"><a href="#Course-Schedule-3" class="headerlink" title="Course Schedule 3"></a>Course Schedule 3</h6><p>一共有标号从0到n-1的n个课程，每个课程都有一个持续时间。给定每个课程的持续时间t和最晚结束时间d对（t,d），要求找到能够完成的课程的最大数量。其中，1 &lt;= d, t, n &lt;= 10,000，同一时刻不能同时学习两门课。</p>
+<pre><code>[[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]
+
+output: 3
+</code></pre><h6 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution 3"></a>Solution 3</h6><p>先对每个课程按最晚结束时间从小到大排序。在前k-1个课程处理之后，对与第k个课程（tk,dk），前k个课程的最晚结束时间为dk，如果前k-1个课程中最优课程组合的总时长为x</p>
+<ul>
+<li><p>如果此时<code>tk + x &gt; dk</code>，那么这个课程就不能直接放进去，处理方法是将这个课程放进去，然后从已选课程中删除时长最大的课程（删除时长最大的肯定是最好的选择，最大堆）</p>
+</li>
+<li><p>否则，直接将当前课程放进去即可</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">scheduleCourse</span><span class="params">(vector&lt;vector&lt;<span class="keyword">int</span>&gt;&gt;&amp; courses)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ret = <span class="number">0</span>, sum = <span class="number">0</span>, n = <span class="number">0</span>;</span><br><span class="line">        priority_queue&lt;<span class="keyword">int</span>&gt; pq;</span><br><span class="line">        sort(courses.begin(), courses.end(), [](<span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; a, <span class="keyword">const</span> vector&lt;<span class="keyword">int</span>&gt;&amp; b)&#123;</span><br><span class="line">            <span class="keyword">if</span> (a[<span class="number">1</span>] == b[<span class="number">1</span>]) <span class="keyword">return</span> a[<span class="number">0</span>] &lt; b[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">return</span> a[<span class="number">1</span>] &lt; b[<span class="number">1</span>];</span><br><span class="line">        &#125;); </span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;courses.size(); i++) &#123;</span><br><span class="line">            pq.push(courses[i][<span class="number">0</span>]);</span><br><span class="line">            sum += courses[i][<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">if</span> (sum &gt; courses[i][<span class="number">1</span>]) &#123;</span><br><span class="line">                sum -= pq.top();</span><br><span class="line">                pq.pop();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> pq.size();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ckeiowf6v001g4gphs6vtnn56" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Sliding-Window-Median" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/06/17/Sliding-Window-Median/">Sliding Window Median</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/06/17/Sliding-Window-Median/">
+            <time datetime="2017-06-17T02:03:17.000Z" itemprop="datePublished">2017-06-17</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Sliding-window/">Sliding window</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定数组nums和滑动窗口长度k，求滑动窗口由左向右滑动时<strong>窗口内元素的中位数</strong>。</p>
+<pre><code>Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+
+Window position                Median
+---------------               -----
+[1  3  -1] -3  5  3  6  7       1
+ 1 [3  -1  -3] 5  3  6  7       -1
+ 1  3 [-1  -3  5] 3  6  7       -1
+ 1  3  -1 [-3  5  3] 6  7       3
+ 1  3  -1  -3 [5  3  6] 7       5
+ 1  3  -1  -3  5 [3  6  7]      6
+</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>容易想到用set的思想，由于数组可能会有重复，所以使用的数据结构为<code>multiset</code>。思想如下：</p>
+<ul>
+<li>维护一个名为window的multiset</li>
+<li>每次通过迭代器获取中位数</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">double</span>&gt; <span class="title">medianSlidingWindow</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="function">multiset&lt;<span class="keyword">int</span>&gt; <span class="title">ms</span><span class="params">(nums.begin()</span>, nums.<span class="title">begin</span><span class="params">()</span>+k)</span>;</span><br><span class="line">    vector&lt;<span class="keyword">double</span>&gt; ret;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=k; i&lt;=nums.size(); i++) &#123;</span><br><span class="line">        <span class="comment">// k/2处，基数数组正好是中位数，偶数数组则是中间偏右的那一个</span></span><br><span class="line">        auto mid = next(ms.begin(), k/<span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> (k % <span class="number">2</span> == <span class="number">0</span>) ret.push_back((<span class="keyword">double</span>(*mid) + *prev(mid))/<span class="number">2.0</span>);</span><br><span class="line">        <span class="keyword">else</span> ret.push_back(*mid);</span><br><span class="line">        <span class="keyword">if</span> (i == nums.size()) <span class="keyword">break</span>;</span><br><span class="line">        ms.insert(nums[i]);</span><br><span class="line">        <span class="comment">// 删除要用迭代器，否则将会删除所有值相同的元素</span></span><br><span class="line">        <span class="comment">// lower_bound取到值相同的最左边的元素</span></span><br><span class="line">        ms.erase(ms.lower_bound(nums[i-k]));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度为<code>O(kn)</code>。</p>
+<hr>
+<p><strong>更好的方法</strong></p>
+<ul>
+<li>使用一个指针mid用以指向median值（基数指向中间那个元素、偶数指向中间两个元素的后一个）。</li>
+<li>向window中加入/删除元素时，考虑两边比较麻烦（没做对==!）。这里的做法是<strong>保证mid左边的元素个数不变，不管右侧如何</strong>，这样结束后还是mid该在的位置<ul>
+<li>添加元素时，如果添加的元素在mid左边，mid左移一位</li>
+<li>删除元素时，如果删除的元素在mid左边，mid右移一位</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">double</span>&gt; <span class="title">medianSlidingWindow</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="function">multiset&lt;<span class="keyword">int</span>&gt; <span class="title">window</span><span class="params">(nums.begin()</span>, nums.<span class="title">begin</span><span class="params">()</span> + k)</span>;</span><br><span class="line">    auto mid = next(window.begin(), k / <span class="number">2</span>);</span><br><span class="line">    vector&lt;<span class="keyword">double</span>&gt; medians;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=k; ; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Push the current median.</span></span><br><span class="line">        medians.push_back((<span class="keyword">double</span>(*mid) + *prev(mid, <span class="number">1</span> - k%<span class="number">2</span>)) / <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If all done, return.</span></span><br><span class="line">        <span class="keyword">if</span> (i == nums.size())</span><br><span class="line">            <span class="keyword">return</span> medians;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Insert nums[i].</span></span><br><span class="line">        window.insert(nums[i]);</span><br><span class="line">        <span class="comment">// 只保证左边的元素个数不变，右边不用管</span></span><br><span class="line">        <span class="comment">// 如果新插入的在左边，则左移一位，保证左边元素数量不变</span></span><br><span class="line">        <span class="keyword">if</span> (nums[i] &lt; *mid)</span><br><span class="line">            mid--;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Erase nums[i-k].</span></span><br><span class="line">        <span class="comment">// 只保证左边的元素个数不变，右边不用管</span></span><br><span class="line">        <span class="comment">// 如果删除的在左边，右移一位保证左边的元素个数不变</span></span><br><span class="line">        <span class="keyword">if</span> (nums[i-k] &lt;= *mid)</span><br><span class="line">            mid++;</span><br><span class="line">        window.erase(window.lower_bound(nums[i-k]));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Find-Median-from-Data-Stream"><a href="#Find-Median-from-Data-Stream" class="headerlink" title="Find Median from Data Stream"></a>Find Median from Data Stream</h6><p>实现一个数据结构，满足两种操作：</p>
+<ol>
+<li>加入元素</li>
+<li>计算结构中元素的中位数</li>
+</ol>
+<h6 id="解题思路-1"><a href="#解题思路-1" class="headerlink" title="解题思路"></a>解题思路</h6><ul>
+<li>使用两个优先队列（大根堆），将数据分成两部分，左边存较小的一部分，右边存较大一部分的相反数</li>
+<li>计算中位数时，如果左边的个数大于右边，则左边的堆顶就是中位数；否则，两个堆的堆顶元素计算中位数</li>
+<li>需要加入一个新的数时，先push进左边的堆，然后从左边的堆中pop出最大值到右边的堆</li>
+<li>如果左侧堆的数量小于右侧的数量，右侧弹出一个元素并将其相反数放入左侧堆</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">priority_queue&lt;<span class="keyword">int</span>&gt; left;</span><br><span class="line">priority_queue&lt;<span class="keyword">int</span>&gt; right;</span><br><span class="line">MedianFinder() &#123;&#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addNum</span><span class="params">(<span class="keyword">int</span> num)</span> </span>&#123;</span><br><span class="line">    left.push(num); <span class="comment">// push到左侧</span></span><br><span class="line">    right.push(-left.top()); <span class="comment">// 左侧的最大值push到右侧</span></span><br><span class="line">    left.pop();</span><br><span class="line">    <span class="keyword">if</span> (left.size() &lt; right.size()) &#123; <span class="comment">// 确保左右两边的数量关系</span></span><br><span class="line">        <span class="keyword">int</span> tmp = -right.top();</span><br><span class="line">        right.pop();</span><br><span class="line">        left.push(tmp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">findMedian</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> left.size()&gt;right.size()?<span class="keyword">double</span>(left.top()) : (<span class="keyword">double</span>(left.top())-right.top())/<span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ckeiowfam008h4gphbqwmcab4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-MultiThreads-in-Cpp" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/06/12/MultiThreads-in-Cpp/">MultiThreads in Cpp</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/06/12/MultiThreads-in-Cpp/">
+            <time datetime="2017-06-12T01:41:32.000Z" itemprop="datePublished">2017-06-12</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Dev/">Dev</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Cpp/">Cpp</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="thread"><a href="#thread" class="headerlink" title="thread"></a>thread</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;thread&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="构造"><a href="#构造" class="headerlink" title="构造"></a>构造</h6><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建一个空的 thread 执行对象</td>
+<td><code>thread() noexcept;</code></td>
+</tr>
+<tr>
+<td>创建一个 thread对象，该 thread对象可被 joinable，新产生的线程会调用 fn 函数，该函数的参数由 args 给出</td>
+<td><code>template &lt;class Fn, class... Args&gt; explicit thread (Fn&amp;&amp; fn, Args&amp;&amp;... args);</code></td>
+</tr>
+<tr>
+<td>copy [deleted]</td>
+<td><code>thread (const thread&amp;) = delete;</code></td>
+</tr>
+<tr>
+<td>调用成功之后 x 不代表任何 thread 执行对象</td>
+<td><code>thread (thread&amp;&amp; x) noexcept;</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h6 id="其他成员"><a href="#其他成员" class="headerlink" title="其他成员"></a>其他成员</h6><ul>
+<li><code>get_id</code> : 获取线程 ID</li>
+<li><code>joinable</code> : 检查线程是否可被 join</li>
+<li><code>join</code> : 同步操作，线程所有的操作完成此函数才返回，阻塞调用此函数的线程。调用此函数后，对应thread对象变成<code>non-joinable</code>，并可以安全销毁</li>
+<li><code>detach</code> : 将目标线程与调用线程分离开，调用此函数后，对应thread对象变成<code>non-joinable</code>，并可以安全销毁（这里很奇怪—!）</li>
+<li><code>swap</code> : <code>void swap (thread&amp; x) noexcept</code>，与x互换状态</li>
+<li><code>native_handle</code> : 返回可以访问此线程详细实现信息的值</li>
+<li><code>hardware_concurrency [static]</code> :  返回硬件线程上下文的数量</li>
+</ul>
+<h5 id="mutex"><a href="#mutex" class="headerlink" title="mutex"></a>mutex</h5><p>Mutex 又称互斥量，C++ 11中与 Mutex 相关的类（包括锁类型）和函数都声明在 <mutex> 头文件中.</mutex></p>
+<h6 id="std-mutex"><a href="#std-mutex" class="headerlink" title="std::mutex"></a>std::mutex</h6><p>std::mutex 对象提供了独占所有权的特性——即不支持递归地对 std::mutex 对象上锁(重复上锁)，其相关函数如下：</p>
+<ul>
+<li>构造函数，std::mutex<strong>不允许拷贝构造，也不允许 move 拷贝</strong>，最初产生的 mutex 对象是处于 unlocked 状态的</li>
+<li><code>lock()</code>，调用线程将锁住该互斥量。线程调用该函数会发生下面 3 种情况：(1). 如果该互斥量当前没有被锁住，则调用线程将该互斥量锁住，直到调用 unlock之前，该线程一直拥有该锁。(2). <strong>如果当前互斥量被其他线程锁住，则当前的调用线程被阻塞住</strong>。(3). <strong>如果当前互斥量被当前调用线程锁住，则会产生死锁(deadlock)</strong></li>
+<li><code>unlock()</code>， 解锁，释放对互斥量的所有权</li>
+<li><code>try_lock()</code>，尝试锁住互斥量，如果互斥量被其他线程占有，则当前线程也不会被阻塞。线程调用该函数也会出现下面 3 种情况，(1). 如果当前互斥量没有被其他线程占有，则该线程锁住互斥量，直到该线程调用 unlock 释放互斥量。(2). <strong>如果当前互斥量被其他线程锁住，则当前调用线程返回 false，而并不会被阻塞掉</strong>。(3). 如果当前互斥量被当前调用线程锁住，则会产生死锁(deadlock)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">std::mutex mtx;</span><br><span class="line"><span class="function"><span class="keyword">volatile</span> <span class="keyword">int</span> <span class="title">counter</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10000</span>; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mtx.try_lock()) &#123;   <span class="comment">// 没被上锁时才自增</span></span><br><span class="line">            ++counter;</span><br><span class="line">            mtx.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* argv[])</span> </span>&#123;</span><br><span class="line">    std::thread threads[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; ++i)</span><br><span class="line">        threads[i] = std::thread(func);</span><br><span class="line">    <span class="keyword">for</span> (auto&amp; th : threads) th.join();</span><br><span class="line">    std::cout &lt;&lt; counter &lt;&lt; <span class="string">" successful increases of the counter.\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-recursive-mutex"><a href="#std-recursive-mutex" class="headerlink" title="std::recursive_mutex"></a>std::recursive_mutex</h6><p>recursive_mutex与mutex类似。但是和 std::mutex 不同的是，<strong>std::recursive_mutex 允许同一个线程对互斥量多次上锁（即递归上锁），来获得对互斥量对象的多层所有权</strong>，std::recursive_mutex 释放互斥量时需要调用与该锁层次深度相同次数的 unlock()，可理解为 lock() 次数和 unlock() 次数相同</p>
+<h6 id="std-time-mutex"><a href="#std-time-mutex" class="headerlink" title="std::time_mutex"></a>std::time_mutex</h6><p>定时Mutex类，有两个特殊函数：</p>
+<ul>
+<li><code>try_lock_for</code> : 接受一个时间范围，表示在这一段时间范围之内线程如果没有获得锁则被阻塞住，超时则返回false</li>
+<li><code>try_lock_until</code> : 接受一个时间点作为参数，在指定时间点未到来之前线程如果没有获得锁则被阻塞住，超时则返回false</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;chrono&gt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fireworks</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 等待获取锁，每200ms打印一个'-'</span></span><br><span class="line">  <span class="keyword">while</span> (!mtx.try_lock_for(std::chrono::milliseconds(<span class="number">200</span>))) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">"-"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 获取锁后休息1秒，然后打印'*'</span></span><br><span class="line">  std::this_thread::sleep_for(std::chrono::milliseconds(<span class="number">1000</span>));</span><br><span class="line">  std::cout &lt;&lt; <span class="string">"*\n"</span>;</span><br><span class="line">  mtx.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-recursive-timed-mutex"><a href="#std-recursive-timed-mutex" class="headerlink" title="std::recursive_timed_mutex"></a>std::recursive_timed_mutex</h6><p>std::recursive_timed_mutex之于std::timed_mutex如同std:recursive_mutex之于std::mutex，就是允许重复上锁。</p>
+<h6 id="std-lock-guard"><a href="#std-lock-guard" class="headerlink" title="std::lock_guard"></a>std::lock_guard</h6><p>方便线程对互斥量上锁，不用考虑销毁、异常时的解锁问题。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdexcept&gt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_even</span> <span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x%<span class="number">2</span> == <span class="number">0</span>) std::cout &lt;&lt; x &lt;&lt; <span class="string">" is even\n"</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">throw</span> (std::logic_error(<span class="string">"not even"</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_thread_id</span> <span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 实用局部的lock_guard锁定mtx保证在销毁、异常中的解锁</span></span><br><span class="line">        std::lock_guard&lt;std::mutex&gt; lck (mtx);</span><br><span class="line">        print_even(id);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (std::logic_error&amp;) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"[exception caught]\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-unique-lock"><a href="#std-unique-lock" class="headerlink" title="std::unique_lock"></a>std::unique_lock</h6><p>方便线程对互斥量上锁，但提供了更好的上锁和解锁控制。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_block</span> <span class="params">(<span class="keyword">int</span> n, <span class="keyword">char</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 临界区 (lck生存周期内对std::cout的互斥访问权)</span></span><br><span class="line">    std::unique_lock&lt;std::mutex&gt; lck (mtx);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; ++i) &#123;</span><br><span class="line">        std::cout &lt;&lt; c;</span><br><span class="line">    &#125;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="future"><a href="#future" class="headerlink" title="future"></a>future</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;future&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="std-future"><a href="#std-future" class="headerlink" title="std::future"></a>std::future</h6><p>从异步任务中获取结果，通过查询future的状态（future_status）可获取异步操作的结果。future_status有三种状态：</p>
+<ul>
+<li>deferred：异步操作还没开始</li>
+<li>ready：异步操作已经完成</li>
+<li>timeout：异步操作超时</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">std::future_status status;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        status = future.wait_for(std::chrono::seconds(<span class="number">1</span>));</span><br><span class="line">        <span class="keyword">if</span> (status == std::future_status::deferred) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"deferred\n"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == std::future_status::timeout) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"timeout\n"</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (status == std::future_status::ready) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">"ready!\n"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">while</span> (status != std::future_status::ready);</span><br></pre></td></tr></table></figure>
+<p>获取future结果有三种方式：get、wait、wait_for</p>
+<ul>
+<li>get等待异步操作结束并返回结果</li>
+<li>wait只是等待异步操作完成，没有返回值</li>
+<li>wait_for是超时等待返回结果。</li>
+</ul>
+<p><future> 头文件中包含了以下几个类和函数：</future></p>
+<ul>
+<li>Providers 类：std::promise, std::package_task</li>
+<li>Futures 类：std::future, shared_future</li>
+<li>Providers 函数：std::async()</li>
+<li>其他类型：std::future_error, std::future_errc, std::future_status, std::launch</li>
+</ul>
+<h6 id="std-promise"><a href="#std-promise" class="headerlink" title="std::promise"></a>std::promise</h6><p><code>std::promise</code>为获取线程函数中的某个值提供便利，在<strong>线程函数中给外面传进来的promise赋值，当线程函数执行完成之后就可以通过promis获取该值</strong>了，值得注意的是取值是间接的通过promise内部提供的future来获取的.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::promise&lt;<span class="keyword">int</span>&gt; pr;</span><br><span class="line">    std::<span class="function">thread <span class="title">t</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        [] (std::promise&lt;<span class="keyword">int</span>&gt;&amp; p)</span> </span>&#123; p.set_value_at_thread_exit(<span class="number">9</span>); &#125; ,</span><br><span class="line">        std::ref(pr)</span><br><span class="line">    );</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f = pr.get_future();</span><br><span class="line">    auto r = f.get();</span><br></pre></td></tr></table></figure></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>promise();</td>
+<td>默认构造函数，初始化一个空的共享状态</td>
+</tr>
+<tr>
+<td>template <class alloc=""> promise (allocator_arg_t aa, const Alloc&amp; alloc);</class></td>
+<td>带自定义内存分配器的构造函数，与默认构造函数类似，但是使用自定义分配器来分配共享状态</td>
+</tr>
+<tr>
+<td>promise (const promise&amp;) = delete;</td>
+<td>删除的拷贝构造函数</td>
+</tr>
+<tr>
+<td>promise (promise&amp;&amp; x) noexcept;</td>
+<td>移动构造函数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>promise 对象可以保存某一类型 T 的值，该值可被 future 对象读取（可能在另外一个线程中），因此 promise 也提供了一种线程同步的手段</li>
+<li>在 promise 对象构造时可以和一个共享状态（通常是std::future）相关联，并可以在相关联的共享状态(std::future)上保存一个类型为 T 的值。</li>
+<li>可以通过 <code>get_future</code> 来获取与该 promise 对象相关联的 future 对象，调用该函数之后，两个对象共享相同的共享状态<ul>
+<li>promise 对象是异步 Provider，它可以在某一时刻设置共享状态的值</li>
+<li>future 对象可以异步返回共享状态的值，或者在必要的情况下阻塞调用者并等待共享状态标志变为 ready，然后才能获取共享状态的值</li>
+</ul>
+</li>
+<li>promise对象可以通过<code>set_value</code>函数设置共享状态的值</li>
+<li><code>std::promise::set_value_at_thread_exit</code> : 设置共享状态的值，但是不将共享状态的标志设置为 ready，当线程退出时该 promise 对象会自动设置为 ready</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_int</span><span class="params">(std::future&lt;<span class="keyword">int</span>&gt;&amp; fut)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = fut.get(); <span class="comment">// 获取共享状态的值.</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"value: "</span> &lt;&lt; x &lt;&lt; <span class="string">'\n'</span>; <span class="comment">// 打印 value: 10.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    std::promise&lt;<span class="keyword">int</span>&gt; prom; <span class="comment">// 生成一个 std::promise&lt;int&gt; 对象.</span></span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; fut = prom.get_future(); <span class="comment">// 和 future 关联.</span></span><br><span class="line">    std::<span class="function">thread <span class="title">t</span><span class="params">(print_int, std::ref(fut)</span>)</span>; <span class="comment">// 将 future 交给另外一个线程t.</span></span><br><span class="line">    prom.set_value(<span class="number">10</span>); <span class="comment">// 设置共享状态的值, 此处和线程t保持同步.</span></span><br><span class="line">    t.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>std::promise::set_exception</code>为 promise 设置异常，此后 promise 的共享状态变标志变为 ready。下面程序的意义是：线程1从终端接收一个整数，线程2将该整数打印出来，如果线程1接收一个非整数，则为 promise 设置一个异常(failbit) ，线程2 在std::future::get 是抛出该异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_int</span><span class="params">(std::promise&lt;<span class="keyword">int</span>&gt;&amp; prom)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">"Please, enter an integer value: "</span>;</span><br><span class="line">    std::cin.exceptions (std::ios::failbit);   <span class="comment">// throw on failbit</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        std::cin &gt;&gt; x;                         <span class="comment">// sets failbit if input is not int</span></span><br><span class="line">        prom.set_value(x);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (std::exception&amp;) &#123;</span><br><span class="line">        prom.set_exception(std::current_exception());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_int</span><span class="params">(std::future&lt;<span class="keyword">int</span>&gt;&amp; fut)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> x = fut.get();</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"value: "</span> &lt;&lt; x &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (std::exception&amp; e) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">"[exception caught: "</span> &lt;&lt; e.what() &lt;&lt; <span class="string">"]\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::promise&lt;<span class="keyword">int</span>&gt; prom;</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; fut = prom.get_future();</span><br><span class="line"></span><br><span class="line">    std::<span class="function">thread <span class="title">th1</span><span class="params">(get_int, std::ref(prom)</span>)</span>;</span><br><span class="line">    std::<span class="function">thread <span class="title">th2</span><span class="params">(print_int, std::ref(fut)</span>)</span>;</span><br><span class="line"></span><br><span class="line">    th1.join();</span><br><span class="line">    th2.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="std-packaged-task"><a href="#std-packaged-task" class="headerlink" title="std::packaged_task"></a>std::packaged_task</h6><p><code>std::packaged_task</code><strong>包装了一个可调用的目标</strong>（如function, lambda expression, bind expression, or another function object）,以便异步调用，它和promise在某种程度上有点像，promise保存了一个共享状态的值，而packaged_task保存的是一个函数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">std::packaged_task&lt;<span class="keyword">int</span>()&gt; task([]()&#123; <span class="keyword">return</span> <span class="number">7</span>; &#125;);</span><br><span class="line">std::<span class="function">thread <span class="title">t1</span><span class="params">(std::ref(task)</span>)</span>;</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = task.get_future();</span><br><span class="line">auto r1 = f1.get();</span><br></pre></td></tr></table></figure></p>
+<h6 id="std-async"><a href="#std-async" class="headerlink" title="std::async"></a>std::async</h6><p><code>std::async</code>先将异步操作用<code>std::packaged_task</code>包装起来，然后将异步操作的结果放到<code>std::promise</code>中，这个过程就是创造未来的过程。外面再通过<code>future.get/wait</code>来获取这个未来的结果，<code>std::async</code>的原型<code>async(std::launch::async | std::launch::deferred, f, args...)</code>，<strong>第一个参数是线程的创建策略</strong>，有两种策略，默认的策略是立即创建线程：</p>
+<ul>
+<li><code>std::launch::async</code>：在调用<code>async</code>就开始创建线程</li>
+<li><code>std::launch::deferred</code>：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者wait时才创建线程</li>
+</ul>
+<p><strong>第二个参数是线程函数，第三个参数是线程函数的参数.</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f1 = std::async(</span><br><span class="line">    std::launch::async,</span><br><span class="line">    []() &#123;<span class="keyword">return</span> <span class="number">8</span>;&#125;</span><br><span class="line">);</span><br><span class="line">std::future&lt;<span class="keyword">int</span>&gt; f2 = std::async(</span><br><span class="line">    std::launch::async,</span><br><span class="line">    [](<span class="keyword">int</span> x) &#123;<span class="keyword">return</span> <span class="number">8</span>+x;&#125;,</span><br><span class="line">    <span class="number">100</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h5 id="std-condition-variable"><a href="#std-condition-variable" class="headerlink" title="std::condition_variable"></a>std::condition_variable</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;condition_variable&gt;</span><br></pre></td></tr></table></figure>
+<p>std::condition_variable 是条件变量，其构造方法如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>condition_variable();</td>
+<td>默认构造函数</td>
+</tr>
+<tr>
+<td>condition_variable (const condition_variable&amp;) = delete;</td>
+<td>删除的拷贝函数</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>当 <code>std::condition_variable</code> 对象的某个 wait 函数被调用的时候，它使用 <code>std::unique_lock</code>(通过 std::mutex) 来锁住当前线程。当前线程会一直被阻塞，直到另外一个线程在相同的 <code>std::condition_variable</code> 对象上调用了 <code>notify_one</code>或者’notify_all’ 函数来唤醒当前线程</strong>。</p>
+<p><code>wait</code>函数有两种形式：</p>
+<ul>
+<li><code>void wait( std::unique_lock&lt;std::mutex&gt;&amp; lock )</code> : 一直阻塞直到<code>notify_one</code>或者’notify_all’ 函数被调用。</li>
+<li><code>template&lt; class Predicate &gt; void wait( std::unique_lock&lt;std::mutex&gt;&amp; lock, Predicate pred )</code> : <strong>只有当谓词<code>pred()</code>不为真的时候才等待，否则直接跳过<code>wait</code></strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">std::mutex mtx; <span class="comment">// 全局互斥锁.</span></span><br><span class="line">std::condition_variable cv; <span class="comment">// 全局条件变量.</span></span><br><span class="line">bool ready = <span class="keyword">false</span>; <span class="comment">// 全局标志位.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">do_print_id</span><span class="params">(<span class="keyword">int</span> id)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</span><br><span class="line">    <span class="keyword">while</span> (!ready) <span class="comment">// 如果标志位不为 true, 则等待...</span></span><br><span class="line">        cv.wait(lck); <span class="comment">// 当前线程被阻塞, 当全局标志位变为 true 之后,</span></span><br><span class="line">    <span class="comment">// 线程被唤醒, 继续往下执行打印线程编号id.</span></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"thread "</span> &lt;&lt; id &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">go</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</span><br><span class="line">    ready = <span class="keyword">true</span>; <span class="comment">// 设置全局标志位为 true.</span></span><br><span class="line">    cv.notify_all(); <span class="comment">// 唤醒所有线程.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::thread threads[<span class="number">10</span>];</span><br><span class="line">    <span class="comment">// spawn 10 threads:</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)</span><br><span class="line">        threads[i] = std::thread(do_print_id, i);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"10 threads ready to race...\n"</span>;</span><br><span class="line">    go(); <span class="comment">// go!</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (auto &amp; th:threads)</span><br><span class="line">        th.join();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>引用</strong><br>[1]. <a href="http://www.cnblogs.com/haippy/p/3236136.html" target="_blank" rel="noopener">C++11 并发指南二</a><br>[2]. <a href="http://www.cnblogs.com/haippy/p/3237213.html" target="_blank" rel="noopener">C++11 并发指南三</a><br>[3]. <a href="http://www.cnblogs.com/haippy/p/3239248.html" target="_blank" rel="noopener">C++11 并发指南</a><br>[4]. <a href="http://blog.csdn.net/watson2016/article/details/52861094" target="_blank" rel="noopener"> C++11 并发指南五</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ckeiowf9g006d4gphh1qls0v5" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Convex-Hull" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -313,7 +1348,7 @@ b_1 & b_2 & 0
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ck82imy7e0010r4phig3b6w93" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ckeiowf6q00154gphuaqj2b80" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -529,7 +1564,7 @@ h_{\theta}(x)&=\frac{1}{\sum_{i=1}^2e^{\theta_i^Tx}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ck82imycx007zr4phylp7wh1w" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ckeiowfak008e4gphge22j2nl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -705,7 +1740,7 @@ E_t=-o_tlog\hat{o_t}</script><p>激活函数可以是<code>tanh</code>，也可�
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ck82imycf0070r4phgklhfosw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ckeiowfa5007q4gphz0sw4bwk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -843,7 +1878,7 @@ Explanation: The maximum result is 5 ^ 25 = 28.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ck82imyan004ur4ph1gx29ck4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ckeiowf93005m4gphpuye2frh" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1062,977 +2097,7 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/02/Introduction-to-Recommender-System/" data-id="ck82imy9u003yr4phlr1pvwej" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Super-Washing-Machines" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/04/02/Super-Washing-Machines/">Super Washing Machines</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/04/02/Super-Washing-Machines/">
-            <time datetime="2017-04-02T02:08:53.000Z" itemprop="datePublished">2017-04-02</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>You have $n$ super washing machines on a line. Initially, each washing machine has some dresses or is empty.</p>
-<p>For each move, you could <strong>choose any $m (1 ≤ m ≤ n)$ washing machines, and pass one dress of each washing machine to one of its adjacent washing machines at the same time</strong> .</p>
-<p>Given an integer array representing the number of dresses in each washing machine from left to right on the line, you should find the minimum number of moves to make all the washing machines have the same number of dresses. If it is not possible to do it, return -1.</p>
-<pre><code>Example1
-
-Input: [1,0,5]
-Output: 3
-
-Explanation: 
-1st move:    1     0 &lt;-- 5    =&gt;    1     1     4
-2nd move:    1 &lt;-- 1 &lt;-- 4    =&gt;    2     1     3    
-3rd move:    2     1 &lt;-- 3    =&gt;    2     2     2   
-Example2
-
-Input: [0,3,0]
-Output: 2
-
-Explanation: 
-1st move:    0 &lt;-- 3     0    =&gt;    1     2     0    
-2nd move:    1     2 --&gt; 0    =&gt;    1     1     1     
-Example3
-
-Input: [0,2,0]
-Output: -1
-
-Explanation: 
-It&#39;s impossible to make all the three washing machines have the same number of dresses. 
-Note:
-The range of n is [1, 10000].
-The range of dresses number in a super washing machine is [0, 1e5].
-</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>首先，如果所有洗衣机的衣服总和不能被$n$整除，返回-1.<br>然后对于每个洗衣机，计算它的<code>gain/lose</code>数组，表示还需要移除多少件衣服使得自己达到平衡状态。</p>
-<p>举个栗子：<br>对于<code>[0,0,11,5]</code>，每个洗衣机应该有4件衣服，所以它的<code>gain/lose</code>数组为<code>[-4,-4,7,1]</code>。从第一个机器开始考虑，第一个要加入4件，得从第二个机器中过来，所以这个状态可以以4次移动的代价变成<code>[0,-8,7,1]</code>。同理第二个状态也可以以8次移动的代价变成状态三<code>[0,0,-1,1]</code>，最后以一次移动的代价变成<code>[0,0,0,0]</code>。</p>
-<p>因为每一次移动可以选取任意个元素，并朝左边或者右边移动一个元素，所以总共需要的移动次数就是<code>gain/lose</code>数组中出现的最大值。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">        tmp += num-n;</span><br><span class="line">        ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码中<code>num-n</code>没加绝对值，我的理解是对于初始<code>gain/lose</code>数组的负数，可以从两边同时添加衣服，如果是正数，那么那么每次只能移除一件衣服。而<code>tmp</code>加了绝对值，是因为<code>tmp</code>表示左边一个缺少/多的衣服数，这些衣服得从右边过来，并且一个一个达到当前位置，所以得加绝对值。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="ck82imyd5008dr4phoks4lbx7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Contiguous-Array" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/04/01/Contiguous-Array/">Contiguous Array</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/04/01/Contiguous-Array/">
-            <time datetime="2017-04-01T06:09:56.000Z" itemprop="datePublished">2017-04-01</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定一个只包含0和1的整形数组，输出最长的连续子串的长度，要求子串中0和1的个数相同。</p>
-<pre><code>Input: [0,1]
-Output: 2
-Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
-
-Input: [0,1,0]
-Output: 2
-Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
-</code></pre><p>数组长度不会超过50000.</p>
-<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>$O(n^2)$的思路容易想到，但是数组长度太长，会超时。</p>
-<p>方法如下：</p>
-<ul>
-<li>先将数组中的<code>0</code>变成<code>-1</code>，这样连续子序列的和为<code>0</code>的时候满足条件</li>
-<li>记录下<code>0-k</code>位置的和与<code>k</code>的对应关系，可以hash map的方法。和相同的只记录最左边的，毕竟长度要最长嘛</li>
-<li>如果后面遇到了记录过的和，位置相减就能得到满足条件的子序列长度</li>
-<li>时间复杂度为$O(n)$</li>
-</ul>
-<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">    unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">    map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        sum += nums[i];</span><br><span class="line">        <span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">        <span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">            ret = max(ret, i-map[sum]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">            map[sum] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="ck82imy7c000xr4phprt2h25g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Remove-Boxes" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/04/01/Remove-Boxes/">Remove Boxes</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/04/01/Remove-Boxes/">
-            <time datetime="2017-04-01T02:17:56.000Z" itemprop="datePublished">2017-04-01</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>Given several boxes with different colors represented by different positive numbers.<br>You may experience several rounds to remove boxes until there is no box left. Each time you can choose some continuous boxes with the same color (composed of k boxes, k &gt;= 1), remove them and get k*k points.<br>Find the maximum points you can get.</p>
-<p><code>Example 1</code></p>
-<pre><code>Input:
-[1, 3, 2, 2, 2, 3, 4, 3, 1]
-Output:
-23
-Explanation:
-[1, 3, 2, 2, 2, 3, 4, 3, 1] 
-----&gt; [1, 3, 3, 4, 3, 1] (3*3=9 points) 
-----&gt; [1, 3, 3, 3, 1] (1*1=1 points) 
-----&gt; [1, 1] (3*3=9 points) 
-----&gt; [] (2*2=4 points)
-</code></pre><p><code>Note: The number of boxes n would not exceed 100.</code></p>
-<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>本题可以采用递归+memory（DP）的方法解决，思路是：使用数组map[i][j][k]表示从第i个元素到第j个元素，并且后面还有k个boxes[j]，也就是说现在至少有k+1个boxes[j]。对于i-j之间的满足boxes[p]=boxes[j]的元素，满足一下条件</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-for\;& p\; with\;boxes[p]==boxes[j]: \\ 
-&map[i][j][k]=\max_p(map[i][j][k], map[i][p][k+1]+map[p+1][r-1][0])
-\end{aligned}</script><p>代码为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dfs</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; boxes, <span class="keyword">int</span> start, <span class="keyword">int</span> end, <span class="keyword">int</span> k, <span class="keyword">int</span> map[<span class="number">100</span>][<span class="number">100</span>][<span class="number">100</span>])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (start &gt; end) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (map[start][end][k] &gt; <span class="number">0</span>) <span class="keyword">return</span> map[start][end][k];</span><br><span class="line">    <span class="comment">// 记录后面连续boxes[end]的数量</span></span><br><span class="line">    <span class="keyword">while</span> (start&lt;end &amp;&amp; boxes[end-<span class="number">1</span>]==boxes[end]) &#123;--end; ++k;&#125;</span><br><span class="line">    map[start][end][k] = dfs(boxes, start, end-<span class="number">1</span>, <span class="number">0</span>, map)+(k+<span class="number">1</span>)*(k+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=start; i&lt;end; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (boxes[i] == boxes[end]) &#123;</span><br><span class="line">            map[start][end][k]=max(map[start][end][k], dfs(boxes, start, i, k+<span class="number">1</span>, map)+dfs(boxes, i+<span class="number">1</span>, end-<span class="number">1</span>, <span class="number">0</span>, map));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map[start][end][k];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeBoxes</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; boxes)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> map[<span class="number">100</span>][<span class="number">100</span>][<span class="number">100</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> dfs(boxes, <span class="number">0</span>, boxes.size()-<span class="number">1</span>, <span class="number">0</span>, map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/04/01/Remove-Boxes/" data-id="ck82imyci0077r4phbwnb6oub" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-word2vec" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/31/word2vec/">word2vec</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/31/word2vec/">
-            <time datetime="2017-03-31T02:50:31.000Z" itemprop="datePublished">2017-03-31</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h5><p>自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。</p>
-<p>对于一段文本序列$S=w_1,…,w_T$，它的概率是</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1})
-\end{aligned}</script><p>问题变成了如何去预测这些条件概率.</p>
-<h6 id="Ngram"><a href="#Ngram" class="headerlink" title="Ngram"></a>Ngram</h6><p>上述模型的参数空间巨大，一个改进方法是Ngram，有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(w_t|w_1,...,w_{t-1}) \approx p(w_t|w_{t-n+1},...,w_{t-1})
-\end{aligned}</script><p>Ngram本质上是将词当做一个个孤立的原子单元去处理的，用<code>ont-hot</code>的方式向量化word，向量维度等于词典大小。<br>Ngram及其他gram模型仍有局限性：</p>
-<ul>
-<li>由于参数空间的爆炸式增长，它无法处理更长程的context</li>
-<li>没有考虑词与词之间内在的联系性</li>
-</ul>
-<h5 id="Distributed-Representation"><a href="#Distributed-Representation" class="headerlink" title="Distributed Representation"></a>Distributed Representation</h5><p>用<code>ont-hot</code>的方式向量化单词面临着维度灾难问题，能否用一个连续的稠密向量去刻画一个word的特征呢？这样不仅可以直接刻画词与词之间的相似度，还可以建立一个从向量到概率的平滑函数模型，使得相似的词向量可以映射到相近的概率空间上。这个稠密连续向量也被称为word的<code>distributed representation</code>.</p>
-<p>在信息检索领域里，这个概念被称为向量空间模型（<code>Vector Space Model</code>），VSM是基于一种<code>Statistical Semantics Hypothesis</code>，比较广为人知的两个版本是<code>Bag of Words Hypothesis</code>和<code>Distributional Hypothesis</code>，分别表示</p>
-<ul>
-<li><code>Bag of Words Hypothesis</code>：一篇文档的词频（而不是词序）代表了文档的主题</li>
-<li><code>Distributional Hypothesis</code>：上下文环境相似的两个词有着相近的语义</li>
-</ul>
-<p>基于<code>Bag of Words Hypothesis</code>，我们可以构造一个<code>term-document</code>矩阵$A$，矩阵里的元素$A_{ij}$代表着word $w_i$在文档$D_j$中出现的次数（或频率）。可以提取行向量做为word的语义向量。</p>
-<p>基于<code>Distributional Hypothesis</code>，我们可以构造一个<code>word-context</code>的矩阵$B$，矩阵里的元素$B_{ij}$代表着word $w_i$在context $C_j$中出现的次数（或频率）</p>
-<p>这种co-occurrence矩阵仍然存在着数据稀疏性和维度灾难的问题，解决方法是基于SVD的稀疏矩阵分解方法。</p>
-<h5 id="word2vec原理"><a href="#word2vec原理" class="headerlink" title="word2vec原理"></a>word2vec原理</h5><p>假设预料为$D=\lbrace w_1,…,w_V \rbrace$</p>
-<h6 id="CBoW模型（Continuous-Bag-of-Words-Model）"><a href="#CBoW模型（Continuous-Bag-of-Words-Model）" class="headerlink" title="CBoW模型（Continuous Bag-of-Words Model）"></a>CBoW模型（Continuous Bag-of-Words Model）</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe4l3rsmdtj20tm10gtee.jpg" alt="Continuous Bag-of-Words Model"></p>
-<p><strong>CBoW的描述</strong>(N对应图中的|V|)</p>
-<ul>
-<li>利用位置$t$前后的$2m$个words，以它们的<code>one-hot</code>编码$x_k$作为输入。通过一个共享的$n\times N$投影矩阵$V$，将每个输入投影成$n$维词向量，$N$是词典大小。$v_{t+j}=Vx_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$这里的$V$矩阵最终包含的就是我们要的结果。</li>
-<li>在PROJECTION层上，将$2m$个投影结果汇总（平均值，舍弃了位置信息）.$\hat{v_t}=\frac{1}{2m}\sum_{j}v_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$，通过矩阵$U_{Nn}(U^T=[u_1,…,u_N])$连接到输出层。</li>
-<li>最后是softmax层，$N$个节点，每个节点表示中心词是$w_i$的概率。输出层的输入向量为$z$，$z_i=u_i^T\hat{v_t}$，输出结果为$y$，$\hat{y_i}=softmax(z_i)$</li>
-</ul>
-<p>模型参数是两个词向量矩阵：$U,V$，对于中心词$w_t$，模型对它的损失函数为：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-J_t&=-logP(w_t|w_{t-m},...,w_{t-1},w_{t+1},...,w_{t+m}) \\
- &=-log(softmax(z_t)) \\
- &=-log\frac{e^{u_t^T\hat{v_t}}}{\sum_{k=1}^V e^{u_k^T\hat{v_t}}} \\
- &=-z_t+log\sum_{k=1}^V e^{z_k}
-\end{aligned}</script><p>所以，整个模型的经验风险为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-J&=\sum_{w_{t+m},w_{t-m}\in D} J_t
-\end{aligned}</script><p>风险$J$对$U,V$的导数为：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\frac{\partial J}{\partial u_i} &= (\hat{y_i}-y_i)\hat{v_t} \\
-\frac{\partial J}{\partial U^T} &= \hat{v_t}(\hat{y_t}-y)^T \\
-\frac{\partial J}{\partial v_{t+j}} &= \frac{1}{2m}U^T(\hat{y}-y)
-\end{aligned}</script><p>采取sgd更新方式，梯度下降。</p>
-<h6 id="Skip-gram"><a href="#Skip-gram" class="headerlink" title="Skip-gram"></a>Skip-gram</h6><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffjr31ab9aj213q0tt1hg.jpg" alt="Skip-gram"></p>
-<p>Skip-gram以当前词为中心，预测window内的词语，细节图中描述的很清楚了。为了描述方便，不妨假设图中的矩阵$W,W{\’}$分别为$U,V$。</p>
-<p>由于输入向量$w_t$是<code>one-hot</code>向量(不妨假设第$k$行是1)，所以$Uw_t$就相当于$U$的第$k$列，在这里将其命名为$u_k$。经过$V$矩阵，得到$z=Vu_k,z_i=v_iu_k$，$v_i$是$V$的第$i$行。这里$V$也可以看成包含了所有单词对应向量的矩阵，$z$就表示了$u_k$和$V$中其他向量的相似度。最后对$z$做softmax归一化得到结果$y$(假设应该是$w_{t+1}$)，最大的对应输出。</p>
-<p>假设真实的输出为$\hat{y}$（<code>one-hot</code>，$p$行为1），损失函数使用交叉熵，则对这单个样例的损失函数为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-l(t,t+1)=-logy_p=-log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}
-\end{aligned}</script><p>所以一个句子的损失为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-L=-\frac{1}{T}\sum_{t=1}^T\sum_{i=t-m}^{t+m}l(t,i)
-\end{aligned}</script><p>然后分别对$U,V$求导即可得到梯度。</p>
-<h6 id="Negative-Sampling"><a href="#Negative-Sampling" class="headerlink" title="Negative Sampling"></a>Negative Sampling</h6><p>继续<code>skip-gram</code>模型，在计算$l(t,i)$的时候，需要计算$w_t$对应的向量与每一个其他向量的相似程度$v_iu_k$，<code>softmax</code>对于特别大的词汇计算量很大。</p>
-<p>负采样的思想就是把这里计算其他所有词的相似度改成只计算一部分的相似度，具体地，将这里的类<code>softmax</code>分类的方法变成<code>logistic regression</code>的方法，当前词的context的词为正样本，然后采样一部分其余的词作为负样本。</p>
-<p>也就是将$log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}$变成</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-log\;\sigma(v_iu_k)+\sum_{j=1}^n E_{w_i\sim p_{neg}(w_t)}[log\;\sigma(-v_ju_k)]
-\end{aligned}</script><p>其中，$n$是超参数，表示负采样的数量，一般地，对小的训练集$n\in [20,50]$；对大的数据集，$n$可能只有$[2,5]$之间。$ p_{neg}(w_t)$表示对$w_t$负采样的分布。启发式的采样方法可以如下：</p>
-<p>随机选取非正样本$w_i$，然后以一定的概率舍弃之，这个概率是</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(w_i)=1-\sqrt{\frac{c}{f(w_i))}}
-\end{aligned}</script><p>其中，$f(w_i)$是词$w_i$的词频，$c$是常数，一般在$10^{-5}$左右。这样选择，会过滤掉词频小于$c$的词，并且保证词频大的词语被选中的概率更大。</p>
-<h6 id="层次Softmax"><a href="#层次Softmax" class="headerlink" title="层次Softmax"></a>层次Softmax</h6><p>由于原始的CBoW和skip-gram最后都有softmax层，导致复杂度能达到O(nN)，<strong>Hierarchical Softmax是一种对输出层进行优化的策略，输出层从原始模型的利用softmax计算概率值改为了利用<code>Huffman</code>树计算概率值</strong>。</p>
-<ul>
-<li>投影层的输出沿着<code>huffman</code>树不断进行logistic二分类，并修正各中间向量和词向量</li>
-<li>词表中的<strong>全部词作为叶子节点</strong>，<strong>词频作为节点的权</strong>，叶子结点包含word本身</li>
-<li>每一个非叶子结点都看作是一个logistic分类器，决定下一层的走向，它包含权值</li>
-<li>从根节点出发，到达指定叶子节点的路径是唯一的</li>
-<li>路过非叶子结点，修正logistic参数，并且<strong>累计误差，误差最后用来修正投影矩阵$V$</strong></li>
-<li><code>Hierarchical Softmax</code>正是利用这条唯一路径来计算指定词的概率</li>
-</ul>
-<p>实现过程中，可以</p>
-<ul>
-<li>不考虑投影矩阵，而是将每个词对应的向量（投影后的）设置为随机向量</li>
-<li>通过huffman的每一个节点时都计算累加误差，利用累计误差更新当前节点的LR参数</li>
-<li>累计误差将被用来调整词向量</li>
-</ul>
-<h5 id="word2vec的应用"><a href="#word2vec的应用" class="headerlink" title="word2vec的应用"></a>word2vec的应用</h5><h6 id="广告投放"><a href="#广告投放" class="headerlink" title="广告投放"></a>广告投放</h6><pre><code>U1  a1,a2,a3……
-U2  a2,a3,a5,……
-U3  a1,a3,a6,……
-</code></pre><p>公司A目前有很多用户的浏览数据，如用户u浏览了公司A的页面a1，a2，a3等。把每个用户的整体浏览记录当作一篇doc，每个记录就是一个word。利用word2vec算法，将每个记录转化为一个向量。向量化的页面就能够计算相似度，进而根据各种推荐规则进行推荐。</p>
-<h6 id="ctr预估模型"><a href="#ctr预估模型" class="headerlink" title="ctr预估模型"></a>ctr预估模型</h6><p>CTR（Click-Through-Rate）即点击通过率，是互联网广告常用的术语，指网络广告（图片广告/文字广告/关键词广告/排名广告/视频广告等）的点击到达率，即<strong>该广告的实际点击次数（严格的来说，可以是到达目标页面的数量）除以广告的展现量（Show content）</strong>。</p>
-<p>广告ctr计算存在<strong>冷启动</strong>的问题，冷启动问题就是一个广告是新上线的，之前没有任何的历史投放数据，这样的广告由于数据不足，点击率模型经常不怎么凑效。</p>
-<p>解决方法：<strong>使用同类型广告点击率来缓解</strong>，拿一个同行的广告的各种特征作为这个广告的特征，对这个新广告的点击率进行预估。<br>比如在媒体公司A上面有1000个广告主，它们的主页分别是a1、a2、……、a1000，运行word2vec得到每一个页面的向量，然后运行kmean或者其他聚类算法，把这1000个广告主聚成100个簇，然后每个簇里面的广告主看成是一个。</p>
-<p><strong>引用</strong><br>[1] <a href="http://www.cnblogs.com/iloveai/p/word2vec.html" target="_blank" rel="noopener">word2vec前世今生</a><br>[2] <a href="https://www.52ml.net/16951.html" target="_blank" rel="noopener">深度学习word2vec笔记之应用篇</a><br>[3] <a href="http://blog.csdn.net/u014595019/article/details/51884529" target="_blank" rel="noopener">自己动手写word2vec</a><br>[4] <a href="https://github.com/multiangle/pyword2vec" target="_blank" rel="noopener">word2vec的python实现</a></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/31/word2vec/" data-id="ck82imyec00agr4ph8dwy1w1x" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Latent-Dirichlet-Allocation" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/31/Latent-Dirichlet-Allocation/">Latent Dirichlet Allocation</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/31/Latent-Dirichlet-Allocation/">
-            <time datetime="2017-03-31T02:16:10.000Z" itemprop="datePublished">2017-03-31</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h5><p>问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？</p>
-<h6 id="TF"><a href="#TF" class="headerlink" title="TF"></a>TF</h6><p>首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到<strong><code>词频(TF)</code></strong>这个标准</p>
-<pre><code>词频TF(t)就是关键词t在文档中出现的次数
-</code></pre><h6 id="IDF"><a href="#IDF" class="headerlink" title="IDF"></a>IDF</h6><p>但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性，举个例子：在计算机科学类的paper中，出现算法和文学类paper中出现算法的重要性是不一样的，又或者“的”这个字在汉语中出现的次数相当大，一篇文档中没有“的”字的概率是很小的，此时仅仅按照关键词中的“的”判断文档排名显然是不准确的。于是，我们希望加大稀缺词的权重，所以定义了<strong><code>逆文档频率(IDF)</code></strong>，<code>IDF</code>的定义如下<script type="math/tex">IDF(t) = log\frac{N} {DF(t)}</script>其中，$N$为文档总数，$DF(t)$为所有文档中出现了关键词$t$的文档个数。所以，越是普遍的单词（“的”，“因此”等）<code>IDF</code>越小，而稀缺的单词（如文学paper中的“算法”）就对应着比较大的<code>IDF</code>。</p>
-<p>将TF和IDF结合到一起，得到TF-IDF的计算方法：<script type="math/tex">TF-IDF(t,d) = TF(t,d) * IDF(t)</script>所以，<strong>一篇文档和一条Query的相关度为Query中所有单词在这篇文档中的TF-IDF值之和</strong>。而<strong>两个文档间的相关度是文档向量的余弦值</strong>，余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似，这就叫”余弦相似性”。</p>
-<h6 id="TF-IDF的缺陷"><a href="#TF-IDF的缺陷" class="headerlink" title="TF-IDF的缺陷"></a>TF-IDF的缺陷</h6><ul>
-<li>单纯地认为文本频数小的单词就越重要，文本频数大的单词就越无用，并不是完全正确的</li>
-<li>不能有效地反映单词的重要程度和特征词的分布情况，TF-IDF的精度并不是很高</li>
-<li>没有体现出单词的位置信息，这也是空间向量模型的不足</li>
-</ul>
-<h4 id="主题模型"><a href="#主题模型" class="headerlink" title="主题模型"></a>主题模型</h4><p>TF-IDF模型中没有考虑文字背后的语义关联，即语义层面上的关联，可能在两个文档共同出现的单词很少甚至没有，但两个文档是相似的。判断文档相关性的时候需要考虑到文档的语义，而语义挖掘的利器是主题模型，LDA就是其中一种比较有效的模型。</p>
-<p>主题模型的思想源于生成模型，其思想如下：<strong>一篇文章的每个词都是通过：以一定概率选择了某个主题，并从这个主题中以一定概率选择某个词语</strong>，形式化表述为<script type="math/tex">p(word|doc)=\sum_{topic}p(word|topic)\times p(topic|doc)</script>，具体内容在下文中描述。</p>
-<p>能够发现文档-词语之间所蕴含的潜在语义关系（即主题）——将文档看成一组主题的混合分布，而主题又是词语的概率分布——从而<strong>将高维度的“文档-词语”向量空间映射到低维度的“文档-主题”和“主题-词语”空间</strong>，有效提高了文本信息处理的性能。</p>
-<h5 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h5><h6 id="二项分布（Binomial-distribution）"><a href="#二项分布（Binomial-distribution）" class="headerlink" title="二项分布（Binomial distribution）"></a>二项分布（Binomial distribution）</h6><p>$n$次重复伯努利试验，一次概率为$p$，$k$次试验概率函数为<script type="math/tex">P(K=k)=C_n^kp^k(1-p)^{n-k}</script>，二项分布计为$X\sim b(n,p)$。</p>
-<h6 id="多项式分布"><a href="#多项式分布" class="headerlink" title="多项式分布"></a>多项式分布</h6><p>每次试验可能有$k$种结果，每种结果的可能性是$p_i$，则$n$次试验各种结果出现次数分别为$x_1,…,x_k$的概率是</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(x_1,...,x_k;n,p_1,...,p_k)=\frac{n!}{x_1!...x_k!}p_1^{x_1}...p_k^{x_k}
-\end{aligned}</script><p>是二项分布的扩展。</p>
-<h6 id="gamma函数"><a href="#gamma函数" class="headerlink" title="gamma函数"></a>gamma函数</h6><p>gamma函数形如<script type="math/tex">\Gamma(x)=\int_0^{\infty}t^{x-1}e^{-t}dt</script>这个函数有如下性质$\Gamma(x+1)=x\Gamma(x)$，因此gamma函数可以看作是阶乘在实数集上的延拓<script type="math/tex">\Gamma(n)=(n-1)!</script>此外，gamma函数还有如下性质</p>
-<ul>
-<li>对$x\in (0,1)$，$\Gamma(1-x)\Gamma(x)=\frac{\pi}{sin(\pi x)}$</li>
-<li>$\Gamma(\frac{1}{2})=\sqrt{\pi}$</li>
-</ul>
-<h6 id="共轭先验分布"><a href="#共轭先验分布" class="headerlink" title="共轭先验分布"></a>共轭先验分布</h6><p><strong>定义</strong><br>设$\theta$是总体分布中的参数，$p(\theta)$是$\theta$的先验密度函数，假如<strong>由抽样信息$x$算得的后验密度函数$p(\theta|x)$与$p(\theta)$有相同的函数形式(同一个分布簇)，则称$p(\theta)$是$p(\theta|x)$的(自然)共轭先验分布</strong>，称$p(\theta)$和$p(\theta|x)$为共轭分布。</p>
-<h6 id="Beta分布-二项分布的共轭先验分布"><a href="#Beta分布-二项分布的共轭先验分布" class="headerlink" title="Beta分布-二项分布的共轭先验分布"></a>Beta分布-二项分布的共轭先验分布</h6><p>给定参数$\alpha&gt;0,\beta&gt;0$，取值范围为$[0,1]$的随机变量$x$的概率密度函数为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-f(x;\alpha,\beta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1} \\
-&=\frac{1}{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1}
-\end{aligned}</script><p>则称$x$满足Beta分布，Beta分布的均值为$\frac{\alpha}{\alpha+\beta}$，方差为$\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$。参数$\alpha,\beta$共同控制Beta分布的函数的形状，见下图。</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1c0iuzclj20pb0ko788.jpg" alt=""></p>
-<p>假定先验分布$p(\theta)$和似然概率$p(x|\theta)$满足</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(\theta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}\\&=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1} \\
-p(x|\theta)&=C_n^k\theta^k(1-\theta)^{n-k}
-\end{aligned}</script><p>那么，考虑到$p(x)$为常数项，可知后验概率</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(\theta|x)&=\frac{p(x|\theta)p(\theta)}{p(x)} \\
-&= \frac{1}{Z}  \theta^{\alpha+k-1}(1-\theta)^{\beta+n-k-1}.
-\end{aligned}</script><p>所以，根据定义，$p(\theta)$和$p(\theta|x)$是共轭分布。</p>
-<h6 id="Dirichlet分布"><a href="#Dirichlet分布" class="headerlink" title="Dirichlet分布"></a>Dirichlet分布</h6><p>维度$k \ge 2$的狄利克雷分布在参数$\alpha_1, …, \alpha_k &gt; 0$上，其概率密度函数为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-f(\theta_1,..,\theta_k;\alpha_1,...,\alpha_k)&=\frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
-B(\alpha) &= \frac{\prod_{i=1}^k\Gamma(\alpha_i)}{\Gamma(\sum_{i=1}^k\alpha_i)}
-\end{aligned}</script><p>同上，假设$\theta=(\theta_1,…,\theta_k)$有先验分布和似然函数,可以有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(\theta)&= \frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
-p(x|\theta)&= \frac{n!}{n_1!...n_k!}\theta_1^{n_1}...\theta_k^{n_k} \\
-p(\theta|x)&= \frac{1}{Z} \prod_{i=1}^k\theta_i^{\alpha_i+n_i-1}
-\end{aligned}</script><p>和Dirichlet分布形式一致。<br>Dirichlet分布的均值向量为$\left( \frac{\alpha_1}{\sum_i^k \alpha_i},…,\frac{\alpha_k}{\sum_i^k \alpha_i} \right)$。</p>
-<h5 id="铺垫模型"><a href="#铺垫模型" class="headerlink" title="铺垫模型"></a>铺垫模型</h5><p>定义：</p>
-<ul>
-<li>$w$表示词，$V$表示所有单词的个数（固定值）</li>
-<li>$z$表示主题，$k$是主题的个数（预先给定，固定值）</li>
-<li>$D=(d_1,…,d_M)$表示语料库，其中$M$是语料库中的文档数（固定值）</li>
-<li>$d=(w_1,…,w_N)$表示一个文档，其中$N$表示一个文档中的词数（随机变量）</li>
-</ul>
-<h6 id="Unigram-model"><a href="#Unigram-model" class="headerlink" title="Unigram model"></a>Unigram model</h6><p>对于文档$d=(w_1,…,w_N)$，用$p(w_n)$表示$w_n$的先验概率，生成文档$d$的概率为<script type="math/tex">p(d)=\prod_{n-1}^Np(w_n)</script>unigram model假设文本中的词服从Multinomial分布，而Multinomial分布的先验分布为Dirichlet分布。</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cpt0cu9j20j40iudgr.jpg" alt="Unigram model"></p>
-<p>上图中，$w_n$是在文本中观察到的第$n$个词，$p$和$α$是隐含未知变量,其中</p>
-<ul>
-<li>$p$是词服从的Multinomial分布的参数</li>
-<li>$\alpha$是Dirichlet分布（即Multinomial分布的先验分布）的参数</li>
-</ul>
-<p>一般$\alpha$由经验事先给定，$p$由观察到的文本中出现的词学习得到，表示文本中出现每个词的概率。</p>
-<h6 id="Mixture-of-unigrams-model"><a href="#Mixture-of-unigrams-model" class="headerlink" title="Mixture of unigrams model"></a>Mixture of unigrams model</h6><p>Mixture of unigrams model生成过程是：给某个文档先选择<strong>一个主题</strong>，再根据该主题生成文档，该文档中的所有词都来自一个主题。假设主题有$z_1,…,z_k$，生成文档$d$的概率为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(d)=\sum_zp(z) \prod_{n=1}^N p(w_n|z)
-\end{aligned}</script><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cx1ll6gj205a02rwec.jpg" alt="Mixture of unigrams model"></p>
-<p>如上图所示。</p>
-<h6 id="PLSA模型"><a href="#PLSA模型" class="headerlink" title="PLSA模型"></a>PLSA模型</h6><p>Mixture of unigrams model中假定一篇文档只由一个主题生成，可实际中，一篇文章往往有多个主题，只是这多个主题各自在文档中出现的概率大小不一样。PLSA是一种词袋模型，不关注词和词之间的出现顺序。</p>
-<p>假设一组共现(co-occurrence)词项关联着一个隐含的主题类别$z_k\in \lbrace z_1,…,z_K \rbrace$。同时定义</p>
-<ul>
-<li>$p(d_i)$表示海量文档中某篇文档被选中的概率</li>
-<li>$p(w_j|d_i)$表示词$w_j$在给定文档$d_i$中出现的概率</li>
-<li>$p(z_k|d_i)$表示具体某个主题$z_k$在给定文档$d_i$下出现的概率</li>
-<li>$p(w_j|z_k)$表示具体某个词$w_j$在给定主题$z_k$下出现的概率，与主题关系越密切的词，其条件概率越大</li>
-</ul>
-<hr>
-<p><strong>文档到词项的生成方法</strong></p>
-<ol>
-<li>按照概率$p(d_i)$选择一篇文档$d_i$</li>
-<li>选定文档$d_i$后，从主题分布中按照概率$p(z_k|d_i)$选择一个隐含的主题类别$z_k$</li>
-<li>选定$z_k$后，从词分布中按照概率$p(w_j|z_k)$选择一个词$w_j$</li>
-</ol>
-<p>整个过程便是：选定文档-&gt;生成主题-&gt;确定主题生成词。</p>
-<hr>
-<p><strong>发现文档集中的主题（分布）</strong></p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1del7l22j207c02qt8m.jpg" alt="PLSA"></p>
-<p>如上图所示，文档$d$和单词$w$是可被观察到的（样本），但主题$z$却是隐藏的。因为$p(w_j|d_i)$是已知的(统计文档词频)，根据大量已知的文档-词项信息可以训练出$p(z_k|d_i),p(w_j|z_k)$。文档中每个词的生成概率为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(w_j,d_i) &= p(d_i)p(w_j|d_i) \\
-&= p(d_i)\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)
-\end{aligned}</script><p>其中$p(d_i)$可事先计算求出，$p(z_k|d_i),p(w_j|z_k)$未知。</p>
-<p>考虑词和词($N$)之间、文档($M$)和文档之间的独立性，则整个语料库中词的分布为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(w,D)=\prod_{i=1}^M\prod_{j=1}^Np(w_j,d_i)^{n(w_j,d_i)}
-\end{aligned}</script><p>其中$n(w_j,d_i)$表示词项$w_j$在文档$d_i$中出现的次数，$n(d_i)$表示文档$d_i$中词的总数，并且令$p(w_j|z_k)=\phi_{kj},p(z_k|d_i)=\theta_{ik}$将未知量矩阵化成$\Phi,\Theta$。所以得到对数似然函数</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-l(\Phi,\Theta)&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\log p(w_j,d_i) \\
-&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\left(\log p(d_i)+\log\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)\right) \\
-&= \sum_{i=1}^Mn(d_i)\left( \log p(d_i)+ \sum_{j=1}^N \frac{n(w_j,d_i)}{n(d_i)} \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \right) \\
-&\propto \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \\
-& \ge \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \sum_{k=1}^K p(z_k|d_i,w_j) \log(\phi_{kj}\theta_{ik})
-\end{aligned}</script><p>含有隐含变量的优化可以使用EM算法求解，很复杂，不具体写了<br><strong>E步</strong></p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj}\theta_{ik}}{\sum_{l=1}^M\phi_{lj}\theta_{il}}
-\end{aligned}</script><p><strong>M步</strong><br>经过E步，还需考虑约束条件，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\sum_{j=1}^N\phi_{kj}&=1 \\
-\sum_{k=1}^K\theta_{ik}&=1
-\end{aligned}</script><p>用拉格朗日乘子法解得</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\phi_{kj} &= \frac{\sum_{i=1}^M n(d_i,w_j)p(z_k|d_i,w_j)} {\sum_{i=1}^M\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j)} \\
-\theta_{ik} &= \frac{\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j) }{n(d_i)}
-\end{aligned}</script><p>这样就求解出了$\Phi,\Theta$。PLSA的模型示意如下图所示:</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sf8anmrj20dm09ojsc.jpg" alt="PLSA"></p>
-<h5 id="LDA-Latent-Dirichlet-Allocation"><a href="#LDA-Latent-Dirichlet-Allocation" class="headerlink" title="LDA(Latent Dirichlet Allocation)"></a>LDA(Latent Dirichlet Allocation)</h5><p><strong>LDA在pLSA的基础上加层贝叶斯框架</strong>，在贝叶斯框架下的LDA中，我们不再认为<strong>主题分布（各个主题在文档中出现的概率分布）和词分布（各个词语在某个主题下出现的概率分布）是唯一确定的（而是随机变量）</strong>。这体现了贝叶斯派的核心思想，<strong>把未知参数当作是随机变量，不再认为是某一个确定的值</strong>。即选主题和选词依然都是两个随机的过程。</p>
-<p>LDA需要两个Dirichlet先验参数，这个Dirichlet先验为某篇文档随机抽取出某个主题分布和词分布。</p>
-<h6 id="LDA模型中文档生成方式"><a href="#LDA模型中文档生成方式" class="headerlink" title="LDA模型中文档生成方式"></a>LDA模型中文档生成方式</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a4qu9g3j20dq06sq2y.jpg" alt=""></p>
-<p>$\alpha$是主题分布的先验分布，$\beta$是词分布的先验分布。</p>
-<ol>
-<li>按照先验概率$p(d_i)$选择一篇文档$d_i$</li>
-<li>从Dirichlet分布$\alpha$中取样生成文档$d_i$的主题分布$\theta_i$，换言之，主题分布$\theta_i$由超参数为$\alpha$的Dirichlet分布生成</li>
-<li>从主题的多项式分布$\theta_i$中取样生成文档$d_i$第$j$个词的主题$z_{ij}$</li>
-<li>从Dirichlet分布$\beta$中取样生成主题$z_{ij}$对应的词语分布$\phi_{z_{ij}}$，换言之，词语分布$\phi_{z_{ij}}$由参数为$\beta$的Dirichlet分布生成</li>
-<li>从词语的多项式分布$\phi_{z_{ij}}$中采样最终生成词语$w_{ij}$</li>
-</ol>
-<p>示意图如下:</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sknkxg2j20dm09oq46.jpg" alt="LDA"></p>
-<p>LDA在pLSA的基础上给这两参数$p(z_k|d_i),p(w_j|z_k)$加了两个先验分布的参数（贝叶斯化）：一个主题分布的先验分布Dirichlet分布$\alpha$，和一个词语分布的先验分布Dirichlet分布$\beta$。这里$\alpha,\beta$都是参数向量。</p>
-<p>LDA生成文档的过程中，先从dirichlet先验中“随机”抽取出主题分布，然后从主题分布中“随机”抽取出主题，最后从确定后的主题对应的词分布中“随机”抽取出词。虽说是随机取值，但是不同的参数$\alpha,\beta$导致可选值的分布是不一样的，如下图所示</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a310d1rj20ic07tt9k.jpg" alt="不同参数的dirichlet分布"></p>
-<h6 id="LDA发现文档集中的主题"><a href="#LDA发现文档集中的主题" class="headerlink" title="LDA发现文档集中的主题"></a>LDA发现文档集中的主题</h6><p>文档生成后，LDA把这两参数$p(z_k|d_i),p(w_j|z_k)$变成随机变量，且加入dirichlet先验。</p>
-<p>在pLSA中，我们使用EM算法去估计“主题-词项”矩阵和“文档-主题”矩阵：$\Phi,\Theta$，这两参数都是个固定的值。在LDA中，估计$\Phi,\Theta$这两未知参数可以用变分(Variational inference)-EM算法，也可以用gibbs采样，前者的思想是最大后验估计MAP（MAP与MLE类似，都把未知参数当作固定的值），后者的思想是贝叶斯估计。</p>
-<p><strong>Gibbs采样</strong><br>Gibbs抽样是马尔可夫链蒙特卡尔理论（MCMC）中用来获取一系列近似等于指定多维概率分布（比如2个或者多个随机变量的联合概率分布）观察样本的算法。</p>
-<p>给定一个文档集合，$w$是可以观察到的已知变量，$\alpha,\beta$和是根据经验给定的先验参数，其他的变量$z，\Theta和\Phi$都是未知变量。</p>
-<p>求解$\Theta,\Phi$的过程很复杂，最终求解的Dirichlet分布期望为：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\phi_{kt}&=\frac{n_k^{t}+\beta_t} {\sum_{t=1}^V(n_k^{t}+\beta_t)} \\
-\theta_{mk}&=\frac{n_m^{k}+\alpha_k}{\sum_{k=1}^K(n_m^{k}+\alpha_k)}
-\end{aligned}</script><p>其中，$\phi_{kt}=p(w_t|z_k),\theta_{mk}=p(z_k|d_m)$，$n_t^k$是词$w_t$在主题$z_k$中出现的次数，$n_m^k$是主题$z_k$在文章$d_m$中出现的次数。</p>
-<p><strong>引用</strong><br>[1] <a href="https://cos.name/2013/01/lda-math-gamma-function/" target="_blank" rel="noopener">LDA-math-神奇的Gamma函数</a><br>[2] <a href="http://blog.csdn.net/u010945683/article/details/49149815" target="_blank" rel="noopener">共轭先验分布</a><br>[3] <a href="http://blog.csdn.net/yhao2014/article/details/51098037" target="_blank" rel="noopener">通俗理解LDA主题模型</a><br>[4] <a href="http://blog.163.com/zzz216@yeah/blog/static/162554684201381382117133/" target="_blank" rel="noopener">关于Beta分布、二项分布与Dirichlet分布、多项分布的关系</a></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/" data-id="ck82imya8004er4phx5l1dxgs" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/02/Introduction-to-Recommender-System/" data-id="ckeiowf7y003v4gph0zycdor7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2109,7 +2174,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
 
 
     <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
     </nav>
 </section>
             
@@ -2125,26 +2190,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2019/09/21/CherryPy-Torturial/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Other/">Other</a></p>
-                            <p class="item-title"><a href="/2019/09/21/CherryPy-Torturial/" class="title">CherryPy Torturial</a></p>
-                            <p class="item-date"><time datetime="2019-09-21T15:51:48.000Z" itemprop="datePublished">2019-09-21</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+                            <a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2155,15 +2201,15 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="title">NLP Pre-train Models after Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:16:49.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+                            <a href="/2020/08/30/XGboost/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2174,15 +2220,15 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/XGboost/" class="title">XGboost</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:00:24.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+                            <a href="/2020/08/30/Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2193,15 +2239,15 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Bert/" class="title">Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:58:01.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+                            <a href="/2020/08/30/Transformer/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2212,8 +2258,27 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Transformer/" class="title">Transformer</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:53:14.000Z" itemprop="datePublished">2020-08-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/08/30/First-Order-Optimization/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/08/30/First-Order-Optimization/" class="title">First Order Optimization</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:46:31.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
@@ -2226,7 +2291,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">2</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">55</span></li></ul>
         </div>
     </div>
 
@@ -2235,7 +2300,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2244,7 +2309,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.22px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 13.33px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 13.33px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

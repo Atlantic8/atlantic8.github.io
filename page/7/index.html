@@ -76,6 +76,10 @@ var _hmt = _hmt || [];
                 
                     <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
                 
+                    <a class="main-nav-link" href="/categories/Math">Math</a>
+                
+                    <a class="main-nav-link" href="/categories/Dev">Dev</a>
+                
                     <a class="main-nav-link" href="/about">About</a>
                 
             </nav>
@@ -141,6 +145,10 @@ var _hmt = _hmt || [];
                 
                     <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
                 
+                    <td><a class="main-nav-link" href="/categories/Math">Math</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Dev">Dev</a></td>
+                
                     <td><a class="main-nav-link" href="/about">About</a></td>
                 
                 <td>
@@ -170,11 +178,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                119
+                124
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                45
+                46
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +241,781 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Gibbs-Sampling" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/11/16/Gibbs-Sampling/">Gibbs Sampling</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/11/16/Gibbs-Sampling/">
+            <time datetime="2016-11-16T07:39:21.000Z" itemprop="datePublished">2016-11-16</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/random-algorithm/">random algorithm</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="蒙特卡洛数值积分"><a href="#蒙特卡洛数值积分" class="headerlink" title="蒙特卡洛数值积分"></a>蒙特卡洛数值积分</h5><p>如果我们要求f(x)的积分$ \int_a^b f(x) \,dx $，而f(x)的形式比较复杂积分不好求，则可以通过数值解法来求近似的结果。常用的方法是蒙特卡洛积分:<script type="math/tex">\int_a^b \frac{f(x)}{q(x)}q(x) \,dx</script>这样把q(x)看做是x在区间内的概率分布，而把前面的分数部门看做一个函数，然后在q(x)下抽取n个样本，当n足够大时，可以用采用均值来近似:<script type="math/tex">\frac{1}{n}\sum_{i}\frac{f(x_i)}{q(x_i)}</script>因此只要q(x)比较容易采到数据样本就行了。随机模拟方法的核心就是如何对一个概率分布得到样本，即抽样（sampling）.</p>
+<h5 id="Box-Muller-变换"><a href="#Box-Muller-变换" class="headerlink" title="Box-Muller 变换"></a>Box-Muller 变换</h5><p>如果随机变量 $U_1,U_2$ 独立且$U_1,U_2 ∼ Uniform[0,1]$，如果有：<script type="math/tex">Z_0=\sqrt{-2lnU_1}cos(2\pi U_2)</script> <script type="math/tex">Z_1=\sqrt{-2lnU_1}sin(2\pi U_2)</script> 则 $Z_0,Z_1$ 独立且服从标准正态分布。</p>
+<h5 id="Monte-Carlo-principle"><a href="#Monte-Carlo-principle" class="headerlink" title="Monte Carlo principle"></a>Monte Carlo principle</h5><p>X 表示随机变量，服从概率分布 p(x), 那么要计算 f(x) 的期望，只需要我们不停从 p(x) 中抽样$x_i$，然后对这些$f(x_i)$取平均即可近似f(x)的期望:<script type="math/tex">E(f)=\frac{1}{N}\sum_{i=1}^Nf(x^i)</script>其中$E(f)$即为f的期望。</p>
+<center>![](http://ww4.sinaimg.cn/large/9bcfe727jw1f9u6nr4wtmj20cx08ht98.jpg)</center>
+
+<h5 id="接受-拒绝抽样（Acceptance-Rejection-sampling"><a href="#接受-拒绝抽样（Acceptance-Rejection-sampling" class="headerlink" title="接受-拒绝抽样（Acceptance-Rejection sampling)"></a>接受-拒绝抽样（Acceptance-Rejection sampling)</h5><p>有时候，p(x)是很难直接采样的的。<br>既然 p(x) 太复杂在程序中没法直接采样，那么我设定一个程序可抽样的分布 q(x) 比如高斯分布，然后按照一定的方法拒绝某些样本，达到接近 p(x) 分布的目的，其中q(x)叫做 proposal distribution。<br>具体操作如下，设定一个方便抽样的函数 q(x)，以及一个常量 k，使得 p(x) 总在 kq(x) 的下方。</p>
+<ul>
+<li>x 轴方向：从 q(x) 分布抽样得到 a。(如果是高斯，就用之前说过的 tricky and faster 的算法更快）</li>
+<li>y 轴方向：从均匀分布（0, kq(a)) 中抽样得到 u。</li>
+<li>如果刚好落到灰色区域： u &gt; p(a), 拒绝， 否则接受这次抽样</li>
+<li>重复以上过程</li>
+</ul>
+<p>在高维的情况下，Rejection Sampling 会出现两个问题，第一是合适的 q 分布比较难以找到，第二是很难确定一个合理的 k 值。这两个问题会导致拒绝率很高，无用计算增加。</p>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u6s3wo7hj20fa07vdgd.jpg)</center>
+
+
+<h5 id="马尔科夫稳态"><a href="#马尔科夫稳态" class="headerlink" title="马尔科夫稳态"></a>马尔科夫稳态</h5><p>马氏链即马尔可夫链。社会学家经常把人按其经济状况分成3类：下层(lower-class)、中层(middle-class)、上层(upper-class)，我们用1,2,3 分别代表这三个阶层。社会学家们发现决定一个人的收入阶层的最重要的因素就是其父母的收入阶层。如果一个人的收入属于下层类别，那么他的孩子属于下层收入的概率是 0.65, 属于中层收入的概率是 0.28, 属于上层收入的概率是 0.07。事实上，从父代到子代，收入阶层的变化的转移概率如下：</p>
+<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u6zizzbaj20ch06hq2y.jpg)</center>
+
+<p>经过迭代，三种阶层的状态converge to</p>
+<pre><code>[0.286, 0.489, 0.225]
+</code></pre><p><b>马氏链定理</b></p>
+<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u72rq6c8j20fa0btwfv.jpg)</center>
+
+<h5 id="Markov-Chain-Monte-Carlo-MCMC"><a href="#Markov-Chain-Monte-Carlo-MCMC" class="headerlink" title="Markov Chain Monte Carlo (MCMC)"></a>Markov Chain Monte Carlo (MCMC)</h5><p>由于马氏链能收敛到平稳分布， 于是一个很的漂亮想法是：如果我们能构造一个转移矩阵为P的马氏链，使得该马氏链的平稳分布恰好是p(x), 那么我们从任何一个初始状态$x_0$出发沿着马氏链转移, 得到一个转移序列 $x_0,x_1,x_2,⋯x_n,x_{n+1}⋯$,， 如果马氏链在第n步已经收敛了，于是我们就得到了 π(x) 的样本$x_n,x_{n+1}⋯$。这是Metropolis算法的基本思想。MCMC 算法是 Metropolis 算法的一个改进变种，马氏链的收敛性质主要由转移矩阵P 决定, 所以基于马氏链做采样的关键问题是如何构造转移矩阵P,使得平稳分布恰好是我们要的分布p(x)。</p>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7negt9mj20fa0f7tcc.jpg)</center>
+假设我们已经有一个转移矩阵Q(对应元素为q(i,j)), 用于采样概率分布p(x)的算法如下：
+<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7psj1wdj20fa06nmxc.jpg)</center>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7qj49bbj20fa0fk42d.jpg)</center>
+<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u7r9o55vj20fa07emxe.jpg)</center>
+
+
+<h5 id="MCMC-——-Gibbs-Sampling算法"><a href="#MCMC-——-Gibbs-Sampling算法" class="headerlink" title="MCMC —— Gibbs Sampling算法"></a>MCMC —— Gibbs Sampling算法</h5><center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7s3xbp5j20fa0ddmzx.jpg)</center>
+<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7sldz89j20ad08qgls.jpg)</center>
+<center>![](http://ww4.sinaimg.cn/large/9bcfe727jw1f9u7tgi99tj20fa082q4m.jpg)</center>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7ueeigyj20fa0f1wj6.jpg)</center>
+<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u7uy86ffj20fa08oaa7.jpg)</center>
+
+<p>以上算法收敛后，得到的就是概率分布$p(x_1,x_2,⋯,x_n)$的样本。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="ckeiowf7p003a4gphblho46zd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-3Sum-Closest" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/11/09/3Sum-Closest/">3Sum Closest</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/11/09/3Sum-Closest/">
+            <time datetime="2016-11-09T02:21:26.000Z" itemprop="datePublished">2016-11-09</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
+<pre><code>For example, given array S = {-1 2 1 -4}, and target = 1.
+
+The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
+</code></pre><h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>最简单的莫过于O(n^3)的遍历算法了。<br>这里介绍一个O(n^2)的方法：</p>
+<ul>
+<li>设置first,second和third三个下标。将数组先排序</li>
+<li>第一层循环固定住first，将second放在first+1，将third放在最后</li>
+<li>计算当前和curSum<ul>
+<li>如果curSum等于目标值target，直接返回</li>
+<li>如果curSum比记录值更好，更新记录值</li>
+<li>然后更改second或third。如果curSum大于target，则third—，否则second++</li>
+<li>当second和third相遇，内层循环结束。first++迭代</li>
+</ul>
+</li>
+</ul>
+<p>由于second和third这样移动的复杂度为O(n)，所以整体的复杂度为O(n^2).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">threeSumClosest</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(nums.size() &lt; <span class="number">3</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> closest = nums[<span class="number">0</span>]+nums[<span class="number">1</span>]+nums[<span class="number">2</span>];</span><br><span class="line">    sort(nums.begin(), nums.end());</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> first = <span class="number">0</span> ; first &lt; nums.size()-<span class="number">2</span> ; ++first) &#123;</span><br><span class="line">        <span class="keyword">if</span>(first &gt; <span class="number">0</span> &amp;&amp; nums[first] == nums[first-<span class="number">1</span>]) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">int</span> second = first+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> third = nums.size()-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(second &lt; third) &#123;</span><br><span class="line">            <span class="keyword">int</span> curSum = nums[first]+nums[second]+nums[third];</span><br><span class="line">            <span class="keyword">if</span>(curSum == target) <span class="keyword">return</span> curSum;</span><br><span class="line">            <span class="keyword">if</span>(abs(target-curSum)&lt;abs(target-closest)) &#123;</span><br><span class="line">                closest = curSum;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(curSum &gt; target) &#123;</span><br><span class="line">                --third;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ++second;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> closest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="ckeiowf5q00004gphxzyaywtn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Find-Minimum-in-Rotated-Sorted-Array" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/">Find Minimum in Rotated Sorted Array</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/">
+            <time datetime="2016-11-09T01:27:53.000Z" itemprop="datePublished">2016-11-09</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Binary-Search/">Binary Search</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Suppose a sorted array is rotated at some pivot unknown to you beforehand.</p>
+<p>(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).</p>
+<p>Find the minimum element.</p>
+<p>You may assume no duplicate exists in the array.</p>
+<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>将数组旋转，则会将小元素转到数组后面。<br>这是一个经典的二叉搜索问题，考虑如下：<br>对于位于下标[start,  end]范围内的元素，如果有</p>
+<ul>
+<li>a[start] &lt; a[end]: 那么从start到end范围内的元素是有序的，第一个元素便是其最小值</li>
+<li>否则，看mid = start+(end-start)/2<ul>
+<li>如果a[start] &lt; a[mid]，那么旋转位置在(mid, end)之间，这时设置 start = mid+1</li>
+<li>否则，旋转位置在(start, mid)之间, 这时设置 end = mid</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMin</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp;num)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> start=<span class="number">0</span>,end=num.size()-<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (start&lt;end) &#123;</span><br><span class="line">        <span class="keyword">if</span> (num[start] &lt; num[end])</span><br><span class="line">            <span class="keyword">return</span> num[start];</span><br><span class="line">        <span class="keyword">int</span> mid = start+(end-start)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (num[mid] &gt; num[start]) &#123;</span><br><span class="line">            start = mid+<span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            end = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> num[start];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Extension"><a href="#Extension" class="headerlink" title="Extension"></a>Extension</h5><h6 id="重复元素"><a href="#重复元素" class="headerlink" title="重复元素"></a>重复元素</h6><p>如果存在元素重复现象怎么办。即有可能出现没法判断应该向左还是向右的情况，所以简单的做法是将end-1。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findMin</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp;num)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lo = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> hi = num.size() - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> mid = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(lo &lt; hi) &#123;</span><br><span class="line">            mid = lo + (hi - lo) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (num[mid] &gt; num[hi]) &#123;</span><br><span class="line">                lo = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (num[mid] &lt; num[hi]) &#123;</span><br><span class="line">                hi = mid;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123; <span class="comment">// when num[mid] and num[hi] are same</span></span><br><span class="line">                hi--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> num[lo];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h6 id="二叉搜索的标准写法"><a href="#二叉搜索的标准写法" class="headerlink" title="二叉搜索的标准写法"></a>二叉搜索的标准写法</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binary_search</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> left, <span class="keyword">int</span> right, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 循环结束判断</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right-left)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (a[mid] == target)</span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        <span class="comment">// 如果left=2, right=3,并且a[2]&lt;target是将陷入死循环</span></span><br><span class="line">        <span class="keyword">if</span> (a[mid] &lt; target)</span><br><span class="line">            left = mid+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            right = mid-<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/11/09/Find-Minimum-in-Rotated-Sorted-Array/" data-id="ckeiowf7h002t4gphqsnnra1b" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Split-Array-Largest-Sum" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/10/02/Split-Array-Largest-Sum/">Split Array Largest Sum</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/10/02/Split-Array-Largest-Sum/">
+            <time datetime="2016-10-02T12:26:17.000Z" itemprop="datePublished">2016-10-02</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Binary-Search/">Binary Search</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Given an array which consists of non-negative integers and an integer m, you can split the array into m non-empty continuous subarrays. Write an algorithm to minimize the largest sum among these m subarrays.</p>
+<p>Note:<br>Given m satisfies the following constraint: 1 ≤ m ≤ length(nums) ≤ 14,000.</p>
+<pre><code>Examples:
+
+Input:
+nums = [1,2,3,4,5]
+m = 2
+
+Output:
+9
+</code></pre><p>Explanation:<br>There are four ways to split nums into two subarrays.<br>The best way is to split it into [1,2,3] and [4,5],<br>where the largest sum among the two subarrays is only 9.</p>
+<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>普通的递归方法会超时！！！</p>
+<p>首先确定任意合法的m值，对应结果的范围[left ~ right]<br>其中left = max(nums[]), right = sum(nums[]).</p>
+<p>这里考虑使用二分查找法，如果left = right，那么返回left就好<br>给定一个可能的结果mid = left+(right-left)/2.，验证<b>是否合法</b></p>
+<pre><code>判断一个x是否合法的方法如下：
+顺序扫描nums[]，计算块和不大于（尽可能接近）mid的个数c
+如果c &gt; m，那么mid应该变大，相应的c变小；反之，c &lt;= m，说明mid应该变小，相应c变大
+</code></pre><p>如果合法：mid应该变小，即 right = mid；<br>否则，mid应该变大，即 left = mid + 1；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// check if nums can be divided into m subsets s.t each subset's summation &lt;= sum</span></span><br><span class="line">    <span class="function">bool <span class="title">canSplit</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> m, <span class="keyword">long</span> sum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> c = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">long</span> s = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (auto&amp; num : nums) &#123;</span><br><span class="line">            s += num;</span><br><span class="line">            <span class="keyword">if</span> (s &gt; sum) &#123;</span><br><span class="line">                s = num; <span class="comment">// first element</span></span><br><span class="line">                ++c;  <span class="comment">// a new subset</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// c&lt;=m indicates nums can be divided into m subsets s.t each subset's summation &lt;= sum</span></span><br><span class="line">        <span class="keyword">return</span> c &lt;= m;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">splitArray</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (auto&amp; num : nums) &#123;</span><br><span class="line">            left = max(left, (<span class="keyword">long</span>)num);</span><br><span class="line">            right += num;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">            <span class="keyword">if</span> (left == right) <span class="keyword">return</span> left; <span class="comment">// answer found</span></span><br><span class="line">            <span class="keyword">long</span> mid = left + (right-left)/<span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span> (canSplit(nums, m, mid)) right = mid; <span class="comment">// be smaller.</span></span><br><span class="line">            <span class="keyword">else</span> left = mid+<span class="number">1</span>; <span class="comment">// be bigger</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> left;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/10/02/Split-Array-Largest-Sum/" data-id="ckeiowfap008o4gphqzll052z" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Trapping-Rain-Water" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/10/02/Trapping-Rain-Water/">Trapping Rain Water</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/10/02/Trapping-Rain-Water/">
+            <time datetime="2016-10-02T08:25:51.000Z" itemprop="datePublished">2016-10-02</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="一维情况"><a href="#一维情况" class="headerlink" title="一维情况"></a>一维情况</h5><p>Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.</p>
+<pre><code>For example
+Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
+</code></pre><p><img src="http://ww3.sinaimg.cn/mw690/9bcfe727jw1f8e0cp2n0rj20bg04h3yf.jpg" alt=""><br>The above elevation map is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped. Thanks Marcos for contributing this image!</p>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><ul>
+<li>双指针，分别指向数组两端，主要是由两边到中间的思想</li>
+<li>维护左边最高、右边最高的值</li>
+<li>如果: a[left] &lt; a[right]，先处理left-side [ 否则，right-side。这样保证未被处理的一边总有大于另一边最大值的元素。]<ul>
+<li>假如a[left] &gt;= maxleft, 那么: maxleft = a[left]</li>
+<li>否则：ret += maxleft-a[left]. 因为右边总有比maxleft大的，否则，不可能处理left这边的数。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">trap</span><span class="params">(<span class="keyword">int</span> A[], <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left=<span class="number">0</span>; <span class="keyword">int</span> right=n-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> maxleft=<span class="number">0</span>, maxright=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(left&lt;=right)&#123;</span><br><span class="line">            <span class="comment">// 先处理小的一方，保证对面方总有更大的数</span></span><br><span class="line">            <span class="keyword">if</span>(A[left]&lt;=A[right])&#123;</span><br><span class="line">                <span class="comment">// 更新最大值</span></span><br><span class="line">                <span class="keyword">if</span>(A[left]&gt;=maxleft) maxleft=A[left];</span><br><span class="line">                <span class="comment">// 因为另一边总有大于maxleft的值，所以，此时可盛水maxleft-A[left]</span></span><br><span class="line">                <span class="keyword">else</span> res+=maxleft-A[left];</span><br><span class="line">                left++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">// 同左边</span></span><br><span class="line">                <span class="keyword">if</span>(A[right]&gt;=maxright) maxright= A[right];</span><br><span class="line">                <span class="keyword">else</span> res+=maxright-A[right];</span><br><span class="line">                right--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="二维状况"><a href="#二维状况" class="headerlink" title="二维状况"></a>二维状况</h5><p>Given an m x n matrix of positive integers representing the height of each unit cell in a 2D elevation map, compute the volume of water it is able to trap after raining.</p>
+<p>Note:<br>Both m and n are less than 110. The height of each unit cell is greater than 0 and is less than 20,000.</p>
+<pre><code>Example:
+
+Given the following 3x6 height map:
+[
+      [1,4,3,1,3,2],
+      [3,2,1,3,2,4],
+      [2,3,3,2,3,1]
+]
+
+Return 4.
+</code></pre><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727jw1f8e0cossfsj20dw08cjrl.jpg" alt=""><br>The above image represents the elevation map [[1,4,3,1,3,2],[3,2,1,3,2,4],[2,3,3,2,3,1]]</p>
+<h5 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h5><h6 id="从四周开始，由外向内的方法"><a href="#从四周开始，由外向内的方法" class="headerlink" title="从四周开始，由外向内的方法"></a>从四周开始，由外向内的方法</h6><ul>
+<li>从边界开始，挑选最矮的已经访问过的cell，检查它的邻居(没有被访问过的)</li>
+<li>如果邻居比当前的矮，收集邻居能手机的水量（邻居不必当前矮则无法收集），并填充能收集水的邻居（更新其高度）</li>
+<li>把所有的邻居加入到队列</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Cell</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> row;</span><br><span class="line">        <span class="keyword">int</span> col;</span><br><span class="line">        <span class="keyword">int</span> height;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Cell</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.row = row;</span><br><span class="line">            <span class="keyword">this</span>.col = col;</span><br><span class="line">            <span class="keyword">this</span>.height = height;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">trapRainWater</span><span class="params">(<span class="keyword">int</span>[][] heights)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (heights == <span class="keyword">null</span> || heights.length == <span class="number">0</span> || heights[<span class="number">0</span>].length == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        PriorityQueue&lt;Cell&gt; queue = <span class="keyword">new</span> PriorityQueue&lt;&gt;(<span class="number">1</span>, <span class="keyword">new</span> Comparator&lt;Cell&gt;()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Cell a, Cell b)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> a.height - b.height;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> m = heights.length;</span><br><span class="line">        <span class="keyword">int</span> n = heights[<span class="number">0</span>].length;</span><br><span class="line">        <span class="keyword">boolean</span>[][] visited = <span class="keyword">new</span> <span class="keyword">boolean</span>[m][n];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Initially, add all the Cells which are on borders to the queue.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">            visited[i][<span class="number">0</span>] = <span class="keyword">true</span>;</span><br><span class="line">            visited[i][n - <span class="number">1</span>] = <span class="keyword">true</span>;</span><br><span class="line">            queue.offer(<span class="keyword">new</span> Cell(i, <span class="number">0</span>, heights[i][<span class="number">0</span>]));</span><br><span class="line">            queue.offer(<span class="keyword">new</span> Cell(i, n - <span class="number">1</span>, heights[i][n - <span class="number">1</span>]));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">            visited[<span class="number">0</span>][i] = <span class="keyword">true</span>;</span><br><span class="line">            visited[m - <span class="number">1</span>][i] = <span class="keyword">true</span>;</span><br><span class="line">            queue.offer(<span class="keyword">new</span> Cell(<span class="number">0</span>, i, heights[<span class="number">0</span>][i]));</span><br><span class="line">            queue.offer(<span class="keyword">new</span> Cell(m - <span class="number">1</span>, i, heights[m - <span class="number">1</span>][i]));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// from the borders, pick the shortest cell visited and check its neighbors:</span></span><br><span class="line">        <span class="comment">// if the neighbor is shorter, collect the water it can trap and update its height as its height plus the water trapped</span></span><br><span class="line">       <span class="comment">// add all its neighbors to the queue.</span></span><br><span class="line">        <span class="keyword">int</span>[][] dirs = <span class="keyword">new</span> <span class="keyword">int</span>[][]&#123;&#123;-<span class="number">1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">0</span>, -<span class="number">1</span>&#125;, &#123;<span class="number">0</span>, <span class="number">1</span>&#125;&#125;;</span><br><span class="line">        <span class="keyword">int</span> res = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">            Cell cell = queue.poll();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span>[] dir : dirs) &#123;</span><br><span class="line">                <span class="keyword">int</span> row = cell.row + dir[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">int</span> col = cell.col + dir[<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">if</span> (row &gt;= <span class="number">0</span> &amp;&amp; row &lt; m &amp;&amp; col &gt;= <span class="number">0</span> &amp;&amp; col &lt; n &amp;&amp; !visited[row][col]) &#123;</span><br><span class="line">                    visited[row][col] = <span class="keyword">true</span>;</span><br><span class="line">                    res += Math.max(<span class="number">0</span>, cell.height - heights[row][col]);</span><br><span class="line">                    queue.offer(<span class="keyword">new</span> Cell(row, col, Math.max(heights[row][col], cell.height)));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="Dijkstra"><a href="#Dijkstra" class="headerlink" title="Dijkstra"></a>Dijkstra</h6><p>构建一个图，每个cell都是一个节点，再加上一个dummy节点表示外部区域。<br>如果cell(i, j)与cell(i’, j’)相邻，那么，创建一个由cell(i, j)到cell(i’, j’)的有向边，边的权值为height(i, j)<br>边上cell与dummy节点有一条权值为0的边。<br>设定每条路径的权值为：该路径上最大的权值。所以对每一个cell(i,j)，它能盛的水就是cell(i, j)到dummy节点的最短路径的权值dist(i, j)<br>如果：dist(i, j) &lt;= height(i, j)，那么cell(i, j)不能盛水。</p>
+<p>我们可能需要计算dist(i, j) 对于每个(i, j)对，即多个cell，只有一个终点dummy节点。所以将每条边的方向逆转，那么只需要使用一次Dijkstra算法就可以计算dummy节点到每个cell的最短路径，继而计算出每个cell能盛水的量（最短路径的权值）。</p>
+<p>假设cell由r行、c列，那么时间复杂度：O(rc<em>log(rc)) = O(rc</em>max(log r, log c))，空间复杂度为：O(rc).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span>[] dx = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, -<span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span>[] dy = &#123;<span class="number">1</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    List&lt;<span class="keyword">int</span>[]&gt;[] g;</span><br><span class="line">    <span class="keyword">int</span> start;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] dijkstra() &#123;</span><br><span class="line">        <span class="keyword">int</span>[] dist = <span class="keyword">new</span> <span class="keyword">int</span>[g.length];</span><br><span class="line">        Arrays.fill(dist, Integer.MAX_VALUE / <span class="number">2</span>);</span><br><span class="line">        dist[start] = <span class="number">0</span>;</span><br><span class="line">        TreeSet&lt;<span class="keyword">int</span>[]&gt; tree = <span class="keyword">new</span> TreeSet&lt;&gt;((u, v) -&gt; u[<span class="number">1</span>] == v[<span class="number">1</span>] ? u[<span class="number">0</span>] - v[<span class="number">0</span>] : u[<span class="number">1</span>] - v[<span class="number">1</span>]);</span><br><span class="line">        tree.add(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;start, <span class="number">0</span>&#125;);</span><br><span class="line">        <span class="keyword">while</span> (!tree.isEmpty()) &#123;</span><br><span class="line">            <span class="keyword">int</span> u = tree.first()[<span class="number">0</span>], d = tree.pollFirst()[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span>[] e : g[u]) &#123;</span><br><span class="line">                <span class="keyword">int</span> v = e[<span class="number">0</span>], w = e[<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">if</span> (Math.max(d, w) &lt; dist[v]) &#123;</span><br><span class="line">                    tree.remove(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;v, dist[v]&#125;);</span><br><span class="line">                    dist[v] = Math.max(d, w);</span><br><span class="line">                    tree.add(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;v, dist[v]&#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dist;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">trapRainWater</span><span class="params">(<span class="keyword">int</span>[][] a)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (a == <span class="keyword">null</span> || a.length == <span class="number">0</span> || a[<span class="number">0</span>].length == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> r = a.length, c = a[<span class="number">0</span>].length;</span><br><span class="line"></span><br><span class="line">        start = r * c;</span><br><span class="line">        g = <span class="keyword">new</span> List[r * c + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; g.length; i++) g[i] = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; r; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; c; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (i == <span class="number">0</span> || i == r - <span class="number">1</span> || j == <span class="number">0</span> || j == c - <span class="number">1</span>) g[start].add(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;i * c + j, <span class="number">0</span>&#125;);</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">4</span>; k++) &#123;</span><br><span class="line">                    <span class="keyword">int</span> x = i + dx[k], y = j + dy[k];</span><br><span class="line">                    <span class="keyword">if</span> (x &gt;= <span class="number">0</span> &amp;&amp; x &lt; r &amp;&amp; y &gt;= <span class="number">0</span> &amp;&amp; y &lt; c) g[i * c + j].add(<span class="keyword">new</span> <span class="keyword">int</span>[]&#123;x * c + y, a[i][j]&#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> ans = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span>[] dist = dijkstra();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; r; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; c; j++) &#123;</span><br><span class="line">                <span class="keyword">int</span> cb = dist[i * c + j];</span><br><span class="line">                <span class="keyword">if</span> (cb &gt; a[i][j]) ans += cb - a[i][j];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/10/02/Trapping-Rain-Water/" data-id="ckeiowfbi009q4gpht55iq3hi" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Factorial" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -294,7 +1077,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/27/Factorial/" data-id="ck82imy8j002cr4ph0twwixwj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/27/Factorial/" data-id="ckeiowf7b002e4gph5vqeckv9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -446,7 +1229,7 @@ isMatch(&quot;aab&quot;, &quot;c*a*b&quot;) → false
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/24/Wildcard-Matching/" data-id="ck82imydg008xr4phedb6f4og" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/24/Wildcard-Matching/" data-id="ckeiowfbk009u4gph77xmc839" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -605,7 +1388,7 @@ isMatch(&quot;aab&quot;, &quot;c*a*b&quot;) → false
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/24/Segment-Tree/" data-id="ck82imyco007ir4phcf4azxwh" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/24/Segment-Tree/" data-id="ckeiowfai008a4gphk1z8bjn5" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -805,7 +1588,7 @@ C[8]= A[1]+A[2]+A[3]+A[4]+A[5]+A[6]+A[7]+A[8];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/23/Binary-Indexed-Tree/" data-id="ck82imy6p000br4ph3um5448f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/23/Binary-Indexed-Tree/" data-id="ckeiowf66000f4gphtvmjjjvk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -905,7 +1688,17 @@ C[8]= A[1]+A[2]+A[3]+A[4]+A[5]+A[6]+A[7]+A[8];
 
 
                         
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
                         
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
                     </div>
                 
             </header>
@@ -944,819 +1737,7 @@ Output: False
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="ck82imydj0094r4phnrsjzozn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Cpp-commonly-Used-Data-Structures-and-Methods" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/">STL Heap</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/">
-            <time datetime="2016-09-19T13:50:49.000Z" itemprop="datePublished">2016-09-19</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Cpp/">Cpp</a>, <a class="tag-link" href="/tags/STL/">STL</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h5><h6 id="make-heap"><a href="#make-heap" class="headerlink" title="make_heap"></a>make_heap</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">make_heap</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp )</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">make_heap (v.begin(),v.end());</span><br></pre></td></tr></table></figure>
-<p>重新组织[first, last)，使之成为一个堆（默认为大顶堆）。</p>
-<h6 id="is-heap"><a href="#is-heap" class="headerlink" title="is_heap"></a>is_heap</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">bool <span class="title">is_heap</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">is_heap(foo.begin(), foo.end());</span><br></pre></td></tr></table></figure>
-<p>检查[first, last)范围内的元素是否满足堆的定义</p>
-<h6 id="is-heap-until"><a href="#is-heap-until" class="headerlink" title="is_heap_until"></a>is_heap_until</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">RandomAccessIterator <span class="title">is_heap_until</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">auto last = std::is_heap_until (foo.begin(),foo.end());</span><br></pre></td></tr></table></figure>
-<p>返回[first, last)范围内第一个不满足heap定义的迭代器。</p>
-<h6 id="pop-heap-amp-push-heap"><a href="#pop-heap-amp-push-heap" class="headerlink" title="pop_heap &amp; push_heap"></a>pop_heap &amp; push_heap</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pop_heap</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pop_heap (v.begin(), v.end());</span><br><span class="line"></span><br><span class="line">v.pop_back();</span><br></pre></td></tr></table></figure>
-<p>pop, push完了之后，重新调整，pop默认最大值。</p>
-<h6 id="sort-heap"><a href="#sort-heap" class="headerlink" title="sort_heap"></a>sort_heap</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort_heap</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>排序，heap的属性可能会丢失</p>
-<hr>
-<h5 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;algorithm&gt;</span><br></pre></td></tr></table></figure>
-<p>|function|explanation|function|explanation|</p>
-<p>|:———:|:————-:|:———:|:————-:|</p>
-<p>|sort|对给定区间所有元素进行排序|stable_sort|对给定区间所有元素进行稳定排序|</p>
-<p>|partial_sort|对给定区间所有元素部分排序|partial_sort_copy|对给定区间复制并排序|</p>
-<p>|nth_element|找出给定区间的某个位置对应的元素|is_sorted|判断一个区间是否已经排好序|</p>
-<p>|partition|使得符合某个条件的元素放在前面|stable_partition|相对稳定的使得符合某个条件的元素放在前面|</p>
-<h6 id="sort"><a href="#sort" class="headerlink" title="sort"></a>sort</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br><span class="line"></span><br><span class="line">sort (myvector.begin(), myvector.end());</span><br></pre></td></tr></table></figure>
-<p>将[first, last)范围内元素排序，排序方式由comp决定，<strong>comp是自定义函数，可以使用lambda表达式替代</strong>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/* lambda表达式形式如下</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">capture：指定了在可见域范围内 lambda 表达式的代码内可见得外部变量的列表，可能取值如下：</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    []             不截取任何变量</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [&amp;]         截取外部作用域中所有变量，并作为引用在函数体中使用</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [=]         截取外部作用域中所有变量，并拷贝一份在函数体中使用</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [=, &amp;foo]     截取外部作用域中所有变量，并拷贝一份在函数体中使用，但是对foo变量使用引用</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [bar]         截取bar变量并且拷贝一份在函数体重使用，同时不截取其他变量</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [x, &amp;y]     x按值传递，y按引用传递</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [this]         截取当前类中的this指针。如果已经使用了&amp;或者=就默认添加此选项</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">params：  指定 lambda 表达式的参数</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">ret:  返回类型</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">body: 函数体</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[ capture ] ( params ) -&gt; ret &#123; body &#125;</span><br><span class="line"></span><br><span class="line">sort (envelopes.begin(), envelopes.end(), [](<span class="keyword">const</span> pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; &amp;a, <span class="keyword">const</span> pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; &amp;b)&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (a.first == b.first) <span class="keyword">return</span> a.second &gt; b.second;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> a.first &lt; b.first;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h6 id="stable-sort"><a href="#stable-sort" class="headerlink" title="stable_sort"></a>stable_sort</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">stable_sort</span> <span class="params">( RandomAccessIterator first, RandomAccessIterator last, Compare comp )</span></span>;</span><br></pre></td></tr></table></figure>
-<p>函数用法与sort一致，它的排序结果是稳定的。</p>
-<h6 id="partial-sort"><a href="#partial-sort" class="headerlink" title="partial_sort"></a>partial_sort</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">partial_sort</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>对[first, middle)范围的元素进行排序。</p>
-<h6 id="partial-sort-copy"><a href="#partial-sort-copy" class="headerlink" title="partial_sort_copy"></a>partial_sort_copy</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">partial_sort_copy</span> <span class="params">(InputIterator first,InputIterator last,RandomAccessIterator result_first,RandomAccessIterator result_last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>对[first, last)范围的元素进行排序，并将排序结果复制到[result_first, result_last)</p>
-<h6 id="is-sorted"><a href="#is-sorted" class="headerlink" title="is_sorted"></a>is_sorted</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">bool <span class="title">is_sorted</span> <span class="params">(ForwardIterator first, ForwardIterator last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>判断[first, last)范围的元素是否有序。</p>
-<h6 id="nth-element"><a href="#nth-element" class="headerlink" title="nth_element"></a>nth_element</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">nth_element</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator nth, RandomAccessIterator last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>重新组织[first, last)范围的元素，使第n大元素处于第n位置，并且比这个元素小的元素都排在这个元素之前，比这个元素大的元素都排在这个元素之后，但不能保证他们是有序的</p>
-<h6 id="partition"><a href="#partition" class="headerlink" title="partition"></a>partition</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">BidirectionalIterator <span class="title">partition</span> <span class="params">(BidirectionalIterator first, BidirectionalIterator last, UnaryPredicate pred)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>将区间[first,last)中的元素重新排列，满足判断条件pred的元素会被放在区间的前段，不满足pred的元素会被放在区间的后段。该算法不能保证元素的初始相对位置，<strong>返回指向第二类第一个元素的迭代器</strong>。</p>
-<p>用法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">bool <span class="title">IsOdd</span> <span class="params">(<span class="keyword">int</span> i)</span> </span>&#123; <span class="comment">//用语判断奇数</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (i%<span class="number">2</span>) == <span class="number">1</span>; <span class="comment">//奇数返回true，偶数返回0</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    std::vector&lt;<span class="keyword">int</span>&gt; ivec;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;<span class="number">10</span>; ++i)</span><br><span class="line"></span><br><span class="line">        ivec.push_back(i); <span class="comment">// 1 2 3 4 5 6 7 8 9</span></span><br><span class="line"></span><br><span class="line">    auto bound = partition (ivec.begin(), ivec.end(), IsOdd);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"odd elements:"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (auto it=ivec.begin(); it!=bound; ++it)</span><br><span class="line"></span><br><span class="line">        std::cout &lt;&lt; <span class="string">' '</span> &lt;&lt; *it;       <span class="comment">//输出1,9,3,7,5</span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">"even elements:"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (auto it=bound; it!=ivec.end(); ++it)</span><br><span class="line"></span><br><span class="line">        std::cout &lt;&lt; <span class="string">' '</span> &lt;&lt; *it;     <span class="comment">//输出6,4,8,2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="stable-partition"><a href="#stable-partition" class="headerlink" title="stable_partition"></a>stable_partition</h6><p>partition的稳定版本。</p>
-<h6 id="sort-heap-1"><a href="#sort-heap-1" class="headerlink" title="sort_heap"></a>sort_heap</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort_heap</span> <span class="params">(RandomAccessIterator first, RandomAccessIterator last, Compare comp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>用法和上面的函数一致。</p>
-<h6 id="lower-bound-amp-upper-bound"><a href="#lower-bound-amp-upper-bound" class="headerlink" title="lower_bound &amp; upper_bound"></a>lower_bound &amp; upper_bound</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function">ForwardIter <span class="title">lower_bound</span><span class="params">(ForwardIter first, ForwardIter last, <span class="keyword">const</span> _Tp&amp; val)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">ForwardIter <span class="title">upper_bound</span><span class="params">(ForwardIter first, ForwardIter last, <span class="keyword">const</span> _Tp&amp; val)</span></span>;</span><br></pre></td></tr></table></figure>
-<p><strong>lower_bound返回一个非递减序列[first, last)中的第一个大于等于值val的位置.</strong></p>
-<p><strong>upper_bound返回一个非递减序列[first, last)中第一个大于val的位置</strong></p>
-<p>这两个函数都是用<strong>二分查找</strong>方法实现的，复杂度为O(logn)</p>
-<hr>
-<h5 id="集合set"><a href="#集合set" class="headerlink" title="集合set"></a>集合set</h5><p>set作为一个容器也是用来存储同一数据类型的数据类型，并且能从一个数据集合中取出数据，在set中每个元素的值都唯一，而且元素的值是有序的。<strong>set中数元素的值不能直接被改变</strong>。C++ STL中标准关联容器<code>set, multiset, map, multimap</code>内部采用RB树(插入元素迭代器不会失效，删除元素时除了被删除的那个以外的迭代器不会失效)。</p>
-<p>其包含的方法包括</p>
-<ul>
-<li><p><code>begin(), end(), rbegin(), rend()</code></p>
-</li>
-<li><p><code>clear(), empty(), find(), insert(key_value)</code></p>
-</li>
-<li><p><code>inset(first,second)</code>;将迭代器<code>first</code>到<code>second</code>之间的元素插入到<code>set</code>中，返回值是<code>void</code></p>
-</li>
-<li><p><code>size(), max_size()</code></p>
-</li>
-<li><p><code>equal_range()</code>，返回一对<strong>迭代器</strong>，分别表示第一个大于或等于给定关键值的元素迭代器 以及 第一个大于给定关键值的元素的迭代器，这个返回值是一个pair类型，如果这一对定位器中哪个返回失败，就会等于<code>end()</code>的值。</p>
-</li>
-<li><p><code>erase(iterator)</code>  ，删除迭代器<code>iterator</code>指向的值</p>
-</li>
-<li><p><code>erase(first,second)</code>，删除迭代器<code>first</code>和<code>second</code>之间的值</p>
-</li>
-<li><p><code>erase(key_value)</code>，删除键值<code>key_value</code>的值</p>
-</li>
-<li><p><code>lower_bound(key)</code>:返回第一个<strong>大于等于</strong><code>key</code>的迭代器指针</p>
-</li>
-<li><p><code>upper_bound(key)</code>:返回第一个<strong>大于</strong><code>key</code>的迭代器指针</p>
-</li>
-</ul>
-<hr>
-<h5 id="链表list"><a href="#链表list" class="headerlink" title="链表list"></a>链表list</h5><p>c++中的list容器是双向链表。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt; list &gt; </span><br><span class="line"></span><br><span class="line">list&lt;<span class="keyword">int</span>&gt; new_list;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">assign(iter1, iter2) 将两个迭代器之间的元素赋值给当前list</span><br><span class="line"></span><br><span class="line">back() 返回最后一个元素</span><br><span class="line"></span><br><span class="line">begin() 返回指向第一个元素的迭代器</span><br><span class="line"></span><br><span class="line">clear() 删除所有元素</span><br><span class="line"></span><br><span class="line">empty() 如果list是空的则返回<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">end() 返回末尾的迭代器</span><br><span class="line"></span><br><span class="line">erase() 删除一个元素 </span><br><span class="line"></span><br><span class="line">front() 返回第一个元素 </span><br><span class="line"></span><br><span class="line">get_allocator() 返回list的配置器 </span><br><span class="line"></span><br><span class="line">insert(const_iterator position, <span class="keyword">const</span> value_type&amp; val) 插入一个元素到list中 </span><br><span class="line"></span><br><span class="line">max_size() 返回list能容纳的最大元素数量 </span><br><span class="line"></span><br><span class="line">merge(list&amp; x, Compare comp) 合并当前list和x</span><br><span class="line"></span><br><span class="line">pop_back() 删除最后一个元素 </span><br><span class="line"></span><br><span class="line">pop_front() 删除第一个元素 </span><br><span class="line"></span><br><span class="line">push_back() 在list的末尾添加一个元素 </span><br><span class="line"></span><br><span class="line">push_front() 在list的头部添加一个元素 </span><br><span class="line"></span><br><span class="line">rbegin() 返回指向第一个元素的逆向迭代器 </span><br><span class="line"></span><br><span class="line">remove(<span class="keyword">const</span> value_type&amp; val) 从list删除元素元素val</span><br><span class="line"></span><br><span class="line">remove_if(Predicate pred) 按指定条件删除所有满足条件的元素 </span><br><span class="line"></span><br><span class="line">rend() 指向list末尾的逆向迭代器 </span><br><span class="line"></span><br><span class="line">resize(size_type n, <span class="keyword">const</span> value_type&amp; val) 改变list的大小，val是增加空间用的填充值</span><br><span class="line"></span><br><span class="line">reverse() 把list的元素倒转 </span><br><span class="line"></span><br><span class="line">size() 返回list中的元素个数 </span><br><span class="line"></span><br><span class="line">sort(Compare comp) 给list排序，复杂度大约是NlogN，可以用归并</span><br><span class="line"></span><br><span class="line">splice() 合并两个list </span><br><span class="line"></span><br><span class="line">swap(list&amp; x) 交换当前list和x</span><br><span class="line"></span><br><span class="line">unique() 删除list中重复的元素</span><br></pre></td></tr></table></figure>
-<p>遍历使用迭代器</p>
-<hr>
-<h5 id="forward-list"><a href="#forward-list" class="headerlink" title="forward_list"></a>forward_list</h5><p>forward_list是单向链表</p>
-<hr>
-<h5 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h5><p><code>deque</code>容器类与<code>vector</code>类似，支持随机访问和快速插入删除，它在容器中某一位置上的操作所花费的是线性时间。与<code>vector</code>不同的是，<code>deque</code>还支持从开始端插入数据：<code>push_front()</code>。其余类似<code>vector</code>操作方法的使用。</p>
-<ul>
-<li><p>随机访问方便，即支持[ ] 操作符和<code>vector.at()</code> ，但性能没有<code>vector</code> 好；</p>
-</li>
-<li><p>可以在内部进行插入和删除操作，但性能不及list ；</p>
-</li>
-<li><p>可以在两端进行push 、pop ；</p>
-</li>
-<li><p>相对于verctor 占用更多的内存。</p>
-</li>
-</ul>
-<hr>
-<h5 id="priority-queue"><a href="#priority-queue" class="headerlink" title="priority_queue"></a>priority_queue</h5><p>将任意类型的序列容器转换为一个优先级队列，一般使用vector作为底层存储方式。</p>
-<p>只能访问第一个元素，<strong>不能遍历整个<code>priority_queue</code></strong>。</p>
-<p>模板声明带有三个参数，<code>priority_queue&lt;Type, Container, Functional&gt;</code></p>
-<p>其中<code>Type</code> 为数据类型， <code>Container</code> 为保存数据的容器，<code>Functional</code> 为元素比较方式。</p>
-<p><code>Container</code> 必须是用数组实现的容器，比如 <code>vector, deque</code> 但不能用<code>list</code>.</p>
-<p>STL里面容器默认用的是 <code>vector</code>. 比较方式默认用 <code>operator &lt;</code></p>
-<p>缺省时优先队列就是大顶堆，队头元素优先级最大。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;queue&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">priority_queue &lt;Elem&gt; c;    <span class="comment">// 创建一个空的queue</span></span><br><span class="line"></span><br><span class="line">c.top();     <span class="comment">// 返回队列头部数据</span></span><br><span class="line"></span><br><span class="line">c.push(elem);     <span class="comment">// 在队列尾部增加elem数据</span></span><br><span class="line"></span><br><span class="line">c.pop();     <span class="comment">// 队列头部数据出队</span></span><br><span class="line"></span><br><span class="line">c.empty();</span><br><span class="line"></span><br><span class="line">c.size();</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/19/Cpp-commonly-Used-Data-Structures-and-Methods/" data-id="ck82imy880022r4phsmhsmodr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-First-Missing-Positive" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/14/First-Missing-Positive/">First Missing Positive</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/14/First-Missing-Positive/">
-            <time datetime="2016-09-14T01:18:18.000Z" itemprop="datePublished">2016-09-14</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Given an unsorted integer array, find the first missing positive integer.</p>
-<pre><code>For example,
-Given [1,2,0] return 3,
-and [3,4,-1,1] return 2.
-</code></pre><p>Your algorithm should run in <b>O(n) time and uses constant space</b>.</p>
-<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>解题思路</p>
-<ul>
-<li>把每个数放在它应该的位置，比如找到4，就把4和num[3]兑换</li>
-<li>小于1的数忽略，因为题目说是正数</li>
-<li>大于数组长度的数也不可能是，因为它前面至少有n个数，至少有一个缺失</li>
-<li>第一遍扫面把数放在正确的地方，第二遍，把num[i]!=i+1的最小序号输出</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">firstMissingPositive</span><span class="params">(<span class="keyword">int</span> A[], <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 将数放在正确的地方</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++ i)</span><br><span class="line">            <span class="keyword">while</span>(A[i] &gt; <span class="number">0</span> &amp;&amp; A[i] &lt;= n &amp;&amp; A[A[i] - <span class="number">1</span>] != A[i]) swap(A[i], A[A[i] - <span class="number">1</span>]);</span><br><span class="line">        <span class="comment">// 找到缺失的数</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++ i)</span><br><span class="line">            <span class="keyword">if</span>(A[i] != i + <span class="number">1</span>) <span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> n + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/14/First-Missing-Positive/" data-id="ck82imy8l002fr4phertydndd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Copy-List-with-Random-Pointer" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/12/Copy-List-with-Random-Pointer/">Copy List with Random Pointer</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/12/Copy-List-with-Random-Pointer/">
-            <time datetime="2016-09-12T15:40:24.000Z" itemprop="datePublished">2016-09-12</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Copy-List-with-Random-Pointer"><a href="#Copy-List-with-Random-Pointer" class="headerlink" title="Copy List with Random Pointer"></a>Copy List with Random Pointer</h5><p>A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.</p>
-<p>Return a deep copy of the list.<br>节点的数据结构如下：</p>
-<pre><code>class RandomListNode {
-    int label;
-    RandomListNode next, random;
-    RandomListNode(int x) { this.label = x;}
-};
-</code></pre><h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>本题的naive思想如下：</p>
-<ol>
-<li>在原来list上，每个节点后面插入一个拷贝这个节点的节点</li>
-<li>从第一个节点开始，若：nodei-&gt;random = nodek, 那么设置nodei-&gt;next.random = nodek-&gt;next即可</li>
-<li>还原原来的list，提取复制的list</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> RandomListNode <span class="title">copyRandomList</span><span class="params">(RandomListNode head)</span> </span>&#123;</span><br><span class="line">    RandomListNode iter = head, next;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在原链表上每个节点后一位创建copy</span></span><br><span class="line">    <span class="keyword">while</span> (iter != <span class="keyword">null</span>) &#123;</span><br><span class="line">        next = iter.next;</span><br><span class="line"></span><br><span class="line">        RandomListNode copy = <span class="keyword">new</span> RandomListNode(iter.label);</span><br><span class="line">        iter.next = copy;</span><br><span class="line">        copy.next = next;</span><br><span class="line"></span><br><span class="line">        iter = next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// random指针设置</span></span><br><span class="line">    iter = head;</span><br><span class="line">    <span class="keyword">while</span> (iter != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (iter.random != <span class="keyword">null</span>) &#123;</span><br><span class="line">            iter.next.random = iter.random.next;</span><br><span class="line">        &#125;</span><br><span class="line">        iter = iter.next.next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 还原原来的list，提取复制的list</span></span><br><span class="line">    iter = head;</span><br><span class="line">    RandomListNode pseudoHead = <span class="keyword">new</span> RandomListNode(<span class="number">0</span>);</span><br><span class="line">    RandomListNode copy, copyIter = pseudoHead;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (iter != <span class="keyword">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// extract the copy</span></span><br><span class="line">        copy = iter.next;</span><br><span class="line">        copyIter.next = copy;</span><br><span class="line">        copyIter = copy;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// restore the original list</span></span><br><span class="line">        next = iter.next.next;</span><br><span class="line">        iter.next = next;</span><br><span class="line"></span><br><span class="line">        iter = next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pseudoHead.next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/12/Copy-List-with-Random-Pointer/" data-id="ck82imy7f0013r4phk92imk34" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Reservoir-Sampling" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/12/Reservoir-Sampling/">Reservoir Sampling</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/12/Reservoir-Sampling/">
-            <time datetime="2016-09-12T10:59:35.000Z" itemprop="datePublished">2016-09-12</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/random-algorithm/">random algorithm</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="算法介绍"><a href="#算法介绍" class="headerlink" title="算法介绍"></a>算法介绍</h5><p>Reservoir Sampling（水塘抽样）是一系列的随机算法，其目的在于从包含n个项目的集合S中选取k个样本，其中n为一很大或未知的数量，尤其适用于<b>不能把所有n个项目都存放到主内存</b>的情况。<br>算法思路如下：</p>
-<pre><code>从S中抽取首k项放入「水塘」中
-对于每一个S[j]项（j ≥ k）：
-    随机产生一个范围从0到j的整數r
-    若 r &lt; k 则把水塘中的第r项换成S[j]项
-</code></pre><h5 id="相关问题"><a href="#相关问题" class="headerlink" title="相关问题"></a>相关问题</h5><h6 id="可否在一未知大小的集合中，随机取出一元素？"><a href="#可否在一未知大小的集合中，随机取出一元素？" class="headerlink" title="可否在一未知大小的集合中，随机取出一元素？"></a>可否在一未知大小的集合中，随机取出一元素？</h6><p>第一次直接以第一行作为取出行 choice<br>第二次以二分之一概率决定是否用第二行替换 choice<br>第三次以三分之一的概率决定是否以第三行替换 choice<br>以此类推。<br>Generally，在取第n个数据的时候，我们生成一个0到1的随机数p，如果p小于1/n，保留第n个数。大于1/n，继续保留前面的数。直到数据流结束，返回此数，算法结束。</p>
-<p>证明思路：最后一个数留下的概率是1/N，第一个数留下的概率是1x1/2x2/3x…x(N-1)/N = 1/N，其他元素证明类似，所以每个数被选中的概率是一样的，即这种方法是等概率的。</p>
-<h6 id="在一个长度很大但未知的链表中，如何最高效地取出k个元素？"><a href="#在一个长度很大但未知的链表中，如何最高效地取出k个元素？" class="headerlink" title="在一个长度很大但未知的链表中，如何最高效地取出k个元素？"></a>在一个长度很大但未知的链表中，如何最高效地取出k个元素？</h6><p>道理同上，在取第n个数据的时候，我们生成一个0到1的随机数p<br>如果p小于k/n，替换池中任意一个为第n个数<br>大于k/n，继续保留前面的数<br>直到数据流结束，返回此k个数<br><b>但是为了保证计算机计算分数额准确性，一般是生成一个0到n的随机数，跟k相比，小于k就替换第k项</b>。</p>
-<h6 id="Random-Pick-Index"><a href="#Random-Pick-Index" class="headerlink" title="Random Pick Index "></a>Random Pick Index <leetcode></leetcode></h6><p>Given an array of integers with possible duplicates, randomly output the index of a given target number. You can assume that the given target number must exist in the array.</p>
-<p>Note:<br>The <b>array size can be very large</b>. Solution that uses too much extra space will not pass the judge.</p>
-<pre><code>Example:
-
-int[] nums = new int[] {1,2,3,3,3};
-Solution solution = new Solution(nums);
-
-// pick(3) should return either index 2, 3, or 4 randomly. Each index should have equal     probability of returning.
-solution.pick(3);
-
-// pick(1) should return 0. Since in the array only nums[0] is equal to 1.
-solution.pick(1);
-</code></pre><p>解体思想：用简单的map思路来做会超出空间限制，水塘抽样是比较好的方法</p>
-<ul>
-<li>扫描每一个元素，不是当前要求的忽略</li>
-<li>遇到第k个目标元素，以1/k的概率替换ret值</li>
-<li>直到扫描完整个字符串</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; data;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Solution</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; nums)</span> </span>&#123;</span><br><span class="line">    srand((<span class="keyword">int</span>)time(NULL)); <span class="comment">// 设置时间种子，放在pick里面会导致之间间隔太短而使得随机数不随机</span></span><br><span class="line">    data = nums;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pick</span><span class="params">(<span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = <span class="number">0</span>, n = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;data.size(); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (data.at(i) != target) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (rand()%n++ == <span class="number">0</span>) ret = i;  <span class="comment">// 以以1/k的概率使用第k个target值</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/12/Reservoir-Sampling/" data-id="ck82imycu007sr4ph51ip76lf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-KMP" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/09/12/KMP/">KMP</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/09/12/KMP/">
-            <time datetime="2016-09-12T03:05:21.000Z" itemprop="datePublished">2016-09-12</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/String/">String</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <p>KMP算法是是一种在<b>线性时间</b>内对字符串进行匹配的经典算法.<br>待匹配的字符串是s，模式串为p</p>
-<h6 id="匹配原理"><a href="#匹配原理" class="headerlink" title="匹配原理"></a>匹配原理</h6><p><img src="http://ww2.sinaimg.cn/mw690/9bcfe727jw1f7qppqwfckj20g103m74h.jpg" alt=""></p>
-<p>算法的出发点很直接，如上图所示，当匹配过程中出现不匹配时，不是简单地将模式串向右移动一位再从头匹配。而是利用匹配中的信息，比如上图，应该直接将模式串移动4位，到达下图的位置：</p>
-<p><img src="http://ww3.sinaimg.cn/mw690/9bcfe727jw1f7qppr0j6zj20g503tdg2.jpg" alt=""></p>
-<p>那么算法如何确定应该移动几位呢？这样的信息其实隐藏在模式串p中。我们把这些信息放在数组中，称之为next数组。（后面再讨论next数组的求法）</p>
-<pre><code>例子中模式串p的next数组位
-A B C D A B D
-0 0 0 0 1 2 0
-</code></pre><p>所以当第k位匹配失败时，模式串向前移动的位数满足：</p>
-<pre><code>移动位数 = 已匹配的字符数 - next[k-1]
-</code></pre><h6 id="next数组"><a href="#next数组" class="headerlink" title="next数组"></a>next数组</h6><p><b>next数组就是”前缀”和”后缀”的最长的共有元素的长度<br>next[i]表示的是p的子串p[0,i]的”前缀”和”后缀”的最长的共有元素的长度</b><br>next数组的计算方式依旧采用滑动匹配的方式，并且在计算next[j]时需要使用已经计算过的next值</p>
-<ol>
-<li>首先p的第一个字符的最大相同前后缀长度为0</li>
-<li>设next[q-1]=k，对于第q个<ul>
-<li>如果：p[q]==p[k]，那么，next[q] = ++k，break;</li>
-<li>否则：因为此时p[q]和p[k]已经不匹配了，所以我们需要将匹配串右移next[k-1]=j位，此时p[0,j-1]和p[q-j,q-1]已经匹配上了，所以此时要看p[j]==p[q]?，所以回到第2步；</li>
-</ul>
-</li>
-</ol>
-<p><img src="http://ww4.sinaimg.cn/mw690/9bcfe727jw1f7qppq928aj20bn0800td.jpg" alt=""><br><img src="http://ww2.sinaimg.cn/mw690/9bcfe727jw1f7qppqs0frj20cj080js0.jpg" alt=""></p>
-<h6 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line">#include&lt;string.h&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">makeNext</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> P[],<span class="keyword">int</span> next[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> q,k;</span><br><span class="line">    <span class="keyword">int</span> m = strlen(P);</span><br><span class="line">    next[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (q = <span class="number">1</span>,k = <span class="number">0</span>; q &lt; m; ++q) &#123;</span><br><span class="line">        <span class="comment">// k=0时，无论P[q]和P[k]是否匹配，next[q]都next[k-1]值无关</span></span><br><span class="line">        <span class="comment">// 不匹配时，根据next[k-1]=j右移，并且看P[q]和P[j]的匹配情况</span></span><br><span class="line">        <span class="keyword">while</span>(k &gt; <span class="number">0</span> &amp;&amp; P[q] != P[k])</span><br><span class="line">            k = next[k-<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (P[q] == P[k]) &#123; <span class="comment">// next值增长一</span></span><br><span class="line">            k++;</span><br><span class="line">        &#125;</span><br><span class="line">        next[q] = k;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kmp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> T[],<span class="keyword">const</span> <span class="keyword">char</span> P[],<span class="keyword">int</span> next[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n,m;</span><br><span class="line">    <span class="keyword">int</span> i,q; <span class="comment">// i指示T的索引，q指示P的索引</span></span><br><span class="line">    n = strlen(T);</span><br><span class="line">    m = strlen(P);</span><br><span class="line">    makeNext(P,next);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>,q = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="comment">// 这里的原理和上面一致</span></span><br><span class="line">        <span class="keyword">while</span>(q &gt; <span class="number">0</span> &amp;&amp; P[q] != T[i])</span><br><span class="line">            q = next[q-<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (P[q] == T[i]) &#123;</span><br><span class="line">            q++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (q == m) &#123; <span class="comment">// 找到一个匹配</span></span><br><span class="line">            printf(<span class="string">"Pattern occurs with shift:%d\n"</span>,(i-m+<span class="number">1</span>));</span><br><span class="line">            <span class="comment">// count++; // 计算模式串出现的次数</span></span><br><span class="line">            q = next[q-<span class="number">1</span>]; <span class="comment">// 找到一个匹配后，寻找下一个匹配，移动p</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">int</span> next[<span class="number">20</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span> T[] = <span class="string">"ababxbababcadfdsss"</span>;</span><br><span class="line">    <span class="keyword">char</span> P[] = <span class="string">"abcdabd"</span>;</span><br><span class="line">    printf(<span class="string">"%s\n"</span>,T);</span><br><span class="line">    printf(<span class="string">"%s\n"</span>,P );</span><br><span class="line">    <span class="comment">// makeNext(P,next);</span></span><br><span class="line">    kmp(T,P,next);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; strlen(P); ++i) &#123;</span><br><span class="line">        printf(<span class="string">"%d "</span>,next[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    printf(<span class="string">"\n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/09/12/KMP/" data-id="ck82imy9x0041r4phgifbl2nn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/22/Water-and-Jug-Problem/" data-id="ckeiowfbg009n4gpha060lw00" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1833,7 +1814,7 @@ A B C D A B D
 
 
     <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/6/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/8/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/6/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/8/">下一页 &raquo;</a>
     </nav>
 </section>
             
@@ -1849,26 +1830,7 @@ A B C D A B D
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2019/09/21/CherryPy-Torturial/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Other/">Other</a></p>
-                            <p class="item-title"><a href="/2019/09/21/CherryPy-Torturial/" class="title">CherryPy Torturial</a></p>
-                            <p class="item-date"><time datetime="2019-09-21T15:51:48.000Z" itemprop="datePublished">2019-09-21</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+                            <a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1879,15 +1841,15 @@ A B C D A B D
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="title">NLP Pre-train Models after Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:16:49.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+                            <a href="/2020/08/30/XGboost/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1898,15 +1860,15 @@ A B C D A B D
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/XGboost/" class="title">XGboost</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:00:24.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+                            <a href="/2020/08/30/Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1917,15 +1879,15 @@ A B C D A B D
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Bert/" class="title">Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:58:01.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+                            <a href="/2020/08/30/Transformer/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1936,8 +1898,27 @@ A B C D A B D
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Transformer/" class="title">Transformer</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:53:14.000Z" itemprop="datePublished">2020-08-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/08/30/First-Order-Optimization/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/08/30/First-Order-Optimization/" class="title">First Order Optimization</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:46:31.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
@@ -1950,7 +1931,7 @@ A B C D A B D
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">2</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">55</span></li></ul>
         </div>
     </div>
 
@@ -1959,7 +1940,7 @@ A B C D A B D
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1968,7 +1949,7 @@ A B C D A B D
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.22px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 13.33px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 13.33px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

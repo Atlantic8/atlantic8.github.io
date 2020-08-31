@@ -76,6 +76,10 @@ var _hmt = _hmt || [];
                 
                     <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
                 
+                    <a class="main-nav-link" href="/categories/Math">Math</a>
+                
+                    <a class="main-nav-link" href="/categories/Dev">Dev</a>
+                
                     <a class="main-nav-link" href="/about">About</a>
                 
             </nav>
@@ -141,6 +145,10 @@ var _hmt = _hmt || [];
                 
                     <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
                 
+                    <td><a class="main-nav-link" href="/categories/Math">Math</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Dev">Dev</a></td>
+                
                     <td><a class="main-nav-link" href="/about">About</a></td>
                 
                 <td>
@@ -170,11 +178,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                119
+                124
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                45
+                46
                 <span>标签</span>
             </div>
         </div>
@@ -233,6 +241,976 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Super-Washing-Machines" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/04/02/Super-Washing-Machines/">Super Washing Machines</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/04/02/Super-Washing-Machines/">
+            <time datetime="2017-04-02T02:08:53.000Z" itemprop="datePublished">2017-04-02</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>You have $n$ super washing machines on a line. Initially, each washing machine has some dresses or is empty.</p>
+<p>For each move, you could <strong>choose any $m (1 ≤ m ≤ n)$ washing machines, and pass one dress of each washing machine to one of its adjacent washing machines at the same time</strong> .</p>
+<p>Given an integer array representing the number of dresses in each washing machine from left to right on the line, you should find the minimum number of moves to make all the washing machines have the same number of dresses. If it is not possible to do it, return -1.</p>
+<pre><code>Example1
+
+Input: [1,0,5]
+Output: 3
+
+Explanation: 
+1st move:    1     0 &lt;-- 5    =&gt;    1     1     4
+2nd move:    1 &lt;-- 1 &lt;-- 4    =&gt;    2     1     3    
+3rd move:    2     1 &lt;-- 3    =&gt;    2     2     2   
+Example2
+
+Input: [0,3,0]
+Output: 2
+
+Explanation: 
+1st move:    0 &lt;-- 3     0    =&gt;    1     2     0    
+2nd move:    1     2 --&gt; 0    =&gt;    1     1     1     
+Example3
+
+Input: [0,2,0]
+Output: -1
+
+Explanation: 
+It&#39;s impossible to make all the three washing machines have the same number of dresses. 
+Note:
+The range of n is [1, 10000].
+The range of dresses number in a super washing machine is [0, 1e5].
+</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>首先，如果所有洗衣机的衣服总和不能被$n$整除，返回-1.<br>然后对于每个洗衣机，计算它的<code>gain/lose</code>数组，表示还需要移除多少件衣服使得自己达到平衡状态。</p>
+<p>举个栗子：<br>对于<code>[0,0,11,5]</code>，每个洗衣机应该有4件衣服，所以它的<code>gain/lose</code>数组为<code>[-4,-4,7,1]</code>。从第一个机器开始考虑，第一个要加入4件，得从第二个机器中过来，所以这个状态可以以4次移动的代价变成<code>[0,-8,7,1]</code>。同理第二个状态也可以以8次移动的代价变成状态三<code>[0,0,-1,1]</code>，最后以一次移动的代价变成<code>[0,0,0,0]</code>。</p>
+<p>因为每一次移动可以选取任意个元素，并朝左边或者右边移动一个元素，所以总共需要的移动次数就是<code>gain/lose</code>数组中出现的最大值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">        tmp += num-n;</span><br><span class="line">        ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码中<code>num-n</code>没加绝对值，我的理解是对于初始<code>gain/lose</code>数组的负数，可以从两边同时添加衣服，如果是正数，那么那么每次只能移除一件衣服。而<code>tmp</code>加了绝对值，是因为<code>tmp</code>表示左边一个缺少/多的衣服数，这些衣服得从右边过来，并且一个一个达到当前位置，所以得加绝对值。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="ckeiowfb9009c4gphq2nefmp7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Contiguous-Array" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/04/01/Contiguous-Array/">Contiguous Array</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/04/01/Contiguous-Array/">
+            <time datetime="2017-04-01T06:09:56.000Z" itemprop="datePublished">2017-04-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定一个只包含0和1的整形数组，输出最长的连续子串的长度，要求子串中0和1的个数相同。</p>
+<pre><code>Input: [0,1]
+Output: 2
+Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
+
+Input: [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+</code></pre><p>数组长度不会超过50000.</p>
+<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>$O(n^2)$的思路容易想到，但是数组长度太长，会超时。</p>
+<p>方法如下：</p>
+<ul>
+<li>先将数组中的<code>0</code>变成<code>-1</code>，这样连续子序列的和为<code>0</code>的时候满足条件</li>
+<li>记录下<code>0-k</code>位置的和与<code>k</code>的对应关系，可以hash map的方法。和相同的只记录最左边的，毕竟长度要最长嘛</li>
+<li>如果后面遇到了记录过的和，位置相减就能得到满足条件的子序列长度</li>
+<li>时间复杂度为$O(n)$</li>
+</ul>
+<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">    unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">    map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        sum += nums[i];</span><br><span class="line">        <span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">        <span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">            ret = max(ret, i-map[sum]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">            map[sum] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="ckeiowf6n000y4gphmw2yge6n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Remove-Boxes" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/04/01/Remove-Boxes/">Remove Boxes</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/04/01/Remove-Boxes/">
+            <time datetime="2017-04-01T02:17:56.000Z" itemprop="datePublished">2017-04-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>Given several boxes with different colors represented by different positive numbers.<br>You may experience several rounds to remove boxes until there is no box left. Each time you can choose some continuous boxes with the same color (composed of k boxes, k &gt;= 1), remove them and get k*k points.<br>Find the maximum points you can get.</p>
+<p><code>Example 1</code></p>
+<pre><code>Input:
+[1, 3, 2, 2, 2, 3, 4, 3, 1]
+Output:
+23
+Explanation:
+[1, 3, 2, 2, 2, 3, 4, 3, 1] 
+----&gt; [1, 3, 3, 4, 3, 1] (3*3=9 points) 
+----&gt; [1, 3, 3, 3, 1] (1*1=1 points) 
+----&gt; [1, 1] (3*3=9 points) 
+----&gt; [] (2*2=4 points)
+</code></pre><p><code>Note: The number of boxes n would not exceed 100.</code></p>
+<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>本题可以采用递归+memory（DP）的方法解决，思路是：使用数组map[i][j][k]表示从第i个元素到第j个元素，并且后面还有k个boxes[j]，也就是说现在至少有k+1个boxes[j]。对于i-j之间的满足boxes[p]=boxes[j]的元素，满足一下条件</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+for\;& p\; with\;boxes[p]==boxes[j]: \\ 
+&map[i][j][k]=\max_p(map[i][j][k], map[i][p][k+1]+map[p+1][r-1][0])
+\end{aligned}</script><p>代码为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dfs</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; boxes, <span class="keyword">int</span> start, <span class="keyword">int</span> end, <span class="keyword">int</span> k, <span class="keyword">int</span> map[<span class="number">100</span>][<span class="number">100</span>][<span class="number">100</span>])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (start &gt; end) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (map[start][end][k] &gt; <span class="number">0</span>) <span class="keyword">return</span> map[start][end][k];</span><br><span class="line">    <span class="comment">// 记录后面连续boxes[end]的数量</span></span><br><span class="line">    <span class="keyword">while</span> (start&lt;end &amp;&amp; boxes[end-<span class="number">1</span>]==boxes[end]) &#123;--end; ++k;&#125;</span><br><span class="line">    map[start][end][k] = dfs(boxes, start, end-<span class="number">1</span>, <span class="number">0</span>, map)+(k+<span class="number">1</span>)*(k+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=start; i&lt;end; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (boxes[i] == boxes[end]) &#123;</span><br><span class="line">            map[start][end][k]=max(map[start][end][k], dfs(boxes, start, i, k+<span class="number">1</span>, map)+dfs(boxes, i+<span class="number">1</span>, end-<span class="number">1</span>, <span class="number">0</span>, map));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map[start][end][k];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeBoxes</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; boxes)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> map[<span class="number">100</span>][<span class="number">100</span>][<span class="number">100</span>]=&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> dfs(boxes, <span class="number">0</span>, boxes.size()-<span class="number">1</span>, <span class="number">0</span>, map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/04/01/Remove-Boxes/" data-id="ckeiowfa2007j4gphj1wptxot" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-word2vec" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/03/31/word2vec/">word2vec</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/31/word2vec/">
+            <time datetime="2017-03-31T02:50:31.000Z" itemprop="datePublished">2017-03-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="统计语言模型"><a href="#统计语言模型" class="headerlink" title="统计语言模型"></a>统计语言模型</h5><p>自然语言处理中的一个基本问题是计算一段文本序列在某种语言下出现的概率，统计语言模型给出了这一类问题的一个基本解决框架。</p>
+<p>对于一段文本序列$S=w_1,…,w_T$，它的概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(S)=P(w_1,...,w_T)=\prod_{t=1}^Tp(w_t|w_1,...,w_{t-1})
+\end{aligned}</script><p>问题变成了如何去预测这些条件概率.</p>
+<h6 id="Ngram"><a href="#Ngram" class="headerlink" title="Ngram"></a>Ngram</h6><p>上述模型的参数空间巨大，一个改进方法是Ngram，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_t|w_1,...,w_{t-1}) \approx p(w_t|w_{t-n+1},...,w_{t-1})
+\end{aligned}</script><p>Ngram本质上是将词当做一个个孤立的原子单元去处理的，用<code>ont-hot</code>的方式向量化word，向量维度等于词典大小。<br>Ngram及其他gram模型仍有局限性：</p>
+<ul>
+<li>由于参数空间的爆炸式增长，它无法处理更长程的context</li>
+<li>没有考虑词与词之间内在的联系性</li>
+</ul>
+<h5 id="Distributed-Representation"><a href="#Distributed-Representation" class="headerlink" title="Distributed Representation"></a>Distributed Representation</h5><p>用<code>ont-hot</code>的方式向量化单词面临着维度灾难问题，能否用一个连续的稠密向量去刻画一个word的特征呢？这样不仅可以直接刻画词与词之间的相似度，还可以建立一个从向量到概率的平滑函数模型，使得相似的词向量可以映射到相近的概率空间上。这个稠密连续向量也被称为word的<code>distributed representation</code>.</p>
+<p>在信息检索领域里，这个概念被称为向量空间模型（<code>Vector Space Model</code>），VSM是基于一种<code>Statistical Semantics Hypothesis</code>，比较广为人知的两个版本是<code>Bag of Words Hypothesis</code>和<code>Distributional Hypothesis</code>，分别表示</p>
+<ul>
+<li><code>Bag of Words Hypothesis</code>：一篇文档的词频（而不是词序）代表了文档的主题</li>
+<li><code>Distributional Hypothesis</code>：上下文环境相似的两个词有着相近的语义</li>
+</ul>
+<p>基于<code>Bag of Words Hypothesis</code>，我们可以构造一个<code>term-document</code>矩阵$A$，矩阵里的元素$A_{ij}$代表着word $w_i$在文档$D_j$中出现的次数（或频率）。可以提取行向量做为word的语义向量。</p>
+<p>基于<code>Distributional Hypothesis</code>，我们可以构造一个<code>word-context</code>的矩阵$B$，矩阵里的元素$B_{ij}$代表着word $w_i$在context $C_j$中出现的次数（或频率）</p>
+<p>这种co-occurrence矩阵仍然存在着数据稀疏性和维度灾难的问题，解决方法是基于SVD的稀疏矩阵分解方法。</p>
+<h5 id="word2vec原理"><a href="#word2vec原理" class="headerlink" title="word2vec原理"></a>word2vec原理</h5><p>假设预料为$D=\lbrace w_1,…,w_V \rbrace$</p>
+<h6 id="CBoW模型（Continuous-Bag-of-Words-Model）"><a href="#CBoW模型（Continuous-Bag-of-Words-Model）" class="headerlink" title="CBoW模型（Continuous Bag-of-Words Model）"></a>CBoW模型（Continuous Bag-of-Words Model）</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe4l3rsmdtj20tm10gtee.jpg" alt="Continuous Bag-of-Words Model"></p>
+<p><strong>CBoW的描述</strong>(N对应图中的|V|)</p>
+<ul>
+<li>利用位置$t$前后的$2m$个words，以它们的<code>one-hot</code>编码$x_k$作为输入。通过一个共享的$n\times N$投影矩阵$V$，将每个输入投影成$n$维词向量，$N$是词典大小。$v_{t+j}=Vx_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$这里的$V$矩阵最终包含的就是我们要的结果。</li>
+<li>在PROJECTION层上，将$2m$个投影结果汇总（平均值，舍弃了位置信息）.$\hat{v_t}=\frac{1}{2m}\sum_{j}v_{t+j},j\in \lbrace -m,…-1,1,…,m \rbrace$，通过矩阵$U_{Nn}(U^T=[u_1,…,u_N])$连接到输出层。</li>
+<li>最后是softmax层，$N$个节点，每个节点表示中心词是$w_i$的概率。输出层的输入向量为$z$，$z_i=u_i^T\hat{v_t}$，输出结果为$y$，$\hat{y_i}=softmax(z_i)$</li>
+</ul>
+<p>模型参数是两个词向量矩阵：$U,V$，对于中心词$w_t$，模型对它的损失函数为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J_t&=-logP(w_t|w_{t-m},...,w_{t-1},w_{t+1},...,w_{t+m}) \\
+ &=-log(softmax(z_t)) \\
+ &=-log\frac{e^{u_t^T\hat{v_t}}}{\sum_{k=1}^V e^{u_k^T\hat{v_t}}} \\
+ &=-z_t+log\sum_{k=1}^V e^{z_k}
+\end{aligned}</script><p>所以，整个模型的经验风险为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J&=\sum_{w_{t+m},w_{t-m}\in D} J_t
+\end{aligned}</script><p>风险$J$对$U,V$的导数为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial J}{\partial u_i} &= (\hat{y_i}-y_i)\hat{v_t} \\
+\frac{\partial J}{\partial U^T} &= \hat{v_t}(\hat{y_t}-y)^T \\
+\frac{\partial J}{\partial v_{t+j}} &= \frac{1}{2m}U^T(\hat{y}-y)
+\end{aligned}</script><p>采取sgd更新方式，梯度下降。</p>
+<h6 id="Skip-gram"><a href="#Skip-gram" class="headerlink" title="Skip-gram"></a>Skip-gram</h6><p><img src="http://ww1.sinaimg.cn/mw690/9bcfe727ly1ffjr31ab9aj213q0tt1hg.jpg" alt="Skip-gram"></p>
+<p>Skip-gram以当前词为中心，预测window内的词语，细节图中描述的很清楚了。为了描述方便，不妨假设图中的矩阵$W,W{\’}$分别为$U,V$。</p>
+<p>由于输入向量$w_t$是<code>one-hot</code>向量(不妨假设第$k$行是1)，所以$Uw_t$就相当于$U$的第$k$列，在这里将其命名为$u_k$。经过$V$矩阵，得到$z=Vu_k,z_i=v_iu_k$，$v_i$是$V$的第$i$行。这里$V$也可以看成包含了所有单词对应向量的矩阵，$z$就表示了$u_k$和$V$中其他向量的相似度。最后对$z$做softmax归一化得到结果$y$(假设应该是$w_{t+1}$)，最大的对应输出。</p>
+<p>假设真实的输出为$\hat{y}$（<code>one-hot</code>，$p$行为1），损失函数使用交叉熵，则对这单个样例的损失函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(t,t+1)=-logy_p=-log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}
+\end{aligned}</script><p>所以一个句子的损失为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L=-\frac{1}{T}\sum_{t=1}^T\sum_{i=t-m}^{t+m}l(t,i)
+\end{aligned}</script><p>然后分别对$U,V$求导即可得到梯度。</p>
+<h6 id="Negative-Sampling"><a href="#Negative-Sampling" class="headerlink" title="Negative Sampling"></a>Negative Sampling</h6><p>继续<code>skip-gram</code>模型，在计算$l(t,i)$的时候，需要计算$w_t$对应的向量与每一个其他向量的相似程度$v_iu_k$，<code>softmax</code>对于特别大的词汇计算量很大。</p>
+<p>负采样的思想就是把这里计算其他所有词的相似度改成只计算一部分的相似度，具体地，将这里的类<code>softmax</code>分类的方法变成<code>logistic regression</code>的方法，当前词的context的词为正样本，然后采样一部分其余的词作为负样本。</p>
+<p>也就是将$log\frac{e^{v_iu_k}}{\sum_ie^{v_iu_k}}$变成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+log\;\sigma(v_iu_k)+\sum_{j=1}^n E_{w_i\sim p_{neg}(w_t)}[log\;\sigma(-v_ju_k)]
+\end{aligned}</script><p>其中，$n$是超参数，表示负采样的数量，一般地，对小的训练集$n\in [20,50]$；对大的数据集，$n$可能只有$[2,5]$之间。$ p_{neg}(w_t)$表示对$w_t$负采样的分布。启发式的采样方法可以如下：</p>
+<p>随机选取非正样本$w_i$，然后以一定的概率舍弃之，这个概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_i)=1-\sqrt{\frac{c}{f(w_i))}}
+\end{aligned}</script><p>其中，$f(w_i)$是词$w_i$的词频，$c$是常数，一般在$10^{-5}$左右。这样选择，会过滤掉词频小于$c$的词，并且保证词频大的词语被选中的概率更大。</p>
+<h6 id="层次Softmax"><a href="#层次Softmax" class="headerlink" title="层次Softmax"></a>层次Softmax</h6><p>由于原始的CBoW和skip-gram最后都有softmax层，导致复杂度能达到O(nN)，<strong>Hierarchical Softmax是一种对输出层进行优化的策略，输出层从原始模型的利用softmax计算概率值改为了利用<code>Huffman</code>树计算概率值</strong>。</p>
+<ul>
+<li>投影层的输出沿着<code>huffman</code>树不断进行logistic二分类，并修正各中间向量和词向量</li>
+<li>词表中的<strong>全部词作为叶子节点</strong>，<strong>词频作为节点的权</strong>，叶子结点包含word本身</li>
+<li>每一个非叶子结点都看作是一个logistic分类器，决定下一层的走向，它包含权值</li>
+<li>从根节点出发，到达指定叶子节点的路径是唯一的</li>
+<li>路过非叶子结点，修正logistic参数，并且<strong>累计误差，误差最后用来修正投影矩阵$V$</strong></li>
+<li><code>Hierarchical Softmax</code>正是利用这条唯一路径来计算指定词的概率</li>
+</ul>
+<p>实现过程中，可以</p>
+<ul>
+<li>不考虑投影矩阵，而是将每个词对应的向量（投影后的）设置为随机向量</li>
+<li>通过huffman的每一个节点时都计算累加误差，利用累计误差更新当前节点的LR参数</li>
+<li>累计误差将被用来调整词向量</li>
+</ul>
+<h5 id="word2vec的应用"><a href="#word2vec的应用" class="headerlink" title="word2vec的应用"></a>word2vec的应用</h5><h6 id="广告投放"><a href="#广告投放" class="headerlink" title="广告投放"></a>广告投放</h6><pre><code>U1  a1,a2,a3……
+U2  a2,a3,a5,……
+U3  a1,a3,a6,……
+</code></pre><p>公司A目前有很多用户的浏览数据，如用户u浏览了公司A的页面a1，a2，a3等。把每个用户的整体浏览记录当作一篇doc，每个记录就是一个word。利用word2vec算法，将每个记录转化为一个向量。向量化的页面就能够计算相似度，进而根据各种推荐规则进行推荐。</p>
+<h6 id="ctr预估模型"><a href="#ctr预估模型" class="headerlink" title="ctr预估模型"></a>ctr预估模型</h6><p>CTR（Click-Through-Rate）即点击通过率，是互联网广告常用的术语，指网络广告（图片广告/文字广告/关键词广告/排名广告/视频广告等）的点击到达率，即<strong>该广告的实际点击次数（严格的来说，可以是到达目标页面的数量）除以广告的展现量（Show content）</strong>。</p>
+<p>广告ctr计算存在<strong>冷启动</strong>的问题，冷启动问题就是一个广告是新上线的，之前没有任何的历史投放数据，这样的广告由于数据不足，点击率模型经常不怎么凑效。</p>
+<p>解决方法：<strong>使用同类型广告点击率来缓解</strong>，拿一个同行的广告的各种特征作为这个广告的特征，对这个新广告的点击率进行预估。<br>比如在媒体公司A上面有1000个广告主，它们的主页分别是a1、a2、……、a1000，运行word2vec得到每一个页面的向量，然后运行kmean或者其他聚类算法，把这1000个广告主聚成100个簇，然后每个簇里面的广告主看成是一个。</p>
+<p><strong>引用</strong><br>[1] <a href="http://www.cnblogs.com/iloveai/p/word2vec.html" target="_blank" rel="noopener">word2vec前世今生</a><br>[2] <a href="https://www.52ml.net/16951.html" target="_blank" rel="noopener">深度学习word2vec笔记之应用篇</a><br>[3] <a href="http://blog.csdn.net/u014595019/article/details/51884529" target="_blank" rel="noopener">自己动手写word2vec</a><br>[4] <a href="https://github.com/multiangle/pyword2vec" target="_blank" rel="noopener">word2vec的python实现</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/31/word2vec/" data-id="ckeiowfcb00bc4gph395if1eh" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Latent-Dirichlet-Allocation" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/03/31/Latent-Dirichlet-Allocation/">Latent Dirichlet Allocation</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/03/31/Latent-Dirichlet-Allocation/">
+            <time datetime="2017-03-31T02:16:10.000Z" itemprop="datePublished">2017-03-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h5><p>问题的起源是文档排名，就像使用搜索引擎那样，给定关键字，返回排好序的文档列表。既然提到排序，就肯定有衡量标准，给定关键词，一个文档的重要性或者说相关性如何度量呢？</p>
+<h6 id="TF"><a href="#TF" class="headerlink" title="TF"></a>TF</h6><p>首先，直观地，如果一篇文档中出现要查询的词的次数越多，相关性应该越大。于是很容易想到<strong><code>词频(TF)</code></strong>这个标准</p>
+<pre><code>词频TF(t)就是关键词t在文档中出现的次数
+</code></pre><h6 id="IDF"><a href="#IDF" class="headerlink" title="IDF"></a>IDF</h6><p>但是仅仅考虑词频必然会出现问题，因为不同的词应该有不同的重要性，举个例子：在计算机科学类的paper中，出现算法和文学类paper中出现算法的重要性是不一样的，又或者“的”这个字在汉语中出现的次数相当大，一篇文档中没有“的”字的概率是很小的，此时仅仅按照关键词中的“的”判断文档排名显然是不准确的。于是，我们希望加大稀缺词的权重，所以定义了<strong><code>逆文档频率(IDF)</code></strong>，<code>IDF</code>的定义如下<script type="math/tex">IDF(t) = log\frac{N} {DF(t)}</script>其中，$N$为文档总数，$DF(t)$为所有文档中出现了关键词$t$的文档个数。所以，越是普遍的单词（“的”，“因此”等）<code>IDF</code>越小，而稀缺的单词（如文学paper中的“算法”）就对应着比较大的<code>IDF</code>。</p>
+<p>将TF和IDF结合到一起，得到TF-IDF的计算方法：<script type="math/tex">TF-IDF(t,d) = TF(t,d) * IDF(t)</script>所以，<strong>一篇文档和一条Query的相关度为Query中所有单词在这篇文档中的TF-IDF值之和</strong>。而<strong>两个文档间的相关度是文档向量的余弦值</strong>，余弦值越接近1，就表明夹角越接近0度，也就是两个向量越相似，这就叫”余弦相似性”。</p>
+<h6 id="TF-IDF的缺陷"><a href="#TF-IDF的缺陷" class="headerlink" title="TF-IDF的缺陷"></a>TF-IDF的缺陷</h6><ul>
+<li>单纯地认为文本频数小的单词就越重要，文本频数大的单词就越无用，并不是完全正确的</li>
+<li>不能有效地反映单词的重要程度和特征词的分布情况，TF-IDF的精度并不是很高</li>
+<li>没有体现出单词的位置信息，这也是空间向量模型的不足</li>
+</ul>
+<h4 id="主题模型"><a href="#主题模型" class="headerlink" title="主题模型"></a>主题模型</h4><p>TF-IDF模型中没有考虑文字背后的语义关联，即语义层面上的关联，可能在两个文档共同出现的单词很少甚至没有，但两个文档是相似的。判断文档相关性的时候需要考虑到文档的语义，而语义挖掘的利器是主题模型，LDA就是其中一种比较有效的模型。</p>
+<p>主题模型的思想源于生成模型，其思想如下：<strong>一篇文章的每个词都是通过：以一定概率选择了某个主题，并从这个主题中以一定概率选择某个词语</strong>，形式化表述为<script type="math/tex">p(word|doc)=\sum_{topic}p(word|topic)\times p(topic|doc)</script>，具体内容在下文中描述。</p>
+<p>能够发现文档-词语之间所蕴含的潜在语义关系（即主题）——将文档看成一组主题的混合分布，而主题又是词语的概率分布——从而<strong>将高维度的“文档-词语”向量空间映射到低维度的“文档-主题”和“主题-词语”空间</strong>，有效提高了文本信息处理的性能。</p>
+<h5 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h5><h6 id="二项分布（Binomial-distribution）"><a href="#二项分布（Binomial-distribution）" class="headerlink" title="二项分布（Binomial distribution）"></a>二项分布（Binomial distribution）</h6><p>$n$次重复伯努利试验，一次概率为$p$，$k$次试验概率函数为<script type="math/tex">P(K=k)=C_n^kp^k(1-p)^{n-k}</script>，二项分布计为$X\sim b(n,p)$。</p>
+<h6 id="多项式分布"><a href="#多项式分布" class="headerlink" title="多项式分布"></a>多项式分布</h6><p>每次试验可能有$k$种结果，每种结果的可能性是$p_i$，则$n$次试验各种结果出现次数分别为$x_1,…,x_k$的概率是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(x_1,...,x_k;n,p_1,...,p_k)=\frac{n!}{x_1!...x_k!}p_1^{x_1}...p_k^{x_k}
+\end{aligned}</script><p>是二项分布的扩展。</p>
+<h6 id="gamma函数"><a href="#gamma函数" class="headerlink" title="gamma函数"></a>gamma函数</h6><p>gamma函数形如<script type="math/tex">\Gamma(x)=\int_0^{\infty}t^{x-1}e^{-t}dt</script>这个函数有如下性质$\Gamma(x+1)=x\Gamma(x)$，因此gamma函数可以看作是阶乘在实数集上的延拓<script type="math/tex">\Gamma(n)=(n-1)!</script>此外，gamma函数还有如下性质</p>
+<ul>
+<li>对$x\in (0,1)$，$\Gamma(1-x)\Gamma(x)=\frac{\pi}{sin(\pi x)}$</li>
+<li>$\Gamma(\frac{1}{2})=\sqrt{\pi}$</li>
+</ul>
+<h6 id="共轭先验分布"><a href="#共轭先验分布" class="headerlink" title="共轭先验分布"></a>共轭先验分布</h6><p><strong>定义</strong><br>设$\theta$是总体分布中的参数，$p(\theta)$是$\theta$的先验密度函数，假如<strong>由抽样信息$x$算得的后验密度函数$p(\theta|x)$与$p(\theta)$有相同的函数形式(同一个分布簇)，则称$p(\theta)$是$p(\theta|x)$的(自然)共轭先验分布</strong>，称$p(\theta)$和$p(\theta|x)$为共轭分布。</p>
+<h6 id="Beta分布-二项分布的共轭先验分布"><a href="#Beta分布-二项分布的共轭先验分布" class="headerlink" title="Beta分布-二项分布的共轭先验分布"></a>Beta分布-二项分布的共轭先验分布</h6><p>给定参数$\alpha&gt;0,\beta&gt;0$，取值范围为$[0,1]$的随机变量$x$的概率密度函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(x;\alpha,\beta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1} \\
+&=\frac{1}{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1}
+\end{aligned}</script><p>则称$x$满足Beta分布，Beta分布的均值为$\frac{\alpha}{\alpha+\beta}$，方差为$\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$。参数$\alpha,\beta$共同控制Beta分布的函数的形状，见下图。</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1c0iuzclj20pb0ko788.jpg" alt=""></p>
+<p>假定先验分布$p(\theta)$和似然概率$p(x|\theta)$满足</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta)&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}\\&=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1} \\
+p(x|\theta)&=C_n^k\theta^k(1-\theta)^{n-k}
+\end{aligned}</script><p>那么，考虑到$p(x)$为常数项，可知后验概率</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta|x)&=\frac{p(x|\theta)p(\theta)}{p(x)} \\
+&= \frac{1}{Z}  \theta^{\alpha+k-1}(1-\theta)^{\beta+n-k-1}.
+\end{aligned}</script><p>所以，根据定义，$p(\theta)$和$p(\theta|x)$是共轭分布。</p>
+<h6 id="Dirichlet分布"><a href="#Dirichlet分布" class="headerlink" title="Dirichlet分布"></a>Dirichlet分布</h6><p>维度$k \ge 2$的狄利克雷分布在参数$\alpha_1, …, \alpha_k &gt; 0$上，其概率密度函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+f(\theta_1,..,\theta_k;\alpha_1,...,\alpha_k)&=\frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
+B(\alpha) &= \frac{\prod_{i=1}^k\Gamma(\alpha_i)}{\Gamma(\sum_{i=1}^k\alpha_i)}
+\end{aligned}</script><p>同上，假设$\theta=(\theta_1,…,\theta_k)$有先验分布和似然函数,可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(\theta)&= \frac{1}{B(\alpha)} \prod_{i=1}^k\theta_i^{\alpha_i-1} \\
+p(x|\theta)&= \frac{n!}{n_1!...n_k!}\theta_1^{n_1}...\theta_k^{n_k} \\
+p(\theta|x)&= \frac{1}{Z} \prod_{i=1}^k\theta_i^{\alpha_i+n_i-1}
+\end{aligned}</script><p>和Dirichlet分布形式一致。<br>Dirichlet分布的均值向量为$\left( \frac{\alpha_1}{\sum_i^k \alpha_i},…,\frac{\alpha_k}{\sum_i^k \alpha_i} \right)$。</p>
+<h5 id="铺垫模型"><a href="#铺垫模型" class="headerlink" title="铺垫模型"></a>铺垫模型</h5><p>定义：</p>
+<ul>
+<li>$w$表示词，$V$表示所有单词的个数（固定值）</li>
+<li>$z$表示主题，$k$是主题的个数（预先给定，固定值）</li>
+<li>$D=(d_1,…,d_M)$表示语料库，其中$M$是语料库中的文档数（固定值）</li>
+<li>$d=(w_1,…,w_N)$表示一个文档，其中$N$表示一个文档中的词数（随机变量）</li>
+</ul>
+<h6 id="Unigram-model"><a href="#Unigram-model" class="headerlink" title="Unigram model"></a>Unigram model</h6><p>对于文档$d=(w_1,…,w_N)$，用$p(w_n)$表示$w_n$的先验概率，生成文档$d$的概率为<script type="math/tex">p(d)=\prod_{n-1}^Np(w_n)</script>unigram model假设文本中的词服从Multinomial分布，而Multinomial分布的先验分布为Dirichlet分布。</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cpt0cu9j20j40iudgr.jpg" alt="Unigram model"></p>
+<p>上图中，$w_n$是在文本中观察到的第$n$个词，$p$和$α$是隐含未知变量,其中</p>
+<ul>
+<li>$p$是词服从的Multinomial分布的参数</li>
+<li>$\alpha$是Dirichlet分布（即Multinomial分布的先验分布）的参数</li>
+</ul>
+<p>一般$\alpha$由经验事先给定，$p$由观察到的文本中出现的词学习得到，表示文本中出现每个词的概率。</p>
+<h6 id="Mixture-of-unigrams-model"><a href="#Mixture-of-unigrams-model" class="headerlink" title="Mixture of unigrams model"></a>Mixture of unigrams model</h6><p>Mixture of unigrams model生成过程是：给某个文档先选择<strong>一个主题</strong>，再根据该主题生成文档，该文档中的所有词都来自一个主题。假设主题有$z_1,…,z_k$，生成文档$d$的概率为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(d)=\sum_zp(z) \prod_{n=1}^N p(w_n|z)
+\end{aligned}</script><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1cx1ll6gj205a02rwec.jpg" alt="Mixture of unigrams model"></p>
+<p>如上图所示。</p>
+<h6 id="PLSA模型"><a href="#PLSA模型" class="headerlink" title="PLSA模型"></a>PLSA模型</h6><p>Mixture of unigrams model中假定一篇文档只由一个主题生成，可实际中，一篇文章往往有多个主题，只是这多个主题各自在文档中出现的概率大小不一样。PLSA是一种词袋模型，不关注词和词之间的出现顺序。</p>
+<p>假设一组共现(co-occurrence)词项关联着一个隐含的主题类别$z_k\in \lbrace z_1,…,z_K \rbrace$。同时定义</p>
+<ul>
+<li>$p(d_i)$表示海量文档中某篇文档被选中的概率</li>
+<li>$p(w_j|d_i)$表示词$w_j$在给定文档$d_i$中出现的概率</li>
+<li>$p(z_k|d_i)$表示具体某个主题$z_k$在给定文档$d_i$下出现的概率</li>
+<li>$p(w_j|z_k)$表示具体某个词$w_j$在给定主题$z_k$下出现的概率，与主题关系越密切的词，其条件概率越大</li>
+</ul>
+<hr>
+<p><strong>文档到词项的生成方法</strong></p>
+<ol>
+<li>按照概率$p(d_i)$选择一篇文档$d_i$</li>
+<li>选定文档$d_i$后，从主题分布中按照概率$p(z_k|d_i)$选择一个隐含的主题类别$z_k$</li>
+<li>选定$z_k$后，从词分布中按照概率$p(w_j|z_k)$选择一个词$w_j$</li>
+</ol>
+<p>整个过程便是：选定文档-&gt;生成主题-&gt;确定主题生成词。</p>
+<hr>
+<p><strong>发现文档集中的主题（分布）</strong></p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1del7l22j207c02qt8m.jpg" alt="PLSA"></p>
+<p>如上图所示，文档$d$和单词$w$是可被观察到的（样本），但主题$z$却是隐藏的。因为$p(w_j|d_i)$是已知的(统计文档词频)，根据大量已知的文档-词项信息可以训练出$p(z_k|d_i),p(w_j|z_k)$。文档中每个词的生成概率为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w_j,d_i) &= p(d_i)p(w_j|d_i) \\
+&= p(d_i)\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)
+\end{aligned}</script><p>其中$p(d_i)$可事先计算求出，$p(z_k|d_i),p(w_j|z_k)$未知。</p>
+<p>考虑词和词($N$)之间、文档($M$)和文档之间的独立性，则整个语料库中词的分布为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(w,D)=\prod_{i=1}^M\prod_{j=1}^Np(w_j,d_i)^{n(w_j,d_i)}
+\end{aligned}</script><p>其中$n(w_j,d_i)$表示词项$w_j$在文档$d_i$中出现的次数，$n(d_i)$表示文档$d_i$中词的总数，并且令$p(w_j|z_k)=\phi_{kj},p(z_k|d_i)=\theta_{ik}$将未知量矩阵化成$\Phi,\Theta$。所以得到对数似然函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\Phi,\Theta)&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\log p(w_j,d_i) \\
+&= \sum_{i=1}^M\sum_{j=1}^Nn(w_j,d_i)\left(\log p(d_i)+\log\sum_{k=1}^Kp(w_j|z_k)p(z_k|d_i)\right) \\
+&= \sum_{i=1}^Mn(d_i)\left( \log p(d_i)+ \sum_{j=1}^N \frac{n(w_j,d_i)}{n(d_i)} \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \right) \\
+&\propto \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \log\sum_{k=1}^K \phi_{kj}\theta_{ik} \\
+& \ge \sum_{i=1}^M \sum_{j=1}^N n(w_j,d_i) \sum_{k=1}^K p(z_k|d_i,w_j) \log(\phi_{kj}\theta_{ik})
+\end{aligned}</script><p>含有隐含变量的优化可以使用EM算法求解，很复杂，不具体写了<br><strong>E步</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj}\theta_{ik}}{\sum_{l=1}^M\phi_{lj}\theta_{il}}
+\end{aligned}</script><p><strong>M步</strong><br>经过E步，还需考虑约束条件，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{j=1}^N\phi_{kj}&=1 \\
+\sum_{k=1}^K\theta_{ik}&=1
+\end{aligned}</script><p>用拉格朗日乘子法解得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\phi_{kj} &= \frac{\sum_{i=1}^M n(d_i,w_j)p(z_k|d_i,w_j)} {\sum_{i=1}^M\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j)} \\
+\theta_{ik} &= \frac{\sum_{j=1}^N n(d_i,w_j)p(z_k|d_i,w_j) }{n(d_i)}
+\end{aligned}</script><p>这样就求解出了$\Phi,\Theta$。PLSA的模型示意如下图所示:</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sf8anmrj20dm09ojsc.jpg" alt="PLSA"></p>
+<h5 id="LDA-Latent-Dirichlet-Allocation"><a href="#LDA-Latent-Dirichlet-Allocation" class="headerlink" title="LDA(Latent Dirichlet Allocation)"></a>LDA(Latent Dirichlet Allocation)</h5><p><strong>LDA在pLSA的基础上加层贝叶斯框架</strong>，在贝叶斯框架下的LDA中，我们不再认为<strong>主题分布（各个主题在文档中出现的概率分布）和词分布（各个词语在某个主题下出现的概率分布）是唯一确定的（而是随机变量）</strong>。这体现了贝叶斯派的核心思想，<strong>把未知参数当作是随机变量，不再认为是某一个确定的值</strong>。即选主题和选词依然都是两个随机的过程。</p>
+<p>LDA需要两个Dirichlet先验参数，这个Dirichlet先验为某篇文档随机抽取出某个主题分布和词分布。</p>
+<h6 id="LDA模型中文档生成方式"><a href="#LDA模型中文档生成方式" class="headerlink" title="LDA模型中文档生成方式"></a>LDA模型中文档生成方式</h6><p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a4qu9g3j20dq06sq2y.jpg" alt=""></p>
+<p>$\alpha$是主题分布的先验分布，$\beta$是词分布的先验分布。</p>
+<ol>
+<li>按照先验概率$p(d_i)$选择一篇文档$d_i$</li>
+<li>从Dirichlet分布$\alpha$中取样生成文档$d_i$的主题分布$\theta_i$，换言之，主题分布$\theta_i$由超参数为$\alpha$的Dirichlet分布生成</li>
+<li>从主题的多项式分布$\theta_i$中取样生成文档$d_i$第$j$个词的主题$z_{ij}$</li>
+<li>从Dirichlet分布$\beta$中取样生成主题$z_{ij}$对应的词语分布$\phi_{z_{ij}}$，换言之，词语分布$\phi_{z_{ij}}$由参数为$\beta$的Dirichlet分布生成</li>
+<li>从词语的多项式分布$\phi_{z_{ij}}$中采样最终生成词语$w_{ij}$</li>
+</ol>
+<p>示意图如下:</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe1sknkxg2j20dm09oq46.jpg" alt="LDA"></p>
+<p>LDA在pLSA的基础上给这两参数$p(z_k|d_i),p(w_j|z_k)$加了两个先验分布的参数（贝叶斯化）：一个主题分布的先验分布Dirichlet分布$\alpha$，和一个词语分布的先验分布Dirichlet分布$\beta$。这里$\alpha,\beta$都是参数向量。</p>
+<p>LDA生成文档的过程中，先从dirichlet先验中“随机”抽取出主题分布，然后从主题分布中“随机”抽取出主题，最后从确定后的主题对应的词分布中“随机”抽取出词。虽说是随机取值，但是不同的参数$\alpha,\beta$导致可选值的分布是不一样的，如下图所示</p>
+<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fe2a310d1rj20ic07tt9k.jpg" alt="不同参数的dirichlet分布"></p>
+<h6 id="LDA发现文档集中的主题"><a href="#LDA发现文档集中的主题" class="headerlink" title="LDA发现文档集中的主题"></a>LDA发现文档集中的主题</h6><p>文档生成后，LDA把这两参数$p(z_k|d_i),p(w_j|z_k)$变成随机变量，且加入dirichlet先验。</p>
+<p>在pLSA中，我们使用EM算法去估计“主题-词项”矩阵和“文档-主题”矩阵：$\Phi,\Theta$，这两参数都是个固定的值。在LDA中，估计$\Phi,\Theta$这两未知参数可以用变分(Variational inference)-EM算法，也可以用gibbs采样，前者的思想是最大后验估计MAP（MAP与MLE类似，都把未知参数当作固定的值），后者的思想是贝叶斯估计。</p>
+<p><strong>Gibbs采样</strong><br>Gibbs抽样是马尔可夫链蒙特卡尔理论（MCMC）中用来获取一系列近似等于指定多维概率分布（比如2个或者多个随机变量的联合概率分布）观察样本的算法。</p>
+<p>给定一个文档集合，$w$是可以观察到的已知变量，$\alpha,\beta$和是根据经验给定的先验参数，其他的变量$z，\Theta和\Phi$都是未知变量。</p>
+<p>求解$\Theta,\Phi$的过程很复杂，最终求解的Dirichlet分布期望为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\phi_{kt}&=\frac{n_k^{t}+\beta_t} {\sum_{t=1}^V(n_k^{t}+\beta_t)} \\
+\theta_{mk}&=\frac{n_m^{k}+\alpha_k}{\sum_{k=1}^K(n_m^{k}+\alpha_k)}
+\end{aligned}</script><p>其中，$\phi_{kt}=p(w_t|z_k),\theta_{mk}=p(z_k|d_m)$，$n_t^k$是词$w_t$在主题$z_k$中出现的次数，$n_m^k$是主题$z_k$在文章$d_m$中出现的次数。</p>
+<p><strong>引用</strong><br>[1] <a href="https://cos.name/2013/01/lda-math-gamma-function/" target="_blank" rel="noopener">LDA-math-神奇的Gamma函数</a><br>[2] <a href="http://blog.csdn.net/u010945683/article/details/49149815" target="_blank" rel="noopener">共轭先验分布</a><br>[3] <a href="http://blog.csdn.net/yhao2014/article/details/51098037" target="_blank" rel="noopener">通俗理解LDA主题模型</a><br>[4] <a href="http://blog.163.com/zzz216@yeah/blog/static/162554684201381382117133/" target="_blank" rel="noopener">关于Beta分布、二项分布与Dirichlet分布、多项分布的关系</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/" data-id="ckeiowf8d004r4gphddbicpxj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Prime-Factor-Index-in-Factorial" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -259,7 +1237,7 @@ var _hmt = _hmt || [];
                         
     <div class="article-category">
     	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Other/">Other</a>
+        <a class="article-category-link" href="/categories/Math/">Math</a>
     </div>
 
                         
@@ -295,7 +1273,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/18/Prime-Factor-Index-in-Factorial/" data-id="ck82imycb006sr4phfpi33xwf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/18/Prime-Factor-Index-in-Factorial/" data-id="ckeiowfa3007m4gphwfnq2m3d" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -395,6 +1373,11 @@ var _hmt = _hmt || [];
 
 
                         
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Dev/">Dev</a>
+    </div>
+
                         
     <div class="article-tag">
         <i class="fas fa-tag"></i>
@@ -482,7 +1465,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="ck82imy7s001lr4phv0g97yvz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="ckeiowf70001t4gph9l94s6jq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -637,7 +1620,7 @@ kmy
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="ck82imyd30089r4phr5n5c9tq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="ckeiowfat008v4gph8hdenzbm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -795,7 +1778,7 @@ kmy
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/07/K-Nearest-Neighbor/" data-id="ck82imy9s003vr4ph97r6uw3o" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/07/K-Nearest-Neighbor/" data-id="ckeiowf88004g4gphq6hkpudk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -895,6 +1878,11 @@ kmy
 
 
                         
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Dev/">Dev</a>
+    </div>
+
                         
     <div class="article-tag">
         <i class="fas fa-tag"></i>
@@ -1487,1348 +2475,7 @@ TeddyBear();
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/" data-id="ck82imy7z001sr4phrvrsbg9b" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-BM" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/04/BM/">BM</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/04/BM/">
-            <time datetime="2017-03-04T12:33:18.000Z" itemprop="datePublished">2017-03-04</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/String/">String</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="BM介绍"><a href="#BM介绍" class="headerlink" title="BM介绍"></a>BM介绍</h6><p>KMP算法是一种利用模式串前缀移动的字符串匹配算法，时间复杂度为<code>O(n)</code>。<br>BM算法是一种使用了两个跳转表的字符串匹配算法，单模式匹配有更加出色的表现。</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fdb3b45fkbj216t0d8753" alt=""></p>
-<p>上图表述了BM算法的大致过程，模式串是<code>AT-THAT</code>，于KMP不同，BM算法<strong>对每一次匹配尝试从后向前匹配的方法</strong>。</p>
-<ol>
-<li><p>第一次匹配从第7位开始。第7为不能匹配，移动模式串，注意到目标串第7为为<code>F</code>，<code>F</code>不在模式串中，所以可以直接将模式串的首位移到目标串第8位。</p>
-</li>
-<li><p>接着从后向前匹配，目标串的14位<code>-</code>与模式串最后一位不匹配，但是<code>-</code>在模式串中，所以将模式串中最靠后的<code>-</code>移到与目标串的14位对齐。</p>
-</li>
-<li><p>再从后向前匹配，目标串的第18位<code>T</code>与模式串的最后一位匹配，向前看一位，17位<code>L</code>不匹配，且<code>L</code>不在模式串中，所以把模式串第一位移到目标串第18位。</p>
-</li>
-<li><p>接着从后向前匹配，第23、24位匹配，22位不匹配，由于模式串的前两位等于后两位，所以将模式串移动使其前两位到后两位的位置上。</p>
-</li>
-</ol>
-<h6 id="坏字符规则"><a href="#坏字符规则" class="headerlink" title="坏字符规则"></a>坏字符规则</h6><p>假设目标串T长度为n，模式串P长度为m</p>
-<p>坏字符规则分为两种情况：</p>
-<ul>
-<li>坏字符没出现在模式串中，这时可以把模式串首移动到坏字符的下一个字符</li>
-<li>坏字符出现在模式串中，这时可以<strong>把模式串第一个出现的坏字符和母串的坏字符对齐</strong>（当然，这样可能造成模式串倒退移动）</li>
-</ul>
-<p>使用一个数组<code>bad</code>，<code>bad[&#39;k&#39;]</code>表示坏字符在模式串中最左侧的字符<code>&#39;k&#39;</code>距离模式串末尾的长度，如果字符’k’不在模式串中，<code>bad[&#39;k&#39;]=m</code>。那么遇到坏字符时模式串可以移动的距离为：<code>bad[T[i]]-(m-1-i)</code>.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// m为模式串长度</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_bad</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* P, <span class="keyword">int</span> m, <span class="keyword">int</span>* bad)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line">         bad[i] = m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;m; i++)</span><br><span class="line">        bad[P[i]] = m-i-<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="好后缀规则"><a href="#好后缀规则" class="headerlink" title="好后缀规则"></a>好后缀规则</h6><p>发现某个字符不匹配的同时，已有部分字符匹配成功。假设模式串P已经匹配成功的部分为Q</p>
-<ul>
-<li>模式串中有子串匹配上好后缀，此时移动模式串，让该子串和好后缀对齐即可，如果超过一个子串匹配上好后缀，则选择最靠左边的子串对齐</li>
-<li>模式串中没有子串匹配上好后缀，此时需要寻找模式串的一个最长前缀，并让该前缀等于好后缀的后缀，寻找到该前缀后，让该前缀和好后缀对齐即可</li>
-<li>模式串中没有子串匹配上后后缀，并且在模式串中找不到最长前缀，让该前缀等于好后缀的后缀。此时，直接移动模式到好后缀的下一个字符</li>
-</ul>
-<p>为了实现好后缀规则，需要定义一个数组<code>suffix[]</code>，其中<code>suffix[i] = s</code> 表示以<code>i</code>为右边界，与模式串后缀匹配的最大长度为<code>s</code>，即<code>P[i-s:s]==P[m-s:m]</code>，</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">suffixes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">int</span> *suff)</span> </span>&#123;</span><br><span class="line">    suff[m-<span class="number">1</span>]=m;</span><br><span class="line">        <span class="keyword">for</span> (i=m-<span class="number">2</span>；i&gt;=<span class="number">0</span>；--i)&#123;</span><br><span class="line">            q=i;</span><br><span class="line">            <span class="keyword">while</span>(q&gt;=<span class="number">0</span>&amp;&amp;P[q]==P[m-<span class="number">1</span>-i+q])</span><br><span class="line">                --q;</span><br><span class="line">            suff[i]=i-q;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>定义<code>good[]</code>数组表示遇到好后缀时，模式串应该移动的距离。其中<code>i</code>表示好后缀前面一个字符的位置（也就是坏字符的位置）.对应上面三种情况，<code>good</code>数组构建方法如下：<br><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fdb6nka0aqj20y013zgq7" alt=""></p>
-<p>上面的三种情况，移动的距离是逐渐增大的，在满足不止一种情况时，应该移动最小的距离。所以分三部分考虑，</p>
-<ul>
-<li>对第三种情况，移动距离就是P的长度</li>
-<li>对第二种情况，我们要找前缀，所以如果位置<code>i</code>到第一个是满足条件的话，必然有<code>suff[i]=i+1</code>，满足条件时，坏字符出现在<code>[0,m-1-i)</code>位置上时都可以移动<code>m-1-i</code>位使得模式串前<code>i+1</code>位与后<code>i+1</code>位重叠。对于<code>i</code>，从大到小计算是因为越长的前缀意味着越小的移动步数，我们希望找到小的，更新时判断<code>good[j]==m</code>也是为了不多次更新。</li>
-<li>对第一种情况，我们知道当<code>m-1-suff[i]</code>位置为坏字符时，需要移动<code>m-i-1</code>位</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_good</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">int</span> bmGs[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j, suff[<span class="number">256</span>];</span><br><span class="line">    suffixes(x, m, suff);</span><br><span class="line">    <span class="comment">// 第三种情况</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; m; ++i)</span><br><span class="line">        good[i] = m;</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 第二种情况</span></span><br><span class="line">    <span class="keyword">for</span> (i = m - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">        <span class="keyword">if</span> (suff[i] == i + <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">for</span> (; j &lt; m - <span class="number">1</span> - i; ++j)</span><br><span class="line">            <span class="keyword">if</span> (good[j] == m)</span><br><span class="line">                good[j] = m - <span class="number">1</span> - i;</span><br><span class="line">     <span class="comment">// 第一种情况</span></span><br><span class="line">     <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt;= m - <span class="number">2</span>; ++i)</span><br><span class="line">          good[m - <span class="number">1</span> - suff[i]] = m - <span class="number">1</span> - i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后给出BM算法，<strong>对于出现无法匹配的时候，移动步数取好后缀和坏字符两种情况的最大值</strong>。完整代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BM</span><span class="params">(<span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">char</span> *S, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j, good[m], bad[<span class="number">256</span>], k=<span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Preprocessing */</span></span><br><span class="line">    get_bad(P, m, bad);</span><br><span class="line">    get_good(P, m, good);</span><br><span class="line">    i = j = m-<span class="number">1</span>;</span><br><span class="line">    <span class="comment">/* Searching */</span></span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= n - m) &#123;</span><br><span class="line">        <span class="keyword">while</span> (i!=<span class="number">0</span> &amp;&amp; P[i]==S[j]) &#123;  <span class="comment">// 从后向前匹配、直到找到不匹配或者完全匹配</span></span><br><span class="line">            --i;</span><br><span class="line">            --j;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 找到一个匹配</span></span><br><span class="line">        <span class="keyword">if</span> (i==<span class="number">0</span> &amp;&amp; P[i]==S[j]) &#123;</span><br><span class="line">            m++;</span><br><span class="line">            j += good[<span class="number">0</span>];  <span class="comment">// 找到匹配算是好后缀情况</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            j += good[i]&gt;bad[S[j]] ? good[i] : bad[S[j]];</span><br><span class="line">        &#125;</span><br><span class="line">        i = m-<span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/04/BM/" data-id="ck82imy620000r4phxqchw1hp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Decision-Tree" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/02/Decision-Tree/">Decision Tree</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/02/Decision-Tree/">
-            <time datetime="2017-03-02T01:39:28.000Z" itemprop="datePublished">2017-03-02</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="决策树模型"><a href="#决策树模型" class="headerlink" title="决策树模型"></a>决策树模型</h5><ul>
-<li>决策树是一种基本的分类与回归的方法</li>
-<li>决策树由节点和有向边组成</li>
-<li>节点分为内部节点和叶节点</li>
-<li><strong>决策树的学习其实就是特征选择的过程</strong></li>
-</ul>
-<h5 id="决策树学习"><a href="#决策树学习" class="headerlink" title="决策树学习"></a>决策树学习</h5><p><strong>决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程</strong></p>
-<p>给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；$y_i\in \lbrace 1,2,…,K \rbrace$为类标记。</p>
-<h6 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h6><p>统计学中，熵是随机变量不确定性的度量，即混乱程度。假设$X$是一个取有限个值的离散随机变量，其概率分布为$P(X=x_i)=p_i,i=1,..,N$，那么$X$的熵定义为<script type="math/tex">H(X)=-\sum_{i=1}^n p_i log p_i</script>条件熵$H(Y|X)$可以表示为已知随机变量$X$的条件下，随机变量$Y$的不确定性，也可以表示成<script type="math/tex">H(Y|X)=\sum_{i=1}^N p_iH(Y|X=x_i)</script>其中$p_i=P(X=x_i)$。<strong>当熵和条件熵中的概率由数据估计得到时，则分别称之为经验熵和条件经验熵</strong>，如果出现0概率，则令$0log0=0$。</p>
-<p><strong>信息增益表示在得知特征$X$的情况下而使得$Y$的不确定性减少的程度</strong>，形式化表述为：特征$A$对训练数据集$D$的信息增益$g(D,A)$，定义为<script type="math/tex">g(D,A)=H(D)-H(D|A)</script>这里的<strong>信息增益等价于训练数据集中类与特征的互信息</strong>。计算信息增益的算法如下：</p>
-<hr>
-<p>输入：数据集$D$和特征$A$</p>
-<hr>
-<p>1 计算数据集$D$的经验熵$H(D)=-\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$<br>2 计算特征$A$对数据集$D$的经验条件熵<script type="math/tex">H(D|A)=\sum_{i=1}^N \frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^N \frac{|D_i|}{|D|}\sum_{k=1}^K\frac{|D_{ik}|}{|D_i|}log_2\frac{|D_{ik}|}{|D_i|}</script><br>3 计算信息增益$g(D,A)=H(D)-H(D|A)$.</p>
-<hr>
-<p>输出信息增益</p>
-<hr>
-<h6 id="信息增益比"><a href="#信息增益比" class="headerlink" title="信息增益比"></a>信息增益比</h6><p><strong>以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题</strong>，使用信息增益比可以缓解这个问题。特征$A$对训练数据集$D$的信息增益比定义为其增益信息$g(D,A)$与训练数据集$D$关于特征$A$的值的熵$H_A(D)$之比，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-g_R(D,A)=\frac{g(D,A)}{H_A(D)}
-\end{aligned}</script><p>其中，$H_A(D)=-\sum_{i=1}^{A_n}\frac{|D_i|}{|D|}log_2\frac{|D_i|}{|D|}$，$A_n$是特征$A$取值的个数。</p>
-<h6 id="ID3"><a href="#ID3" class="headerlink" title="ID3"></a>ID3</h6><p>ID3算法采用<strong>自上而下递归式的算法构建决策树，它使用信息增益作为特征选择的标准</strong>。停止条件是节点所有特征的信息增益都很小（阈值$\epsilon$）或没有特征可以选择为止。</p>
-<hr>
-<p>输入：训练数据集$D$，特征集$A$，阈值$\epsilon$</p>
-<hr>
-<p>1 若$D$中所有实例属于同一类$C_k$，$T$为单节点树，$C_k$为该节点的类标记，返回$T$<br>2 若$A=\emptyset$则$T$为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>3 否则，分别计算$A$中各特征对$D$的信息增益，选择信息增益最大的特征$A_g$<br>4 如果$A_g&lt;\epsilon$，则置T为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>5 否则，对$A_g$的每一个可能值$a_i$，根据$A_g=a_i$将$D$分割成若干非空子集$D_i$，将$D_i$中实例数最大的类作为标记，构建子节点，由节点及其子节点构成树$T$，返回$T$<br>6 对每个子节点$i$，以$D_i$为训练集，以$A-A_g$为特征集，递归调用以上步骤</p>
-<hr>
-<p>输出：决策树$T$</p>
-<hr>
-<h6 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h6><p><strong>C4.5与ID3的差异在于C4.5使用信息增益比进行选择选择</strong></p>
-<h6 id="基尼指数"><a href="#基尼指数" class="headerlink" title="基尼指数"></a>基尼指数</h6><p><strong>基尼指数表示不确定程度，基尼指数越大，样本集的不确定程度就越大、纯度越低。</strong></p>
-<p>分类问题中，假设有$K$个类，样本点属于第$k$类的概率为$p_k$，则概率分布的基尼指数定义为<script type="math/tex">Gini(p)=1-\sum_{k=1}^K p_k^2</script>对于给定的样本集$D$，其基尼指数为<script type="math/tex">Gini(D)=1-\sum_{k=1}^K\left( \frac{|C_k|}{|D|} \right)^2</script>其中$C_k$表示第$k$类的样本子集。表示集合$D$的不确定性。</p>
-<p>假设样本集$D$根据特征$A$的不同取值被分成$A_n$个部分，则定义在特征$A$下集合$D$的基尼指数为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-Gini(D,A)=\sum_{i=1}^{A_n} \frac{|D_i|}{|D|}Gini(D_i)
-\end{aligned}</script><h6 id="CART"><a href="#CART" class="headerlink" title="CART"></a>CART</h6><p><strong>CART分类树</strong><br>使用基尼指数作为划分属性的标准，每次选择基尼指数最小的属性。</p>
-<p><strong>CART回归模型</strong><br>假设已将输入空间划分为$M$个单元$R_1,…,R_M$，并且在每个单元$R_m$上有一个固定的输出值$c_m$，回归树模型可以表示为<script type="math/tex">f(x)=\sum_{m=1}^Mc_mI(x\in R_m)</script>当输入空间划分确定时，可以用平方误差$\sum_{x_i}(y_i-f(x_i))^2$表示训练误差,<strong> $c_m$输出值为对应$R_m$上所有样本输出值的均值</strong>。</p>
-<p>使用启发式的方法划分输入空间，遍历输入变量和可能的切分变量找到最优的切分变量$j$和切分点$s$，即找到切分后部分的误差最小：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-&R_1(j,s)=\lbrace{x|x^{(j)}\le s\rbrace}  \\
-&R_2(j,s)=\lbrace x|x^{(j)}> s \rbrace  \\
-&\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]
-\end{aligned}</script><p>其中$c_1,c_2$是划分后部分中输出值的均值。最小二乘回归树算法描述如下：</p>
-<hr>
-<p>输入：训练集$D$</p>
-<hr>
-<ol>
-<li>选择最优切分变量$j$与最优切分点$s$，求解$\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]$</li>
-<li>用选定的对$(j,s)$划分区域并决定相应输出值：$R_1,R_2,c_1,c_2$</li>
-<li>继续对两个子区域调用步骤1、2直至满足停止条件</li>
-<li>将输入空间划分为$M$个区域$R_1,…,R_M$，生成CART树$f(x)=\sum_{m=1}^Mc_mI(x\in R_m)$</li>
-</ol>
-<hr>
-<p>输出：$f(x)$</p>
-<hr>
-<h5 id="决策树的剪枝"><a href="#决策树的剪枝" class="headerlink" title="决策树的剪枝"></a>决策树的剪枝</h5><p>以上方法可能会产生过拟合现象，适当剪枝会使得决策树的泛化效果变得更好<br>剪枝分为预剪枝和后剪枝两种，预剪枝指的是在决策树生成的过程中进行剪枝，后剪枝则是在生成决策树之后再进行剪枝。</p>
-<h6 id="预剪枝"><a href="#预剪枝" class="headerlink" title="预剪枝"></a>预剪枝</h6><p>大致过程描述：对于一个节点，考虑其剪枝或者不剪枝的情况，看这两种情况下哪种正确率高（一个节点的类别由其包含同类样本数最多的决定），由此决定是否剪枝。</p>
-<p><strong>预剪枝基于贪心本质禁止某些节点展开，而这些节点第一次展开效果可能不好，但后续表现可能显著提高，所以会带来欠拟合的风险</strong>。</p>
-<h6 id="后剪枝"><a href="#后剪枝" class="headerlink" title="后剪枝"></a>后剪枝</h6><p>大致过程描述：自下而上，叶节点不考虑，考虑其父节点F是否需要剪枝，可以仅仅通过父节点包含的样本，在剪枝和不剪枝的情况下分别计算准确率，然后确定是否需要剪枝。</p>
-<p>下面是令一种后剪枝的方法（我不是很了解）：<br>通过<strong>极小化决策树整体的损失函数来实现</strong>。设树的叶节点个数为$|T|$，$t$是树$T$的叶节点，此叶节点上有$N_t$个样本，属于类$C_k$的样本有$N_{tk}$个，$H_t(T)$为叶节点$t$上的经验熵，$\alpha \ge 0$为参数，则决策树学习的损失函数可以定义为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
-\end{aligned}</script><p>其中经验熵为$H_t(T)=-\sum_k \frac{N_{tk}}{N_t}log_2  \frac{N_{tk}}{N_t}$。$C(T)$表示模型对训练数据的预测误差，|T|表示模型的复杂度。剪枝算法描述如下：</p>
-<hr>
-<p>输入：决策树$T$，参数$\alpha$</p>
-<hr>
-<p>1 计算每个节点的经验熵<br>2 递归地从树的节点向上回溯，如果保留子节点的损失函数更大，剪枝以父节点作为叶子<br>3 返回2直到不能继续为止</p>
-<hr>
-<p>输出：修建后的决策树$T_{\alpha}$</p>
-<hr>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/02/Decision-Tree/" data-id="ck82imy8c0025r4phpcaabqht" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Bayesian-Classifier" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/02/26/Bayesian-Classifier/">Bayesian Classifier</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/02/26/Bayesian-Classifier/">
-            <time datetime="2017-02-26T06:49:57.000Z" itemprop="datePublished">2017-02-26</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="朴素贝叶斯分类器"><a href="#朴素贝叶斯分类器" class="headerlink" title="朴素贝叶斯分类器"></a>朴素贝叶斯分类器</h6><p>输入空间$\mathbb{R}$为$n$维向量的集合，输出空间为类标记集合$\mathcal{Y}=\lbrace c_1,c_2,…,c_K \rbrace$，给定训练数据集<script type="math/tex">T=\lbrace (x_1,y_1),...,(x_N,y_N) \rbrace</script>由联合概率分布$P(X,Y)$独立同分布产生。</p>
-<p>朴素贝叶斯分类器旨在<strong>最大化后验概率</strong>，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-c&=\arg\max_{c_k} P(Y=c_k|X=x) \\
- &=\arg\max_{c_k} \frac{P(X=x|Y=c_k)P(Y=c_k)} {\sum_k P(X=x|Y=c_k)P(Y=c_k)}
-\end{aligned}</script><p>由于对于每一个不同的类别，上式中的分母都是一样的，所以上面的目标公式可以写成</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-c=\arg\max_{c_k} P(X=x|Y=c_k)P(Y=c_k)
-\end{aligned}</script><p>对于这个优化目标，可做如下统计</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(Y=c_k) &= \frac{ I\lbrace Y=c_k \rbrace }{N}
-\end{aligned}</script><p>朴素贝叶斯分类器对条件概率分布进行了<strong>条件独立性</strong>的假设 而$P(X=x|Y=c_k)$可以分解为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(X=x|Y=c_k)=\prod_j^n P(X^{(j)}=x^{(j)}|Y=c_k)
-\end{aligned}</script><p>所以上式可以分开考虑，即在满足$Y=c_k$的集合中分别考虑，$P(X^{(1)}=x^{(1)}|Y=c_k)$就等于$Y=c_k$的集合中第一个属性为$x^{(1)}$样本所占的比例，所以上式可以写成</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(X=x|Y=c_k)=\prod_j^n \frac {I\lbrace X^{(j)}=x^{(j)}|Y=c_k \rbrace} {I\lbrace Y=c_k \rbrace}
-\end{aligned}</script><p>所以，经过统计，就可以使用后验概率最大准则进行分类。</p>
-<p>当然，也可以使用极大似然估计对单个属性和属性进行建模，用$D_c$表示数据集中第$c$类样本的集合，参数$\theta_c$表示对第$c$类样本的建模，所以有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\mathcal{l} &= log \prod_{x\in D_c}P(x|\theta_c) \\
- &= \sum_{x\in D_c} logP(x|\theta_c)
-\end{aligned}</script><p>对$P(x|\theta_c)$进行适当建模，比如$P(x|\theta_c) \sim \mathcal{N}(\mu_c, \sigma^2_c)$，然后用经典的极大似然估计进行估值即可。</p>
-<h6 id="贝叶斯估计"><a href="#贝叶斯估计" class="headerlink" title="贝叶斯估计"></a>贝叶斯估计</h6><p>对于朴素贝叶斯分类器，做如下统计计算时</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(X=x|Y=c_k)=\prod_j^n \frac {I\lbrace X^{(j)}=x^{(j)}|Y=c_k \rbrace} {I\lbrace Y=c_k \rbrace}
-\end{aligned}</script><p>分子、分母可能为0，所以这里使用<strong>拉普拉斯平滑</strong>，所以统计方法如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-P(Y=c_k) &= \frac{ I\lbrace Y=c_k \rbrace+\lambda }{N+\lambda K} \\
-P(X=x|Y=c_k)&=\prod_j^n \frac {I\lbrace X^{(j)}=x^{(j)}|Y=c_k \rbrace+\lambda} {I\lbrace Y=c_k \rbrace+\lambda K_j}
-\end{aligned}</script><p>其中，$K$是分类类别总数，而$K_j$表示第$j$个属性的可能取值数，$\lambda$是平滑参数，为1时则为Laplace平滑。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/02/26/Bayesian-Classifier/" data-id="ck82imy6k0006r4phao4qbw1s" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Cpp-Rule-Fragment" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/02/23/Cpp-Rule-Fragment/">Cpp Rule Fragment</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/02/23/Cpp-Rule-Fragment/">
-            <time datetime="2017-02-23T00:50:23.000Z" itemprop="datePublished">2017-02-23</time>
-        </a>
-    </div>
-
-
-                        
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Cpp/">Cpp</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="变量和基本类型"><a href="#变量和基本类型" class="headerlink" title="变量和基本类型"></a>变量和基本类型</h4><h5 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h5><h6 id="列表初始化"><a href="#列表初始化" class="headerlink" title="列表初始化"></a>列表初始化</h6><p>C++11中，一下初始化方法都是成立的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> x = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> x&#123;<span class="number">0</span>&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">x</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br></pre></td></tr></table></figure></p>
-<p>使用花括号初始化变量在C++11中得到全面应用，但是用于内置类型的变量时，使用花括号初始化形式有个重要的特点：</p>
-<pre><code>使用列表初始化且初始化存在丢失信息的风险，编译器将报错
-</code></pre><p>比如</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> db = <span class="number">3.141592653</span>;</span><br><span class="line"><span class="keyword">int</span> x&#123;db&#125;;              <span class="comment">// 错误，转换存在丢失信息的风险</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">y</span><span class="params">(db)</span></span>;              <span class="comment">// 正确，转换执行，丢失部分信息</span></span><br></pre></td></tr></table></figure>
-<h6 id="默认初始化"><a href="#默认初始化" class="headerlink" title="默认初始化"></a>默认初始化</h6><p>如果内置类型的变量未被显示初始化，它的值由定义的位置决定。<strong>定义与任何函数体之外的变量初始化为0，定义于函数体内部的内置类型将不会被初始化</strong>。</p>
-<h5 id="定义与声明"><a href="#定义与声明" class="headerlink" title="定义与声明"></a>定义与声明</h5><ul>
-<li>声明使得名字为程序所知，定义负责创建与名字关联的实体</li>
-<li>只声明一个变量而非定义它，使用<code>extern</code>关键字，不要显示初始化</li>
-<li>任何包含了显示初始化的声明即成了定义</li>
-<li>变量只能定义一次，但是可以声明多次</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">extern <span class="keyword">int</span> i;     <span class="comment">// 声明</span></span><br><span class="line"><span class="keyword">int</span> j;            <span class="comment">// 声明且定义</span></span><br><span class="line">extern <span class="keyword">int</span> k = <span class="number">2</span>; <span class="comment">// 定义</span></span><br></pre></td></tr></table></figure>
-<h5 id="复合类型"><a href="#复合类型" class="headerlink" title="复合类型"></a>复合类型</h5><h6 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h6><ul>
-<li>引用必须被初始化，因为引用是要和初始值绑定到一起的</li>
-<li>引用不能被重新绑定到另一个对象</li>
-<li>引用不能被绑定到字面值、表达式计算结果</li>
-<li>引用类型要与绑定对象类型严格匹配，只在极少数情况下有例外</li>
-<li>因为引用不是对象，所以不能创建引用的引用</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x=<span class="number">10</span>, &amp;y = x, z=<span class="number">20</span>;</span><br><span class="line">&amp;y = z;         <span class="comment">// 错误，不能重新绑定</span></span><br><span class="line">y = z;          <span class="comment">// 正确，相当于赋值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> &amp;i = <span class="number">10</span>;   <span class="comment">// 错误</span></span><br><span class="line"><span class="keyword">double</span> j = <span class="number">2.55</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;k = j;    <span class="comment">// 错误，类型不匹配</span></span><br></pre></td></tr></table></figure>
-<h6 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h6><ul>
-<li>指针是一个对象，可以有指针的指针，且无需定义时赋初值</li>
-<li>指针类型要与其指向对象类型严格匹配，只在极少数情况下有例外</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成空指针的方法</span></span><br><span class="line"><span class="keyword">int</span> *p1 = nullptr;</span><br><span class="line"><span class="keyword">int</span> *p2 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *p3 = NULL;</span><br></pre></td></tr></table></figure>
-<p>void*指针</p>
-<ul>
-<li>可以存放任意对象的地址</li>
-<li>不能直接操作void*指针指向的对象，因为不知道其类型</li>
-</ul>
-<h5 id="const"><a href="#const" class="headerlink" title="const"></a>const</h5><ul>
-<li>const对象必须初始化，一旦创建，不能修改</li>
-<li>利用一个对象去初始化另一个对象，无论他们是不是const都无关紧要，因为拷贝不会改变什么</li>
-<li>默认情况下，const变量尽在文件内有效</li>
-<li>多个文件共享的方法：声明、定义都添加extern关键字</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// file 1，定义、初始化</span></span><br><span class="line">extern <span class="keyword">const</span> <span class="keyword">int</span> x = getSize();</span><br><span class="line"></span><br><span class="line"><span class="comment">// file 2，再次声明一下，与file 1中的是同一个</span></span><br><span class="line">extern <span class="keyword">const</span> <span class="keyword">int</span> x;</span><br></pre></td></tr></table></figure>
-<h6 id="const引用"><a href="#const引用" class="headerlink" title="const引用"></a>const引用</h6><ul>
-<li>不能通过引用改变常量的值</li>
-<li>初始化常量引用时允许用任意表达式作为初始值，只要表达式结果能转换成引用类型即可</li>
-<li><strong>允许为一个常量引用绑定非常量对象、字面值，甚至表达式</strong>，非常量不行</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r1 = i; <span class="comment">// correct</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r2 = <span class="number">42</span>; <span class="comment">// correct</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r3 = r1*<span class="number">2</span>; <span class="comment">// correct</span></span><br><span class="line"><span class="keyword">int</span> &amp;r4 = r1*<span class="number">2</span>;     <span class="comment">// 错误，r4是非常量引用</span></span><br></pre></td></tr></table></figure>
-<h6 id="指针和const"><a href="#指针和const" class="headerlink" title="指针和const"></a>指针和const</h6><p><strong>指向常量的指针</strong></p>
-<ul>
-<li><strong>允许指向常量的指针指向非常量对象</strong></li>
-<li>常量对象的地址只能存在指向常量的指针里</li>
-</ul>
-<p><strong>常量指针</strong></p>
-<ul>
-<li>常量指针是常量，必须初始化，且一旦初始化就不能改变，但其指向的对象可以被改变</li>
-</ul>
-<p><strong>顶层const</strong><br>顶层const表示指针本身是个常量，顶层const表示指针指向一个常量<br>左为底，右为顶即可分辨<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> k=<span class="number">0</span>; <span class="comment">// 这个也是顶层const</span></span><br></pre></td></tr></table></figure></p>
-<h6 id="constexpr和常量表达式"><a href="#constexpr和常量表达式" class="headerlink" title="constexpr和常量表达式"></a>constexpr和常量表达式</h6><ul>
-<li>常量表达式的值不会改变，且在编译时期就能得到结果</li>
-<li>C++11中将变量声明为constexpr类型，由编译器验证变量的值是否为常量表达式</li>
-<li><strong>声明为constexpr的变量一定是常量，且必须用常量表达式初始化</strong></li>
-<li>一个constexpr指针的初始值必须是nullprt或者0，或是存储与某个固定地址（比如全局变量，局部变量不行）中的对象</li>
-<li>constexpr声明的指针，仅对指针有约束，不能约束指向的对象，顶层const</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">constexpr <span class="keyword">int</span> * p = nullptr; <span class="comment">// p是指向整数的常量指针</span></span><br></pre></td></tr></table></figure>
-<h5 id="处理类型"><a href="#处理类型" class="headerlink" title="处理类型"></a>处理类型</h5><h6 id="类型别名"><a href="#类型别名" class="headerlink" title="类型别名"></a>类型别名</h6><p><strong>typedef</strong>和<strong>别名声明</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">typedef <span class="keyword">double</span> wage, *p; <span class="comment">// wage是double同义词，p相当于double*</span></span><br><span class="line"></span><br><span class="line">using vi = vector;</span><br></pre></td></tr></table></figure></p>
-<h6 id="auto"><a href="#auto" class="headerlink" title="auto"></a>auto</h6><ul>
-<li>auto定义的变量必须有初始值</li>
-<li>auto可以一次声明多个变量，但是这些变量的初始基本数据类型必须一样</li>
-<li>auto推断的类型与原始类型可能会不太一样，比如<strong>auto会忽略掉顶层const</strong></li>
-<li>引用类型也可以是auto，原来初始化规则适用</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">auto a = i;       <span class="comment">// a是一个整数，顶层const被忽略</span></span><br><span class="line"><span class="keyword">const</span> auto b = i; <span class="comment">// b是一个const int</span></span><br><span class="line"></span><br><span class="line">auto &amp;c = i;</span><br><span class="line">auto &amp;d = <span class="number">42</span>; <span class="comment">// 错误</span></span><br><span class="line"><span class="keyword">const</span> auto &amp;e = <span class="number">42</span>; <span class="comment">// 正确</span></span><br></pre></td></tr></table></figure>
-<h6 id="decltype"><a href="#decltype" class="headerlink" title="decltype"></a>decltype</h6><ul>
-<li>decltype的作用是<strong>选择并返回操作数的严格基本类型</strong></li>
-<li>如果decltype使用的表达式是一个变量，则decltype返回该变量的类型（包括const和引用）</li>
-<li>如果表达式内容是解引用，decltype得到引用类型</li>
-<li>如果<strong>变量名加上了一层或多层括号，就会被当成表达式，会得到引用类型</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> ci=<span class="number">0</span>, &amp;cj=ci;</span><br><span class="line">decltype(ci) x=<span class="number">0</span>;  <span class="comment">// x为const int</span></span><br><span class="line">decltype(cj) y=x;  <span class="comment">// y为const int&amp;，y绑定到x</span></span><br><span class="line">decltype(cj) z;    <span class="comment">// 错误，z是引用，必须初始化</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i=<span class="number">42</span>, *p=&amp;i;</span><br><span class="line">decltype(*p) c;    <span class="comment">// 错误，c是int&amp;，必须初始化</span></span><br><span class="line"></span><br><span class="line">decltype(i) m;     <span class="comment">// 正确，一个未初始化的int</span></span><br><span class="line">decltype((i)) n;   <span class="comment">// 错误，int&amp; 必须初始化</span></span><br></pre></td></tr></table></figure>
-<h4 id="字符串，向量，数组"><a href="#字符串，向量，数组" class="headerlink" title="字符串，向量，数组"></a>字符串，向量，数组</h4><p>数组不允许直接拷贝、赋值</p>
-<h5 id="字符数组"><a href="#字符数组" class="headerlink" title="字符数组"></a>字符数组</h5><p>字符数组可以使用字符串字面值进行初始化，但字符串结尾处还有一个空字符<code>&#39;\0&#39;</code>，这个空字符也会被拷贝到数组中去</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> a1[] = &#123;<span class="string">'c'</span>,<span class="string">'+'</span>, <span class="string">'+'</span>&#125;;         <span class="comment">// 长度为3</span></span><br><span class="line"><span class="keyword">char</span> a2[] = &#123;<span class="string">'c'</span>,<span class="string">'+'</span>, <span class="string">'+'</span>, <span class="string">'\0'</span>&#125;;  <span class="comment">// 长度为4</span></span><br><span class="line"><span class="keyword">char</span> a3[] = <span class="string">"c++"</span>;              <span class="comment">// 长度为4</span></span><br><span class="line"><span class="keyword">char</span> a4[<span class="number">3</span>] = <span class="string">"c++"</span>;            <span class="comment">// 错误，数组空间不足</span></span><br></pre></td></tr></table></figure>
-<h5 id="负载数组声明"><a href="#负载数组声明" class="headerlink" title="负载数组声明"></a>负载数组声明</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> * ptr[<span class="number">10</span>];           <span class="comment">// 含义10个整型指针的数组 </span></span><br><span class="line"><span class="keyword">int</span> &amp;refs[<span class="number">10</span>]=<span class="comment">/*...*/</span>  <span class="comment">// 不存在引用的数组</span></span><br><span class="line"><span class="keyword">int</span> (*Parray)[<span class="number">10</span>];     <span class="comment">// 指向一个10个整型元素数组的指针</span></span><br><span class="line"><span class="keyword">int</span> (&amp;arrRef)[<span class="number">10</span>]     <span class="comment">// 引用一个10个整型元素数组的指针</span></span><br></pre></td></tr></table></figure>
-<h5 id="显式类型转换"><a href="#显式类型转换" class="headerlink" title="显式类型转换"></a>显式类型转换</h5><h6 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a>static_cast</h6><p><strong><code>static_cast</code>可以完成任何具有明确定义的类型转换(支持强制转换)，只要不包含底层const</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i=<span class="number">2</span>,j=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">double</span> slope = static_cast&lt;<span class="keyword">double</span>&gt;(j) / i;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span>* p = &amp;d;</span><br><span class="line"><span class="keyword">double</span> *dp = static_cast&lt;<span class="keyword">double</span>*&gt;(p);</span><br></pre></td></tr></table></figure></p>
-<h6 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h6><p><strong><code>const_cast</code>只能改变运算对象的底层const</strong>，通常用于有函数重载的上下文中<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *pc;</span><br><span class="line"><span class="keyword">char</span> *p = const_cast&lt;<span class="keyword">char</span>*&gt;(pc);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *cp;</span><br><span class="line"><span class="keyword">char</span> *q = static_cast&lt;<span class="keyword">char</span>*&gt;(cp);  <span class="comment">// 错误，static_cast不能转换掉const性质</span></span><br><span class="line">static_cast&lt;string&gt;(cp);           <span class="comment">// 正确，字符串字面值转换成string属性</span></span><br><span class="line"><span class="keyword">const</span>&lt;string&gt;(cp);                 <span class="comment">// 错误，const_cast只改变常量属性</span></span><br></pre></td></tr></table></figure></p>
-<h6 id="reinterpret-cast"><a href="#reinterpret-cast" class="headerlink" title="reinterpret_cast"></a>reinterpret_cast</h6><p><strong><code>reinterpret_cast</code>通常为运算对象的位模式提供较低层次上的重新解释</strong>，容易引发错误<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *ip;</span><br><span class="line"><span class="keyword">char</span> *cp = reinterpret_cast&lt;<span class="keyword">char</span>*&gt;(ip); <span class="comment">// 虽然转换，但pc所指对象依旧是int型</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h4><h5 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h5><ul>
-<li><strong>用实参初始化形参时会忽略掉顶层const，也就是说给形参传递常量对象或者非常量对象都可以</strong></li>
-<li>由于顶层const被忽略，只有形参顶层const差异的函数会被当成同一个函数</li>
-<li><strong>可以使用一个非常量初始化一个底层const对象，但是反过来不行</strong></li>
-<li><strong>普通引用必须用同类型的对象初始化</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;...&#125;        <span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> i)</span></span>&#123;...&#125;  <span class="comment">// 错误，重复定义func</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//————————————————————————————————————————————————————————</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">reset</span><span class="params">(<span class="keyword">int</span> &amp;i)</span></span>&#123;i=<span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> ci = i;</span><br><span class="line">string::size_type ctr = <span class="number">0</span>;</span><br><span class="line">reset(&amp;i);           <span class="comment">// 调用形参类型是int*的reset函数</span></span><br><span class="line">reset(i);            <span class="comment">// 调用形参类型是int&amp;的reset函数</span></span><br><span class="line">reset(&amp;ci);          <span class="comment">// 错误，普通引用必须用同类型的对象初始化</span></span><br><span class="line">reset(ci);           <span class="comment">// 错误，普通引用必须用同类型的对象初始化</span></span><br><span class="line">reset(<span class="number">42</span>);           <span class="comment">// 错误，普通引用必须用同类型的对象初始化</span></span><br><span class="line">reset(ctr);          <span class="comment">// 错误，普通引用必须用同类型的对象初始化</span></span><br></pre></td></tr></table></figure>
-<h5 id="引用返回左值"><a href="#引用返回左值" class="headerlink" title="引用返回左值"></a>引用返回左值</h5><ul>
-<li>一般函数的返回值均为右值，但也有返回左值的函数</li>
-<li>由函数的返回值类型决定，具体来说，<strong>调用一个返回引用的函数得到左值，其他类型为右值</strong></li>
-<li><strong>左值可以被赋值，右值不行</strong></li>
-<li>如果返回值类型是常量引用，那么就不能赋值了（常量不能修改啊）</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> &amp;get_val(string &amp;s, string::size_type ix) &#123; <span class="comment">//返回的是引用</span></span><br><span class="line">    <span class="keyword">return</span> s[ix];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">string <span class="title">s</span><span class="params">(<span class="string">"hello world"</span>)</span></span>;</span><br><span class="line">get_val(s,<span class="number">3</span>) = <span class="string">'A'</span>;       <span class="comment">// 可以对左值进行赋值</span></span><br></pre></td></tr></table></figure>
-<h5 id="返回数组指针"><a href="#返回数组指针" class="headerlink" title="返回数组指针"></a>返回数组指针</h5><p>普通的数组指针声明如下</p>
-<pre><code>type (*name)[dimension]
-</code></pre><p>返回数组指针的函数形式如下</p>
-<pre><code>type ( *function(parameter_list) ) [dimension]
-</code></pre><h6 id="类型别名-1"><a href="#类型别名-1" class="headerlink" title="类型别名"></a>类型别名</h6><p>也可以考虑使用类型别名</p>
-<pre><code>typedef int arrT[10];
-using arrT = int[10];
-arrt* func(int i);
-</code></pre><h6 id="尾置返回类型"><a href="#尾置返回类型" class="headerlink" title="尾置返回类型"></a>尾置返回类型</h6><ul>
-<li>任何函数都可以使用尾置返回类型</li>
-<li>这种返回方法对复杂的返回类型比较有效</li>
-<li>尾置返回类型跟在形参列表后面，以<code>-&gt;</code>开头，在原本返回类型出现的地方加上<code>auto</code></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">auto <span class="title">func</span><span class="params">(<span class="keyword">int</span> i)</span> -&gt; <span class="title">int</span><span class="params">(*)</span> [10]</span>;</span><br></pre></td></tr></table></figure>
-<h6 id="使用decltype"><a href="#使用decltype" class="headerlink" title="使用decltype"></a>使用decltype</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> odd[] = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">9</span>&#125;;</span><br><span class="line"><span class="comment">// decltype(odd) 返回的是数组，需要在加一个*变成指针</span></span><br><span class="line">decltype(odd) * func(<span class="keyword">int</span> i) &#123;</span><br><span class="line">    <span class="comment">// ...........</span></span><br><span class="line">    <span class="keyword">return</span> &amp;odd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h5><ul>
-<li>重载函数的名字肯定一样，需要形参类型或者数量上有差异</li>
-<li>仅仅返回值不一样不是重载函数，而是重定义</li>
-<li><strong>仅有顶层const的差异不构成重载，底层const可以</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> i)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> i)</span></span>;      <span class="comment">// 顶层const，重复定义</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> * i)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> *i)</span></span>;     <span class="comment">// 底层const，重载函数，指针换引用也一样</span></span><br></pre></td></tr></table></figure>
-<h6 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h6><ul>
-<li><strong>如果在内层作用域中声明名字，它将隐藏外层作用域中所有同名的实体</strong></li>
-<li>声明在内部作用域的名字可能会是外部作用域中同名的所有重载函数失效（不声明名字就没事）</li>
-<li>不同的作用域中无法承载函数名</li>
-</ul>
-<h5 id="默认语言用途"><a href="#默认语言用途" class="headerlink" title="默认语言用途"></a>默认语言用途</h5><h6 id="默认实参"><a href="#默认实参" class="headerlink" title="默认实参"></a>默认实参</h6><ul>
-<li>默认实参填补函数调用缺少的尾部实参，所以默认形参都在尾部</li>
-<li>尾部参数没省略时，中间参数不能省略</li>
-<li>给定作用域中，一个形参只能被赋予一次默认实参</li>
-<li><strong>局部变量不能成为默认实参</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">screen</span><span class="params">(sz, sz, <span class="keyword">char</span>=<span class="string">' '</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">screen</span><span class="params">(sz, sz, <span class="keyword">char</span>=<span class="string">'*'</span>)</span></span>;  <span class="comment">// 错误，重复声明</span></span><br></pre></td></tr></table></figure>
-<h6 id="函数匹配"><a href="#函数匹配" class="headerlink" title="函数匹配"></a>函数匹配</h6><ul>
-<li>优先选择精确匹配、最匹配，所谓最匹配要看实参与形参的接近程度</li>
-<li>有且只有一个函数满足以下条件，则匹配成功<ul>
-<li>该函数每个函数的匹配都不劣与其他函数需要的匹配</li>
-<li>至少有一个实参的匹配优于其他可行函数提供的匹配</li>
-</ul>
-</li>
-<li>上面两步检查后没有函数脱颖而出，那么判定为二义性，报错</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">(<span class="keyword">double</span>, <span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">f(<span class="number">2</span>,<span class="number">2.5</span>);</span><br></pre></td></tr></table></figure>
-<p>上面的例子中，对于第一个实参，<code>f(int,int)</code>好；对于第二个实参，<code>f(double,double)</code>好。最终判断此调用具有二义性，拒绝请求。</p>
-<p>实参到形参的类型转换分为几个等级，如下</p>
-<ol>
-<li>精确匹配<ul>
-<li>实参、形参类型相同</li>
-<li>实参从数组或函数类型转化成对应的指针</li>
-<li>向实参添加顶层const、从实参中删除顶层const</li>
-</ul>
-</li>
-<li>通过const转换实现的匹配（比如创建指向非常量的常量指针、引用）</li>
-<li>通过类型提升实现的匹配（short+int=int整型提升）</li>
-<li>通过算术类型转换（int转double，所有算术类型转换级别一样）或指针实现的匹配</li>
-<li>通过类类型转换实现的匹配</li>
-</ol>
-<h5 id="inline和constexpr"><a href="#inline和constexpr" class="headerlink" title="inline和constexpr"></a>inline和constexpr</h5><ul>
-<li>inline函数编译时，一般适用于代码量很少的函数</li>
-<li>const是指用于常量表达式的函数，返回类型及所有形参都必须是字面值类型，并且要求有且只有一个return语句</li>
-<li>inline函数和constexpr函数可以多次定义，且通常定义在头文件内</li>
-</ul>
-<h5 id="调试帮助"><a href="#调试帮助" class="headerlink" title="调试帮助"></a>调试帮助</h5><h6 id="assert"><a href="#assert" class="headerlink" title="assert"></a>assert</h6><p>assert的用法是<code>assert(expr);</code>，如果表达式expr的值为true，assert什么也不做；否则，assert输出信息并终止程序执行。</p>
-<h6 id="NDEBUG"><a href="#NDEBUG" class="headerlink" title="NDEBUG"></a>NDEBUG</h6><p>如果定义了NDEBUG，那么调试模式就关闭了，assert就不能起作用了。此外，NDEBUG也有助于开发者编写自己的调试代码。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#define NDEBUG  // 表示关闭了调试模式</span><br><span class="line"></span><br><span class="line"># ifndef NDEBUG  // 没有关闭调试模式</span><br><span class="line"><span class="comment">// 。。。。</span></span><br><span class="line"># endif</span><br></pre></td></tr></table></figure></p>
-<h5 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h5><ul>
-<li>函数指针也是指针，可以赋值为nullptr、0等</li>
-<li>指向不同函数类型的函数指针不存在类型转换</li>
-<li><strong>定义重载函数指针时，指针类型必须与重载函数中的某一个精确匹配</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">bool <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="comment">// 定义函数指针</span></span><br><span class="line">bool (*pf)(<span class="keyword">int</span>) = func;     <span class="comment">// 定义指向函数func的函数指针</span></span><br><span class="line">bool (*pf)(<span class="keyword">int</span>) = &amp;func   <span class="comment">// 与上面等价</span></span><br><span class="line"><span class="comment">// 使用函数指针</span></span><br><span class="line">pf(<span class="number">1</span>);</span><br><span class="line">(*pf)(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-<p><strong>C++中，形参和返回值都不能是函数，但可以是函数指针</strong>，使用类型别名、decltype等可以使得函数指针的声明变得简单<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等价的两种定义方式，funcp可以使用在函数实参、返回值</span></span><br><span class="line"><span class="function">typedef <span class="title">bool</span> <span class="params">(*funcp)</span> <span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function">typedef <span class="title">decltype</span><span class="params">(func)</span> *funcp</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用using、尾置返回类型</span></span><br><span class="line">using pf = bool(*) (<span class="keyword">int</span>);  <span class="comment">// pf是函数指针</span></span><br><span class="line"><span class="function">pf <span class="title">f1</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">using f  = bool (<span class="keyword">int</span>);     <span class="comment">// f类型是函数</span></span><br><span class="line">f *f1(<span class="keyword">int</span>);                    <span class="comment">// 显示指定返回类型是指向函数的指针</span></span><br><span class="line"></span><br><span class="line"><span class="function">auto <span class="title">f1</span><span class="params">(<span class="keyword">int</span>)</span> -&gt; <span class="title">bool</span><span class="params">(*)</span> <span class="params">(<span class="keyword">int</span>)</span></span>; <span class="comment">// 尾置返回类型指定返回类型</span></span><br><span class="line">decltype(func) *f1(<span class="keyword">int</span>);        <span class="comment">// 知道返回的函数是哪一个更方便</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="类"><a href="#类" class="headerlink" title="类"></a>类</h4><h5 id="定义抽象数据类型"><a href="#定义抽象数据类型" class="headerlink" title="定义抽象数据类型"></a>定义抽象数据类型</h5><h6 id="const成员函数"><a href="#const成员函数" class="headerlink" title="const成员函数"></a>const成员函数</h6><ul>
-<li>const成员函数不能改变调用它的对象的内容</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">const_func</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">const</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回this对象的函数</span></span><br><span class="line"><span class="comment">// 返回值是引用</span></span><br><span class="line">New_Class&amp; New_Class::hello () &#123;</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">    attribute += <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line">New_Class nc;</span><br><span class="line">nc.hello();  <span class="comment">// nc的attribute属性已经改变了</span></span><br></pre></td></tr></table></figure>
-<h6 id="类相关的非成员函数"><a href="#类相关的非成员函数" class="headerlink" title="类相关的非成员函数"></a>类相关的非成员函数</h6><ul>
-<li>这里的相关非成员函数包括但不限于<code>read</code>、<code>print</code>等</li>
-<li>如果非成员函数是类接口的组成部分，这些函数的声明应当与类在同一个头文件内</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IO类型不能拷贝，所以只能以引用的形式加入形参</span></span><br><span class="line"><span class="comment">// 最后需要返回IO类型的引用</span></span><br><span class="line"><span class="comment">// ostream、print也类似，定义输出函数应该尽量减少对格式的控制</span></span><br><span class="line">istream &amp;read(istream &amp;is, New_Class &amp;item) &#123;</span><br><span class="line">    is &gt;&gt; item.a1 &gt;&gt; item.a2 &gt;&gt; item.a3;</span><br><span class="line">    <span class="keyword">return</span> is;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 调用</span></span><br><span class="line">istream &amp;is;</span><br><span class="line">read(is, *<span class="keyword">this</span>)</span><br></pre></td></tr></table></figure>
-<h6 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h6><ul>
-<li><strong>构造函数不能为const</strong></li>
-<li><strong>const对象和引用都应该在初始值列表中初始化</strong></li>
-<li>初始化列表：成员初始化的顺序与类定义中的顺序一致</li>
-<li>构造const对象时，知道构造函数完成其初始化过程，对象才能取得其“常量”属性</li>
-<li>默认构造函数的规则如下：<ul>
-<li>如果有别的构造函数，编译器不会生成默认构造函数</li>
-<li><strong>如果存在类内初始值，用它来初始化成员</strong></li>
-<li>否则，默认初始化（string为””，int块外为0，块内未定义）</li>
-</ul>
-</li>
-<li>C++11中，如果需要默认行为可以在参数列表之后写上 <code>=default</code>要求编译器生成默认构造函数</li>
-<li><strong>当某个数据成员被构造函数初始值列表忽略时，它将以合成默认构造函数相同的方式隐式初始化</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有其他构造函数的情况下，还想要默认构造函数可以这样</span></span><br><span class="line">New_Class() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过默认参数也等与实现了默认构造函数</span></span><br><span class="line">New_Class(string s = <span class="string">" "</span>):name(s)&#123;&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>委托构造函数</strong>就是利用其他构造函数执行自己的初始化过程，其在参数列表初始化位置调用其他构造函数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">New_Class() : New_Class(<span class="string">"zhangsan"</span>)&#123;&#125;</span><br></pre></td></tr></table></figure></p>
-<h6 id="隐式类类型转换"><a href="#隐式类类型转换" class="headerlink" title="隐式类类型转换"></a>隐式类类型转换</h6><ul>
-<li>通过一个实参调用的构造函数定义一条<strong>从构造函数参数类型向类类型隐式转换</strong>的规则</li>
-<li>只允许一步类类型转换，隐式转换可能会出错</li>
-<li>抑制隐式转换的方法是在构造函数前加上关键字<code>explicit</code></li>
-<li>使用<code>static_cast</code>这样的显式转换也能达到转换的效果<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string lisi = <span class="string">"lisi"</span>;</span><br><span class="line"><span class="function">New_Class <span class="title">zhangsan</span><span class="params">(<span class="string">"zhangsan"</span>)</span></span>;</span><br><span class="line"><span class="comment">// playWith函数的参数类型是New_Class</span></span><br><span class="line">zhangsan.playWith(lisi);</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h5 id="访问控制与封装"><a href="#访问控制与封装" class="headerlink" title="访问控制与封装"></a>访问控制与封装</h5><ul>
-<li>class和struct定义类时的唯一区别就是默认访问权限</li>
-<li>struct默认为public，而class默认为private</li>
-</ul>
-<h6 id="友元"><a href="#友元" class="headerlink" title="友元"></a>友元</h6><ul>
-<li>类中使用<code>friend</code>关键字可以使其他类或者函数成为它的友元</li>
-<li>成为友元的类、函数可以访问当前类的非公有成员</li>
-<li>友元不是类的成员，不受其所在区域访问控制级别的约束</li>
-<li>类内友元函数的声明并非普通意义上的声明，所以在其他地方还得声明一次，即便定义在类内部也还要在外面声明</li>
-<li>友元函数也可以定义在类内部，隐式inline</li>
-<li><strong>友元关系不存在传递性</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Class2</span> </span>&#123;</span><br><span class="line">friend <span class="class"><span class="keyword">class</span> <span class="title">Class1</span></span>;</span><br><span class="line">friend istream &amp; read(istream &amp;is, Class2 &amp; c2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="其他特性"><a href="#其他特性" class="headerlink" title="其他特性"></a>其他特性</h6><ul>
-<li>定义在类内部的成员函数自动是<code>inline</code>类型的</li>
-<li><strong><code>mutable</code>成员用于不会是const，即使在const成员函数内他也是可以被改变的</strong></li>
-<li>返回<code>*this</code>的函数返回的是左值引用（返回类型是引用），返回的是对象本身而不是副本</li>
-</ul>
-<h6 id="聚合类"><a href="#聚合类" class="headerlink" title="聚合类"></a>聚合类</h6><ul>
-<li>所有成员都是public</li>
-<li>没有定义任何构造函数</li>
-<li><strong>没有类内初始值</strong></li>
-<li>没有基类、没有虚函数</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct data &#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    string s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="类的静态成员"><a href="#类的静态成员" class="headerlink" title="类的静态成员"></a>类的静态成员</h5><ul>
-<li>静态成员于类本身直接相关</li>
-<li>静态成员函数不包含this指针、也不能显式、隐式地使用this指针（<strong>不能操作非静态成员</strong>）</li>
-<li><strong>静态成员函数不能声明成const</strong></li>
-<li>在类的外部定义静态成员时，不能重复static关键字</li>
-<li>静态成员变量应该在类的外部定义</li>
-<li>静态数据成员可以是不完全类型（类在声明之后、定义之前称为不完全类型）</li>
-<li>静态成员可以是默认实参，非静态的不可以</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> A a;  <span class="comment">// 正确，静态成员可以使不完全类型</span></span><br><span class="line">    A b;           <span class="comment">// 错误，数据成员必须是完全类型，不过可以定义指针、引用</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="IO库与容器库"><a href="#IO库与容器库" class="headerlink" title="IO库与容器库"></a>IO库与容器库</h4><h5 id="string流"><a href="#string流" class="headerlink" title="string流"></a>string流</h5><p><code>sstream</code>包含三个支持string读写的类型，分别是<code>istringstream</code>、<code>ostringstream</code>和<code>stringstream</code>。<br>sstream的使用可以如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sstream strm;</span><br><span class="line"><span class="function">sstream <span class="title">strm</span><span class="params">(s)</span></span>; <span class="comment">// strm是sstream的对象，保存string s的拷贝</span></span><br><span class="line"></span><br><span class="line">strm.str()           <span class="comment">// 返回strm所保存的string的拷贝</span></span><br><span class="line">strm.str(s)         <span class="comment">// copy string s to strm, return void</span></span><br></pre></td></tr></table></figure></p>
-<p><code>istringstream</code>、<code>ostringstream</code>的用法也很简单，如下所示<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">string <span class="title">line</span><span class="params">(<span class="string">"suck my balls"</span>)</span>, word</span>;</span><br><span class="line"><span class="function">istringstream <span class="title">is</span><span class="params">(line)</span></span>;</span><br><span class="line"><span class="keyword">while</span> (is &gt;&gt; word)</span><br><span class="line">    cout &lt;&lt; word &lt;&lt; endl;</span><br></pre></td></tr></table></figure></p>
-<p>向<code>ostringstream</code>对象写入string其实就是将string添加字符。</p>
-<h6 id="array"><a href="#array" class="headerlink" title="array"></a>array</h6><ul>
-<li>array容器的大小是一定的，其大小也是类型的一部分</li>
-<li>array容器与普通数组不同的是，array支持拷贝与赋值</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">array&lt;<span class="keyword">int</span>&gt; arr;  <span class="comment">// 错误，缺少大小</span></span><br><span class="line">array&lt;<span class="keyword">int</span>, <span class="number">10</span>&gt; arr1 <span class="comment">// 正确</span></span><br><span class="line"></span><br><span class="line">array&lt;<span class="keyword">int</span>, <span class="number">3</span>&gt; arr = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>&#125;;</span><br><span class="line">array&lt;<span class="keyword">int</span>, <span class="number">3</span>&gt; arr1 = arr;  <span class="comment">//正确，类型一定要一致</span></span><br></pre></td></tr></table></figure>
-<h6 id="顺序容器的操作"><a href="#顺序容器的操作" class="headerlink" title="顺序容器的操作"></a>顺序容器的操作</h6><pre><code>seq.assign(b,e); // 将seq中的元素替换成迭代器b、e所表示范围中的元素
-seq.assign(il);   // 将seq中的元素替换成初始化列表il中的元素，比如il={1,2,3,4}，为值列表
-seq.assign(n,t); // 将seq中的元素替换成n个元素t
-
-c.insert(p, t); // 在迭代器p之前添加元素t，返回添加元素的迭代器
-c.insert(p, n, t); // 在迭代器p之前添加n个元素t，返回第一个添加的元素的迭代器
-c.insert(p, b, e); // 在迭代器p之前添加迭代器b、e之间的元素
-c.insert(p, il);
-</code></pre><p><strong>向一个vector、string、deque插入元素会使所有的指向容器的迭代器、引用和指针失效</strong></p>
-<ul>
-<li><code>emplace_front, emplace_back, emplace</code>分别对应<code>push_front, push_back, insert</code></li>
-<li>这些函数可以构造元素</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">person</span></span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    string name;</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">    person(string nm, <span class="keyword">int</span> ag);</span><br><span class="line">&#125;</span><br><span class="line">c.emplace_front(<span class="string">"zhangsan"</span>, <span class="number">10</span>); <span class="comment">// 插入10岁的zhangsan的元素</span></span><br><span class="line">c.push_front(<span class="string">"zhangsan"</span>, <span class="number">10</span>); <span class="comment">// 错误，没有接受三个参数的push_front版本</span></span><br><span class="line">c.push_front(person(<span class="string">"zhangsan"</span>,<span class="number">10</span>)); <span class="comment">// 正确，先构造对象</span></span><br></pre></td></tr></table></figure>
-<p>顺序容器还支持关系运算符，从头向尾比较，比较直观。</p>
-<h6 id="swap"><a href="#swap" class="headerlink" title="swap"></a>swap</h6><pre><code>c1.swap(c2);
-swap(c1, c2);
-</code></pre><ul>
-<li>swap交换元素很快，因为元素本身没有交换，swap只是交换了两个容器的内部数据结构</li>
-<li>array是个例外，swap真正交换元素，所以交换所需时间与元素数目成正比</li>
-</ul>
-<h6 id="改变容器大小、容量"><a href="#改变容器大小、容量" class="headerlink" title="改变容器大小、容量"></a>改变容器大小、容量</h6><p><strong>改变size</strong>：size是容器当前大小，采用多退少补的方法</p>
-<ul>
-<li>函数resize可以改变改变容器大小<code>resize(n)</code>，也可以将新添加的元素设置为t <code>resize(n,t)</code></li>
-<li>array不支持</li>
-</ul>
-<p><strong>改变capacity</strong>：capacity是容器的最大容量</p>
-<ul>
-<li><code>capacity()</code>获取容量</li>
-<li><code>reserve(n)</code>分布至少能容纳n个元素的内存空间</li>
-<li><code>shrink_to_fit()</code>将<code>capacity</code>减少为<code>size</code>大小</li>
-</ul>
-<h6 id="string的搜索操作"><a href="#string的搜索操作" class="headerlink" title="string的搜索操作"></a>string的搜索操作</h6><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>函数</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>s.find(args)</td>
-<td>s中args第一次出现的位置</td>
-</tr>
-<tr>
-<td>s.rfind(args)</td>
-<td>s中args最后一次出现的位置</td>
-</tr>
-<tr>
-<td>s.find_first_of(args)</td>
-<td>s中查找args中任何一个字符第一次出现的位置</td>
-</tr>
-<tr>
-<td>s.find_last_of(args)</td>
-<td>s中查找args中任何一个字符最后一次出现的位置</td>
-</tr>
-<tr>
-<td>s.find_first_not_of(args)</td>
-<td>s中查找第一个不在args中的字符</td>
-</tr>
-<tr>
-<td>s.find_last_not_of(args)</td>
-<td>s中查找最后一个不在args中的字符</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>其中<code>args</code>的形式为包括（pos默认为0）</p>
-<pre><code>c, pos ：    pos为开始查找的位置，c是一个字符
-s2, pos：    s2是字符串
-cp, pos：    cp是指向c风格的字符串的指针（以&#39;\0&#39;结尾）
-cp, pos, n： n表示只看前n个字符
-</code></pre><p>搜索失败则返回一个名为<code>string::npos</code>的static成员，其值初始化为-1.</p>
-<h6 id="string数制转换"><a href="#string数制转换" class="headerlink" title="string数制转换"></a>string数制转换</h6><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>函数</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>to_string(val)</td>
-<td>任何算术类型向string转换</td>
-</tr>
-<tr>
-<td>stoi(s, p, b)</td>
-<td>string转int，s是字符串</td>
-</tr>
-<tr>
-<td>stol(s, p, b)</td>
-<td>string转long，b是转换基数（默认为10，十进制）</td>
-</tr>
-<tr>
-<td>stoul(s, p, b)</td>
-<td>string转unsigned long，p是起始位置</td>
-</tr>
-<tr>
-<td>stoll(s, p, b)</td>
-<td>string转long long</td>
-</tr>
-<tr>
-<td>stoull(s, p, b)</td>
-<td>string转unsigned long long</td>
-</tr>
-<tr>
-<td>stof(s, p)</td>
-<td>string转float，p是起始位置</td>
-</tr>
-<tr>
-<td>stod(s, p)</td>
-<td>string转double</td>
-</tr>
-<tr>
-<td>stold(s, p)</td>
-<td>string转long double</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h5 id="容器适配器"><a href="#容器适配器" class="headerlink" title="容器适配器"></a>容器适配器</h5><p><strong>适配器是一种机制，能使某种事物的行为看起来像另外一种事物</strong><br>标准库中有三个顺序容器适配器，<code>stack、queue、priority_queue</code></p>
-<h4 id="泛型算法"><a href="#泛型算法" class="headerlink" title="泛型算法"></a>泛型算法</h4><ul>
-<li>泛型算法定义在头文件<code>numeric</code>中</li>
-</ul>
-<h5 id="几个基本的泛型算法"><a href="#几个基本的泛型算法" class="headerlink" title="几个基本的泛型算法"></a>几个基本的泛型算法</h5><ul>
-<li><code>find(iter1, iter2, val);</code> // 元素查找，iter1、iter2迭代器至少查找的范围，val是查找的元素。查找失败返回iter2，否则返回对应的迭代器</li>
-<li><code>accumulate(iter1, iter2, sum);</code>  // 元素累加，执行+运算，sum是和的初值，返回最终的和</li>
-<li><code>equal(iter1, iter2, another_iter);</code>  //  比较两个序列元素是否完全一致，一致返回true。another_iter表示第二个序列的起始迭代器</li>
-<li><code>fill(iter1, iter2, val);</code>  // 将迭代器范围中的每个值置为val</li>
-<li><code>fill_n(iter, n, val);</code>  // 将从iter起的n个元素置为val（必须保证有n个元素）</li>
-<li><code>copy(iter1, iter2, another_iter);</code>  // 将iter1-iter2范围内的元素拷贝到以another_iter起始的位置上，要求another_iter对应的容器大小不能比iter1对应的容器小，返回another_iter的位置迭代器位置</li>
-<li><code>replace(iter1, iter2, val, new_val);</code>  // 迭代器范围内，将所有的val换成 new_val</li>
-<li><code>replace_copy(iter1, iter2, new_iter, val, new_val);</code>  // 保持iter1对应的容器不变，将替换后的结果写入new_iter对应的容器中</li>
-<li><code>unique(iter1, iter2);</code>  // 去重，返回指向不重复区域之后一个位置的迭代器</li>
-</ul>
-<h5 id="定制操作"><a href="#定制操作" class="headerlink" title="定制操作"></a>定制操作</h5><h6 id="lambda表达式"><a href="#lambda表达式" class="headerlink" title="lambda表达式"></a>lambda表达式</h6><pre><code>[捕获列表] (参数列表) -&gt; 返回类型 {函数体};
-</code></pre><ul>
-<li>lambda可以理解成未命名的inline函数</li>
-<li>捕获列表：表达式所在函数的局部变量列表，局部变量间以<code>,</code>分隔，通常为空。<code>&amp;</code>引用捕获，<code>=</code></li>
-<li>参数列表、返回类型、函数体和普通函数一个意思</li>
-<li><strong>参数列表和返回类型可以忽略，但捕获列表和函数体必须存在</strong></li>
-<li>lambda表达式的返回值是一个可调用对象，不接收参数，直接带括号调用。可调用对象包括函数、函数指针、lambda表达式等</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto f = []&#123;<span class="keyword">return</span> <span class="number">0</span>;&#125; <span class="comment">// f是可调用对象</span></span><br><span class="line">cout &lt;&lt; f() &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
-<h6 id="bind函数"><a href="#bind函数" class="headerlink" title="bind函数"></a>bind函数</h6><ul>
-<li>头文件为<code>functional</code></li>
-<li>接受一个可调用对象，生成一个新的可调用对象来适应原对象的参数列表</li>
-<li>可以看成一个通用的函数适配器</li>
-<li><p>bind在绑定过程中都是采用参数拷贝的方式，所以对于需要引用的类型，可以使用<code>ref</code>、<code>cref</code>函数表示引用（常量c）</p>
-<p>  <code>auto newCallable = bind(callable, arg_list);</code></p>
-</li>
-</ul>
-<p><code>arg_list</code>中可能包含<code>_n</code>这样的名字（n是整数），这些是占位符，表示newCallable的参数。<code>_n</code>表示第n个参数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// f是有5个参数的可调用对象</span></span><br><span class="line">auto g = bind(f, a, b, _2, c, _1);</span><br><span class="line"><span class="comment">// 传递给g的参数会被分别绑定到_1、_2位置上</span></span><br><span class="line"><span class="comment">// g(X, Y) 等价于 f(a, b, Y, c, X)</span></span><br><span class="line"></span><br><span class="line">ostream &amp;print(ostream &amp;os, string &amp;s, <span class="keyword">char</span> c) &#123;</span><br><span class="line">    <span class="keyword">return</span> os &lt;&lt; s &lt;&lt; c;</span><br><span class="line">&#125;</span><br><span class="line">for_each(words.begin(), words.end(), bind(print, os, _1, <span class="string">' '</span>));  <span class="comment">// 错误，os不能拷贝</span></span><br><span class="line">for_each(words.begin(), words.end(), bind(print, ref(os), _1, <span class="string">' '</span>));  <span class="comment">//正确</span></span><br></pre></td></tr></table></figure></p>
-<h5 id="特殊迭代器"><a href="#特殊迭代器" class="headerlink" title="特殊迭代器"></a>特殊迭代器</h5><h6 id="插入迭代器"><a href="#插入迭代器" class="headerlink" title="插入迭代器"></a>插入迭代器</h6><p>包括<code>back_inserter, front_inserter, inserter</code>三种，分别创建使用<code>push_back, push_front, insert</code>的迭代器。<br>使用 <code>inserter(c, iter)</code>时，插入元素位置在iter位置之前，并且插入前后，iter指向的元素不变；但是<code>front_inserter(c)</code>就一直在容器头部插入。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">list&lt;<span class="keyword">int</span>&gt; lst = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">list&lt;<span class="keyword">int</span>&gt; lst2, lst3;</span><br><span class="line"><span class="comment">// 插入后lst2为 4 3 2 1</span></span><br><span class="line">copy(lst.begin(), lst.end(), front_inserter(lst2));</span><br><span class="line"><span class="comment">// 插入后lst3为 1 2 3 4</span></span><br><span class="line">copy(lst.begin(), lst.end(), inserter(lst3, lst3.begin()));</span><br></pre></td></tr></table></figure></p>
-<h6 id="iostream迭代器"><a href="#iostream迭代器" class="headerlink" title="iostream迭代器"></a>iostream迭代器</h6><ul>
-<li>使用流迭代器，必须指定读写对象的类型</li>
-<li>istream_iterator迭代器要读取的内容必须定义了<code>&gt;&gt;</code>运算符，ostream_iterator迭代器要读取的内容必须定义了<code>&lt;&lt;</code>运算符</li>
-<li>默认初始化istream_iterator迭代器，创建一个当作尾后值使用的迭代器</li>
-<li>流迭代器不支持递减<code>--</code>操作</li>
-<li>istream_iterator迭代器支持<code>++, *, -&gt;, ==,  !=</code>运算符</li>
-<li>ostream_iterator迭代器支持<code>++, =,  *</code>运算符</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">istream_iterator&lt;T&gt; <span class="title">in</span><span class="params">(is)</span></span>;  <span class="comment">// 迭代器对象in从输入流is中读取类型为T的值</span></span><br><span class="line">istream_iterator&lt;T&gt; eof;     <span class="comment">// 尾后迭代器</span></span><br><span class="line"><span class="function">vector&lt;T&gt; <span class="title">vec</span><span class="params">(in, eof)</span></span>;  <span class="comment">// 从迭代器范围构造vector对象</span></span><br><span class="line">accumulate(in, eof, <span class="number">0</span>);   <span class="comment">// 求和</span></span><br><span class="line"></span><br><span class="line"><span class="function">ostream_iterator&lt;T&gt; <span class="title">out</span><span class="params">(os)</span></span>;  <span class="comment">// out将类型为T的输出值写入到输出流os中</span></span><br><span class="line"><span class="function">ostream_iterator&lt;T&gt; <span class="title">out</span><span class="params">(os, d)</span></span>;  <span class="comment">// out将类型为T的输出值写入到输出流os中，每个值后面都额外输出一个d（d是C风格的字符串）</span></span><br><span class="line"><span class="keyword">for</span> (anto e : vec)</span><br><span class="line">    *out++ = e;  <span class="comment">// 直接写out=e;也可以，不过不推荐这么写</span></span><br><span class="line">cout &lt;&lt; endl;</span><br><span class="line">copy(vec.begin(), vec.end(), out);</span><br><span class="line">cout &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
-<h6 id="反向迭代器"><a href="#反向迭代器" class="headerlink" title="反向迭代器"></a>反向迭代器</h6><ul>
-<li>在容器中从尾元素向首元素反向移动的迭代器</li>
-<li>其递增、递减的操作是反过来的，即<code>++</code>会向前移动，前也是相对移动方向的</li>
-<li>除了<code>forward_list</code>外都支持，使用<code>rbegin(),crbegin()</code>等</li>
-</ul>
-<h6 id="链表类容器的特殊方法"><a href="#链表类容器的特殊方法" class="headerlink" title="链表类容器的特殊方法"></a>链表类容器的特殊方法</h6><p><code>list、forward_list</code></p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>lst.merge(lst2)</td>
-<td>将lst2中的元素合并入lst，要求lst、lst2都必须有序</td>
-</tr>
-<tr>
-<td>lst.merge(lst2, comp)</td>
-<td>comp为特定的比较函数</td>
-</tr>
-<tr>
-<td>lst.remove(val)</td>
-<td>调用erase删除lst内与val相等的元素</td>
-</tr>
-<tr>
-<td>lst.remove(pred)</td>
-<td>调用erase删除lst内使得一元谓词pred成立的元素</td>
-</tr>
-<tr>
-<td>lst.reverse()</td>
-<td>反转lst中元素的顺序</td>
-</tr>
-<tr>
-<td>lst.sort()</td>
-<td>排序，可以使用comp</td>
-</tr>
-<tr>
-<td>lst.unique()</td>
-<td>调用erase去重</td>
-</tr>
-<tr>
-<td>lst.unique(pred)</td>
-<td>调用erase去重，重复指的是满足二元谓词pred的元素</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>谓词是返回可以转换为bool类型值的函数。元对应参数个数</strong></p>
-<h4 id="关联容器"><a href="#关联容器" class="headerlink" title="关联容器"></a>关联容器</h4><ul>
-<li>关联容器支持高效的关键字查询和访问，可以分为有序集合和无序集合两种</li>
-<li>map和set的迭代器都不允许修改关键字<h5 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h5>| 有序类型 | 说明 |<br>|————|————|<br>|    map    |     关联数组，保存（key, value）对   |<br>|    set      |       只保存关键字      |<br>|multimap|       关键字可重复出现的map|<br>|multiset|      关键字可重复出现的set    |</li>
-</ul>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>无序类型</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>unordered_map</td>
-<td>用哈希函数组织的map</td>
-</tr>
-<tr>
-<td>unordered_set</td>
-<td>用哈希函数组织的set</td>
-</tr>
-<tr>
-<td>unordered_multimap</td>
-<td>….</td>
-</tr>
-<tr>
-<td>unordered_multiset</td>
-<td>….</td>
-</tr>
-</tbody>
-</table>
-</div>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="keyword">int</span>&gt; vec;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++) &#123;</span><br><span class="line">    vec.push_back(i);</span><br><span class="line">    vec.push_back(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">set&lt;<span class="keyword">int</span>&gt; <span class="title">iset</span><span class="params">(vec.cbegin()</span>, vec.<span class="title">cend</span><span class="params">()</span>)</span>;  <span class="comment">// 10个元素</span></span><br><span class="line"><span class="function">multiset&lt;<span class="keyword">int</span>&gt; <span class="title">imset</span><span class="params">(vec.cbegin()</span>, vec.<span class="title">cend</span><span class="params">()</span>)</span>;  <span class="comment">// 20个元素</span></span><br></pre></td></tr></table></figure>
-<h5 id="关键字类型要求"><a href="#关键字类型要求" class="headerlink" title="关键字类型要求"></a>关键字类型要求</h5><ul>
-<li>有序元素的关键字类型必须定义元素比较的方法</li>
-<li>不支持比较的复杂类型需要自定义比较函数</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// compareClass1是进行Class1对象比较的函数，定义时需要添加比较函数的函数指针</span></span><br><span class="line"><span class="comment">// 直接使用compareClass1也行，因为函数名会转化为函数指针</span></span><br><span class="line"><span class="comment">// 构造函数也使用比较函数的函数指针</span></span><br><span class="line">set&lt;Class1, decltype(compareClass1)*&gt; cls(compareClass1);</span><br></pre></td></tr></table></figure>
-<h6 id="关联容器额外的类型别名"><a href="#关联容器额外的类型别名" class="headerlink" title="关联容器额外的类型别名"></a>关联容器额外的类型别名</h6><pre><code>key_type : 容器的关键字类型
-value_type : 对于set，与key_type相同；map则是pair&lt;key, value&gt;
-mapped_type : 关键字关联的类型
-</code></pre><h5 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h5><pre><code>c.insert(v);
-c.emplace(args);
-c.insert(iter1, iter2);
-c.insert(il);  // 花括号列表，返回void
-c.insert(iter, v); // 迭代器指示搜索新元素存储应该存储的位置。返回一个迭代器，指向具有给定关键字的元素
-c.emplace(iter, args);
-</code></pre><p><strong>对于不包含重复关键字的容器，添加单一元素的inert和emplace返回一个pair，指示插入操作是否成功。pair的首元素（first）是一个迭代器，指向具有指定关键字的元素；second是一个bool值，指示元素成功插入还是已经存在于容器中，成功插入为true，否则为false</strong>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto ret = word_count.insert(&#123;<span class="string">"hello"</span>, <span class="number">1</span>&#125;); 尝试插入</span><br><span class="line"><span class="keyword">if</span> (!ret.second) <span class="comment">// 元素已经存在map中</span></span><br><span class="line">    ++ret.first-&gt;second;  <span class="comment">//  ret.first是指向“hello”关键字的迭代器，迭代器指向的second元素是原本"hello"对应的数目，加一即可</span></span><br></pre></td></tr></table></figure></p>
-<h5 id="访问元素"><a href="#访问元素" class="headerlink" title="访问元素"></a>访问元素</h5><pre><code>c.find(k);  // 返回指向第一个key为k的迭代器
-c.count(k);  // 返回关键字k的个数
-c.lower_bound(k); // 返回一个迭代器，指向第一个关键字不小于k的元素
-c.upper_bound(k);  // 返回一个迭代器，指向第一个关键字大于k的元素
-c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元素的范围。如不存在，则pair的两个成员均为c.end()
-</code></pre><p><code>lower_bound</code>和<code>upper_bound</code>只适用于有序容器<br>通过下标访问元素返回左值，既可以读，也可以写回</p>
-<h5 id="无序容器"><a href="#无序容器" class="headerlink" title="无序容器"></a>无序容器</h5><ul>
-<li>无序容器在存储上组织为一组桶，每个桶保存0个或多个元素</li>
-<li><p>无序容器的性能依赖于哈希函数的质量和桶的大小</p>
-<p>  c.bucket_count();  // 正在使用的桶数目<br>  c.max_bucket_count();  // 容器能容纳的最多的桶的数量<br>  c.bucket_size(n);  // 第n个桶中有多少个元素<br>  c.bucket(k);  //  关键字为k的元素在哪个桶中</p>
-<p>  local_iterator       // 访问桶中元素的迭代器<br>  const_local_iterator   //  const版本<br>  c.begin(n), c.end(n)   //  桶n元素的首、尾迭代器<br>  c.cbegin(n), c.cend(n)</p>
-<p>  c.load_factor();   //  每个桶的平均元素数量，float类型<br>  c.max_load_factor();  // 最大平均桶元素数量，每个桶的平均元素数量大于这个值就需要添加新的桶<br>  c.rehash(n);    //  重组存储，使得bucket_count &gt;= n且bucket_count&gt;size/max_load_factor<br>  c.reserve(n);   //  重组存储，使得c可以保存n个元素且不必rehash</p>
-</li>
-</ul>
-<h6 id="无序容器对关键字的要求"><a href="#无序容器对关键字的要求" class="headerlink" title="无序容器对关键字的要求"></a>无序容器对关键字的要求</h6><ul>
-<li>无序容器使用<code>==</code>运算符比较元素</li>
-<li>使用<code>hash&lt;key_type&gt;</code>类型的对象生成每个元素的哈希值</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">size_t <span class="title">hasher</span><span class="params">(<span class="keyword">const</span> Class1 &amp; cls)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> hash&lt;string&gt;()(cls.name);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">bool <span class="title">eqop</span><span class="params">(<span class="keyword">const</span> Class1 &amp; cls1, <span class="keyword">const</span> Class1 &amp; cls2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> cls1.name == cls2.name;</span><br><span class="line">&#125;</span><br><span class="line">using clsset = unordered_set&lt;Class1, hasher, eqop&gt;;</span><br><span class="line"><span class="comment">// 42是桶大小</span></span><br><span class="line"><span class="function">clsset <span class="title">s</span><span class="params">(<span class="number">42</span>, hasher, eqop)</span></span>;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/02/23/Cpp-Rule-Fragment/" data-id="ck82imy7i0017r4ph5b2qfn4i" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-H-Index" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/02/21/H-Index/">H-Index</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/02/21/H-Index/">
-            <time datetime="2017-02-21T12:30:46.000Z" itemprop="datePublished">2017-02-21</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="H-Index-I"><a href="#H-Index-I" class="headerlink" title="H-Index I"></a>H-Index I</h5><h6 id="H-Index"><a href="#H-Index" class="headerlink" title="H-Index"></a>H-Index</h6><p>维基百科上H-Index的定义如下</p>
-<pre><code>一个科学家的H-Index为h，如果他一共有N篇文章，其中有h篇文章每一篇都至少有h次引用，其他N-h篇论文每一篇都不超过h次引用
-</code></pre><p>比如给定<code>citations = [3, 0, 6, 1, 5]</code>，表示当前研究者有5篇论文，其引用为<code>citations</code>中。因为这些论文中有3篇论文每篇都至少有3次引用，其他2篇都没有3次应用，所以他的H-Index为3。</p>
-<h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定某个科学家论文引用数目的数组（非负），输出他的H-Index</p>
-<h6 id="解题方案"><a href="#解题方案" class="headerlink" title="解题方案"></a>解题方案</h6><p>首先，一个拥有N篇论文的科学家，他的H-Index不可能会超过N，最大就是N，最小是0。所以如果一篇论文的引用超过N，那么这篇论文的引用在计算H-Index时和N个引用是一样的；如果引用小于N，不妨设置为t，这篇论文只在H-Index小于等于t时有用，如果H-Index大于t，这篇论文不能被计数。</p>
-<p>所以，设置一个长度为N+1的辅助数组<code>array</code>，扫描<code>citations</code>数组，对于每个引用t，如果</p>
-<ul>
-<li>t &lt; N   : array[t]++</li>
-<li>t &gt;= N : array[N]++</li>
-</ul>
-<p>得到数组<code>array</code>数组，从后向前，判断方式为如果$ \sum_{k=i}^{N} array[k] &gt;= i $，那么返回$i$，否则继续向前寻找。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hIndex</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt; &amp; citations)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> N = citations.size();</span><br><span class="line">    <span class="keyword">if</span> (N == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">array</span><span class="params">(N+<span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;N; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (citations[i] &gt; N) array[N]++;</span><br><span class="line">        <span class="keyword">else</span> array[citations[i]]++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=N; i&gt;<span class="number">0</span>; i--) &#123;</span><br><span class="line">        sum += array[i];</span><br><span class="line">        <span class="keyword">if</span> (sum &gt;= i) <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="H-Index-II"><a href="#H-Index-II" class="headerlink" title="H-Index II"></a>H-Index II</h5><h6 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h6><p>在H-Index的基础上，假设给定的<code>citations</code>数据是按升序排序的。求H-Index</p>
-<h6 id="解题方案-1"><a href="#解题方案-1" class="headerlink" title="解题方案"></a>解题方案</h6><p>对于第k篇论文，其引用为<code>citations[k]</code>，引用数大于等于<code>citations[k]</code>的论文数量为<code>N-k</code>，所以对应的H-Index为<code>min(N-k, citations[k])</code>。从前向后考虑，开始时始终有<code>citations[k]&lt;N-k</code>，对应的候选H-Index为<code>citations[k]</code>，到后面有<code>citations[k]&gt;N-k</code>，对应的H-Index为<code>N-k</code>。也就是说候选H-Index经历了先增大后减小的过程，转折过程就是<code>citations[k]</code>第一次大于等于<code>N-k</code>的时候。由于H-Index也限制“其他N-h篇论文每一篇都不超过h次引用”，所以我们的目标就是找到第一个<code>citations[k]&gt;=N-k</code>的序号k，因为此时k对应的候选H-Index为<code>N-k</code>，而k-1对应的候选H-Index肯定小于<code>N-k+1</code>，所以k必对应着最优解。</p>
-<p>现在有了O(n)复杂度的算法，考虑到引用数据是严格有序的，所以可以使用类似于二分搜索的方法。此时，可以稍微换个角度思考。对于第k篇论文，其引用为<code>citations[k]</code>，如果<code>N-k&gt;=citations[k]</code>，那么<code>citations[k]</code>就是合格的H-Index，此时应该向右尝试寻找更大的H-Index（因为左边的<code>citations</code>小）；如果<code>N-k&lt;citations[k]</code>，那么<code>citations[k]</code>就不是一个当前合法的H-Index（N-k是），所以要向左尝试寻找。</p>
-<p>出现<code>N-k=citations[k]</code>直接结束了。否则必然存在k满足<code>citations[k]&lt;N-k &amp;&amp; citations[k+1]&gt;N-k-1</code>，现在考虑<code>k,k+1,left,right</code>最终的可能关系，如下</p>
-<pre><code>| k       k+1    |            k     k+1 |  k    k+1            |  k   k+1                   |                   k    k+1  |
-| left     right | left    right        |       left     right |              left    right |  left    right               |
-后面两种情况不可能出现，前三种情况的最终结果都是 `N-left`
-</code></pre><p>再来考虑停止条件，两种情况<code>left=right</code>或者<code>left+1=right</code>。</p>
-<ol>
-<li>当第一种情况出现，<code>mid=left</code>，此时如果<code>citations[mid] &gt; N-mid</code>，那么<code>mid=left</code>就是最佳位置，H-Index为<code>N-mid</code>；否则最佳位置在left后一位，此时将<code>left=mid+1</code>后，<code>N-left</code>就是最佳H-Index。</li>
-<li>当第二种情况出现，<code>left+1=right</code>，<code>mid=left</code>，此时如果<code>citations[mid] &gt; N-mid</code>，那么<code>mid=left</code>就是最佳位置，H-Index为<code>N-mid</code>；否则，设置<code>left=mid+1</code>，回到了第一种情况。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">hIndex</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; citations)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> N=citations.size(), left=<span class="number">0</span>, right=N-<span class="number">1</span>, ret=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (N == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right-left)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (citations[mid] == N-mid) <span class="keyword">return</span> N-mid;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (citations[mid] &gt; N-mid) right = mid-<span class="number">1</span>; <span class="comment">// 向左寻找</span></span><br><span class="line">        <span class="keyword">else</span> left = mid+<span class="number">1</span>;                                     <span class="comment">// 向右寻找</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> N-left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/02/21/H-Index/" data-id="ck82imy9b0037r4phmxqsfbtp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/" data-id="ckeiowf6z001q4gphffrmxfq1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2905,7 +2552,7 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
 
 
     <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/4/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/4/">下一页 &raquo;</a>
     </nav>
 </section>
             
@@ -2921,26 +2568,7 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2019/09/21/CherryPy-Torturial/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Other/">Other</a></p>
-                            <p class="item-title"><a href="/2019/09/21/CherryPy-Torturial/" class="title">CherryPy Torturial</a></p>
-                            <p class="item-date"><time datetime="2019-09-21T15:51:48.000Z" itemprop="datePublished">2019-09-21</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2018/12/16/Hough-Transform/" class="thumbnail">
+                            <a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2951,15 +2579,15 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/Hough-Transform/" class="title">Hough Transform</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:32:21.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="title">NLP Pre-train Models after Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:16:49.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/GRU-and-LSTM/" class="thumbnail">
+                            <a href="/2020/08/30/XGboost/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2970,15 +2598,15 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/GRU-and-LSTM/" class="title">GRU and LSTM</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:27:29.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/XGboost/" class="title">XGboost</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T05:00:24.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2018/12/16/how-does-shazam-work/" class="thumbnail">
+                            <a href="/2020/08/30/Bert/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -2989,15 +2617,15 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2018/12/16/how-does-shazam-work/" class="title">how does shazam work</a></p>
-                            <p class="item-date"><time datetime="2018-12-16T13:06:11.000Z" itemprop="datePublished">2018-12-16</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Bert/" class="title">Bert</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:58:01.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2017/08/27/Conditional-Random-Field/" class="thumbnail">
+                            <a href="/2020/08/30/Transformer/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -3008,8 +2636,27 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2017/08/27/Conditional-Random-Field/" class="title">Conditional Random Field</a></p>
-                            <p class="item-date"><time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time></p>
+                            <p class="item-title"><a href="/2020/08/30/Transformer/" class="title">Transformer</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:53:14.000Z" itemprop="datePublished">2020-08-30</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/08/30/First-Order-Optimization/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/08/30/First-Order-Optimization/" class="title">First Order Optimization</a></p>
+                            <p class="item-date"><time datetime="2020-08-30T04:46:31.000Z" itemprop="datePublished">2020-08-30</time></p>
                         </div>
                     </li>
                 
@@ -3022,7 +2669,7 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">40</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">53</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Other/">Other</a><span class="category-list-count">2</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">55</span></li></ul>
         </div>
     </div>
 
@@ -3031,7 +2678,7 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -3040,7 +2687,7 @@ c.equal_range(k);   //  返回一个迭代器pair，表示关键字等于k的元
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 12.22px;">NLP</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 10px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 13.33px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 13.33px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
