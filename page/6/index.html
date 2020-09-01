@@ -178,11 +178,11 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                124
+                132
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                46
+                48
                 <span>标签</span>
             </div>
         </div>
@@ -241,6 +241,1632 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Markov-Decision-Process" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/01/06/Markov-Decision-Process/">Markov Decision Process</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/01/06/Markov-Decision-Process/">
+            <time datetime="2017-01-06T02:07:53.000Z" itemprop="datePublished">2017-01-06</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>马尔可夫决策过程MDP是经典的增强学习算法。MDP可以表示为一个元组<script type="math/tex">MDP=(S,A,\lbrace P_{sa} \rbrace,\gamma,R)</script>其中$S$是状态集合；$A$是动作集合，也就是可能的操作集合；$P_{sa}$为每一个状态$s$在每一个动作$a$上定义转移概率，转移到不同状态的概率不同；$\gamma \in [0,1]$为折扣因子；$R:S\times A \to \mathbb{R}$表示回报函数。</p>
+<center>![MDP模型](http://ww2.sinaimg.cn/large/9bcfe727jw1fbgomcnv49j20b408wwf9.jpg)</center>
+
+<hr>
+<h5 id="贝尔曼方程（Bellman-equation）"><a href="#贝尔曼方程（Bellman-equation）" class="headerlink" title="贝尔曼方程（Bellman equation）"></a>贝尔曼方程（Bellman equation）</h5><p>贝尔曼方程是理查德贝尔曼提出的，它是典型的动态规划方程，也是动态规划最优性的必要条件。贝尔曼方程在最优控制理论中有着重要的作用。理查德贝尔曼证明了离散时间上的动态规划问题可以被表示成递归的、一步一步完成的后向推导形式，其中这过程需要写出价值函数的递推关系，其实贝尔曼方程的最基本思想就是<b>重叠子问题思想</b>。代价函数的递推关系被称为贝尔曼方程，其形式化表述如下。</p>
+<p>假设时刻$t$时的状态为$s_t$，采取的动作是$a_t$，到达的新状态可以计算成$T(s_t,a_t)$，对应的收益为$F(s_t,a_t)$。联系折扣因子$\beta$，从$s_0$开始的无穷决策问题的收益是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V(s_0)=\max_{\lbrace a_t \rbrace_{t=0}^{\infty}} \sum_{t=0}^{\infty} \beta^tF(s_t,a_t) \\
+s.t.:\; s_{t+1}=T(s_t,a_t)
+\end{aligned}</script><p>上是可以简化为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V(s_0)=\max_{a_0} \lbrace F(s_0,a_0)+\beta V(s_1) \rbrace,\;s.t.:\;s_1=T(s_0,a_0)
+\end{aligned}</script><hr>
+<h5 id="MDP模型描述"><a href="#MDP模型描述" class="headerlink" title="MDP模型描述"></a>MDP模型描述</h5><hr>
+<h6 id="MDP形式定义"><a href="#MDP形式定义" class="headerlink" title="MDP形式定义"></a>MDP形式定义</h6><p>MDP可表示成这样的过程</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+s_0 \xrightarrow{a_0} s_1 \xrightarrow{a_1} s_2 \xrightarrow{a_2} s_3 \xrightarrow{a_3} ...
+\end{aligned}</script><p>在上面的情况下，整体收益可以表示成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+R(s_0,a_0)+\gamma R(s_1,a_1) + \gamma^2 R(s_2,a_2) + ...
+\end{aligned}</script><p>MDP的目标就是<b>选取一组动作以最大化收益均值</b>即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\arg \max_{a_0,a_1,...}E[R(s_0,a_0)+\gamma R(s_1,a_1) + \gamma^2 R(s_2,a_2) + ... ]
+\end{aligned}</script><p>一个策略（policy）是由状态到动作的任意映射$\pi : S \to A$。执行一个策略$\pi$也就是对于任意状态$s$，系统采取的动作是$a=\pi(s)$。定义一个策略$\pi$的<b>价值函数（value function）</b>为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V^{\pi}(s)&=E[R(s_0,a_0)+\gamma R(s_1,a_1) + \gamma^2 R(s_2,a_2) + ... |s_0=s,\pi] \\
+V^{\pi}(s)&=R(s)+\gamma \sum_{s^{'}\in S}P_{s\pi(s)}(s^{'})V^{\pi}(s^{'})
+\end{aligned}</script><p>表示从状态$s$开始，根据策略$\pi$执行的累积收益和的均值。<br>定义最优价值函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V^{\*}(s)&=\max_{\pi} V^{\pi}(s) \\
+V^{\*}(s)&=R(s)+\max_{a\in A}\gamma \sum_{s^{'}\in S}P_{sa}(s^{'})V^{\*}(s^{'})
+\end{aligned}</script><p>指的是任何可能的策略下的最优解.</p>
+<p>接下来定义<b>最优策略</b>，一个最优策略$\pi^{*}:S \to A$可以定义为</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\pi^{\*}(s)=\arg\max_{a\in A}\sum_{s^{'}\in S}P_{sa}(s^{'})V^{\*}(s^{'})
+\end{equation}</script><p>策略$\pi^{*}$为每一个状态提供了最优策略，也就是说无论初始状态是什么，$\pi^{*}$都是最优策略。事实上，对每一个状态$s$和每一个策略$\pi$，我们有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V^{\*}(s)=V^{\pi^{\*}}(s) \ge V^{\pi}(s)
+\end{aligned}</script><hr>
+<h6 id="价值迭代和策略迭代"><a href="#价值迭代和策略迭代" class="headerlink" title="价值迭代和策略迭代"></a>价值迭代和策略迭代</h6><p>为了描述简单，这里仅考虑有限状态空间、有限动作空间的MDP。在下面两个算法中，转移概率$\lbrace P_{sa} \rbrace$和回报函数$R$都是已知的。</p>
+<hr>
+<p>价值迭代（value iteration）<br>1 初始化每个状态的价值$V(s)=0$<br>2 重复迭代直到收敛：<br>3 $\quad$对每个状态$s$，更新：$V(s)=R(s)+\max_{a\in A}\gamma \sum_{s^{‘}}P_{sa}(s^{‘})V(s{‘})$</p>
+<hr>
+<p>其中，更新方式有两种<br>同步更新：先计算所有状态的价值函数，然后再将其一起更新<br>异步更新：每计算出一个状态的价值函数，就将其更新<br>但无论是同步还是异步，$V$都会逐渐收敛至$V^{*}$。有了$V^{*}$，就可以根据公式$(1)$计算出对应的策略了。</p>
+<hr>
+<p>策略迭代（policy iteration）<br>1 随机初始化$\pi$<br>2 重复迭代直到收敛：<br>3 $\quad (a):$使得$V=V^{\pi}$<br>4 $\quad (b):$对每个状态$s$，使得$\pi(s)=\arg\max_{a\in A}\sum_{s^{‘}}P_{sa}(s^{‘})V(s^{‘})$</p>
+<hr>
+<p>迭代过程中，先计算在当前策略$\pi$下每个状态的价值函数值，然后根据这些值找到每个状态对应的最佳动作（greedy）。这些动作的集合就构成了下一步的新策略。步骤$(a)$的计算还是先赋值再迭代计算直到收敛，只是要按照$\pi$策略跳转而已。</p>
+<hr>
+<h6 id="学习一个MDP模型"><a href="#学习一个MDP模型" class="headerlink" title="学习一个MDP模型"></a>学习一个MDP模型</h6><p>上面的讨论中，转移概率$\lbrace P_{sa} \rbrace$和回报函数$R$都是已知的，但是实际中这两部分经常是未知的（通常$S,A,\gamma$是已知的），因此需要通过学习算法来学习。</p>
+<p>数据可以是采集的，也可以是通过实验得出来的。对$P_{sa}$的估计方法可以是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P_{sa}(s^{'})=\frac{times\; s \xrightarrow{a} s^{'}}{times\; s \xrightarrow{a} any\; state}
+\end{aligned}</script><p>在样本不够大的情况下，可能出现$\frac{0}{0}$的情况，如果分母为0，则把对应的概率换成$\frac{1}{\vert S\vert}$.</p>
+<p>$R$的更新思想类似。</p>
+<hr>
+<h5 id="连续状态的MDP"><a href="#连续状态的MDP" class="headerlink" title="连续状态的MDP"></a>连续状态的MDP</h5><p>现实中，MDP的离散状态假设是比较脆弱的。比如二维坐标中的位置就是连续的。那如何处理连续状态下的MDP呢</p>
+<hr>
+<h6 id="离散化"><a href="#离散化" class="headerlink" title="离散化"></a>离散化</h6><p>离散化的思想很直观，比如二维空间就可以通过网格化来达到离散化的目的。但是离散化有两个缺陷：<br><b>1 naive representation</b><br>对于$V^{*}$和$\pi^{*}$的表示太过简单，因为离散化会主动放弃潜在信息因此对平滑函数的表示效果比较差。比如离散化后的线性回归可能会得到如下图中的结果</p>
+<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1fbfzpl9gu1j20cf09dq34.jpg)</center>
+
+<p><b>2 维度诅咒</b><br>假设状态空间是$n$维的，离散化会使得离散化后的状态个数指数增加。</p>
+<hr>
+<h6 id="价值函数近似"><a href="#价值函数近似" class="headerlink" title="价值函数近似"></a>价值函数近似</h6><p>一般地，在连续MDP问题中通常假设</p>
+<p>在价值迭代中，连续状态的迭代公式应该是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V(s)&= R(s)+\gamma \max_{a} E_{s^{'}\sim P_{sa}}[V(s_{'}] \\
+&= R(s)+\gamma \max_{a} \int_{s^{'}}P_{sa}(s^{'})V(s^{'})\,ds^{'}
+\end{aligned}</script><p>此式跟上面的区别是把原来的求和改成了积分。</p>
+<p>在对应状态为$s^{(1)},s^{(2)},…,s^{(m)}$的有限个数样本情况下，<b>价值函数近似就是要将价值函数近似为状态的函数</b>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V(s)=\theta^T\phi(s)
+\end{aligned}</script><p>其中$\phi(s)$是状态$s$的合理映射。对于每一个样本$i$，算法先计算一个</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+y^{(i)} \gets R(s)+\gamma \max_{a} E_{s^{'}\sim P_{sa}}[V(s_{'}]
+\end{aligned}</script><p>上式的计算要使用采样逼近的原理，即采集多个样本求均值以逼近收集到每个样本的状态和对应的$y^{(i)}$，就可以使用监督学习算法训练出$V(s)$和$s$的模型。算法描述如下</p>
+<hr>
+<p>1 随机采样$m$个状态，$s^{(1)},s^{(2)},…,s^{(m)} \in S$.<br>2 初始化$\theta=0$.<br>3 迭代：<br>4 $\quad for\;i=1,…,m$.<br>5 $\quad \quad for\;each\;a\in A$.<br>5 $\quad \quad \quad $采样$s_1^{‘},…,s_k^{‘} \sim P_{s^{(i)}a}$.<br>6 $\quad \quad \quad $设置$q(a)=\frac{1}{k} \sum_{j=1}^k R(s^{(i)})+\gamma V(s_j^{‘})$.<br>7 $\quad \quad \quad $//因此$q(a)$就是$R(s^{(i)})+\gamma E_{s^{‘}\sim P_{s^{(i)}a}}[V(s_{‘}]$的估计.<br>8 $\quad \quad $令$y^{(i)}=\max_{a}q(a)$.<br>9 $\quad \quad $//因此$q(a)$就是$R(s^{(i)})+\gamma \max_{a} E_{s^{‘}\sim P_{s^{(i)}a}}[V(s_{‘}]$的估计.<br>10 $\quad$使得$\theta=\arg\min_{\theta}\frac{1}{2} \sum_{i=1}^m (\theta^T\phi(s^{(i)})-y^{(i)})^2$.</p>
+<p>得到了近似于$V^{*}$的$V$，最后选择action时还是根据</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\arg\max_{a} E_{s^{'}\sim P_{sa}}[V(s^{'})]
+\end{aligned}</script><hr>
+<p>上述算法最后求$\theta$时使用的是线性回归方法，当然其他合适的方法也是可以的。<br>需要注意的是，价值函数近似方法并不能保证收敛，但是通常是收敛得。控制计算量的可用方法是调节算法第5步中的$k$值，有时候设置$k=1$也是可以的。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/01/06/Markov-Decision-Process/" data-id="ckek3hka6005yi0phpqh11vt9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Hidden-Markov-Model" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/31/Hidden-Markov-Model/">Hidden Markov Model</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/31/Hidden-Markov-Model/">
+            <time datetime="2016-12-31T01:41:54.000Z" itemprop="datePublished">2016-12-31</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h5><p>概率图模型是一类用图来表达变量相关关系的概率模型，常见的是用一个节点表示一个或一组随机变量，节点之间的边表示变量之间的概率关系。概率模型可以大致分为两类：</p>
+<ul>
+<li>第一类使用有向无环图表示变量之间的依赖关系，称之为有向图模型或者贝叶斯网</li>
+<li>第二类使用无向无环图表示变量之间的依赖关系，称之为无向图模型或者马尔可夫网</li>
+</ul>
+<p>本文要介绍的隐马尔可夫模型就是结构简单的动态贝叶斯网。</p>
+<h5 id="隐马尔可夫模型"><a href="#隐马尔可夫模型" class="headerlink" title="隐马尔可夫模型"></a>隐马尔可夫模型</h5><p>HMM的主要作用是时序数据建模，应用范围包括语音识别、自然语言处理等领域。<br>与马尔可夫过程不同，HMM中状态是无法直接观测的，取而代之，我们可以获取到与状态值息息相关的观测变量值，图中是经典的海藻与天气例子。</p>
+<center>![经典的海藻于天气示例](http://ww2.sinaimg.cn/large/9bcfe727jw1fb9wwz6vk7j20eq08cdg2.jpg)</center>
+
+<p>一个HMM模型中有两组变量，第一组是状态变量$Y=\lbrace y_1,y_2,…,y_n \rbrace$表示隐含的状态，下标表示时序。另一组是观测变量$X=\lbrace x_1,x_2,…,x_n \rbrace$，下标表示时序。系统可能会存在多个状态，这些状态的集合为$S=\lbrace s_1,s_2,…,s_N \rbrace$，如果$y_i = k$那么表示$i$时刻的状态为$s_k$。观测变量可以是离散的也可以是连续的，不妨假设其为离散值。同样地，定义观测值的集合$O = \lbrace o_1,o_2,…,o_M \rbrace$，如果$x_i = k$那么表示$i$时刻的状态为$o_k$。</p>
+<p>HMM中有两个重要的性质：</p>
+<ul>
+<li>观测变量的取值仅依赖于状态变量</li>
+<li>t时刻的状态仅依赖于t-1时刻的状态</li>
+</ul>
+<p>基于上面两个性质，可以得到如下公式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1,y_1,...,x_n,y_n)=p(y_1)p(x_1|y_1)\prod_{i=2}^n p(y_i|y_{i-1})p(x_i|y_i)
+\end{aligned}</script><p>上式基本上描述了HMM的结构信息，在实际计算时还需要如下参数</p>
+<hr>
+<p>状态转移概率$A=[a_{ij}]_{N\times N}$，其中<script type="math/tex">a_{ij}=p(y_{t+1}=j|y_t=i)</script>表示由状态$s_i$转移到状态$s_j$的概率。</p>
+<p>输出观测概率$B=[b_{ij}]_{N\times M}$，其中<script type="math/tex">b_{ij}=p(x_t=j|y_t=i)</script>表示在状态$s_i$下观测值为$o_j$的概率。</p>
+<p>初始状态概率$\pi=(\pi_1,…,\pi_N)$，其中<script type="math/tex">\pi_i=p(y_1=i)</script>表示初始状态为$s_i$的概率。</p>
+<hr>
+<p>指定了状态空间$Y$，观测空间$X$和上述三组参数，一个HMM就确定了，所以一个HMM可以表示成一个五元组$(N,M,A,B,\pi)$，$N,M$分别表示状态值和观测值的可能取值范围。HMM也可以表示成$\lambda=(A,B,\pi)$。</p>
+<p>下面考虑三个实际问题：</p>
+<hr>
+<h6 id="模型于观测序列匹配度"><a href="#模型于观测序列匹配度" class="headerlink" title="模型于观测序列匹配度"></a>模型于观测序列匹配度</h6><p>给定模型$\lambda=(A,B,\pi)$，如何有效计算其产生观测序列$X=(x_1,x_2,…,x_T)$的概率$p(X|\lambda)$？</p>
+<p>为解决这一问题，Baum提出了<strong>前向算法</strong>，具体如下：<br><strong>定义$\theta_t(j)$为在$t$时刻，整体观测序列为$x_1,…,x_t$，此时状态为$s_j$的概率</strong>。其中我们有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_1(i) = \pi_ib_{ix_1}
+\end{aligned}</script><p>表示第一个观测值的概率，其递推式也很容易写出</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_{t+1}(i)=\left[\sum_{j=1}^N\theta_t(j)a_{ji}\right]b_{ix_{t+1}}
+\end{aligned}</script><p>有两部分构成，第一部分是由枚举$t$时刻的状态并跳转到$t+1$时刻，第二部分是$t+1$时刻的状态产生观测值的概率。</p>
+<p>当$n=1$时，输出序列为$x_1$，此时计算概率$p(x_1|\lambda)$也就是计算初始状态集合每个可能的状态产生观测值$x_1$的概率和，也就是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1|\lambda)=\sum_{i=1}^N \theta_1(i)
+\end{aligned}</script><p>当$n=2$时，输出序列为$x_1x_2$，所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(x_1,x_2|\lambda) &=  \sum_{j=1}^N \theta_2(j)
+\end{aligned}</script><p>后面的依此类推，前向算法的描述如下：</p>
+<hr>
+<p>1 初始化：$\theta_1(i)=\pi_ib_{i1}, 1\le i \le N$<br>2 $\theta_{t+1}(j)=\left[\sum_{i=1}^N \theta_t(i)a_{ij}\right]b_{jx_{t+1}}$<br>3 $p(x_1,…,x_T|\lambda)=\sum_{j=1}^N \theta_T(j)$</p>
+<hr>
+<p>一共有$T$个时刻，每个时刻要考虑$N$个状态，每个状态又要考虑钱一个时刻的$N$个状态，所以时间复杂度为$O(N^2T)$。</p>
+<h6 id="推断隐藏序列"><a href="#推断隐藏序列" class="headerlink" title="推断隐藏序列"></a>推断隐藏序列</h6><p>由于有时候我们需要隐藏序列包含的信息，所以给出隐藏序列是有必要的（比如词性标注最终就需要给出词性序列）。问题的形式化表述即为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\arg\max_{y_1,...,y_T} p(y_1,...,y_T|x_1,...,x_T,\lambda)
+\end{aligned}</script><p>这个问题的解决方法是维特比（Viterbi）算法。</p>
+<p><strong>定义维特比变量$\gamma_t(j)$：表示在时序$t$，观察序列为$x_1,…,x_t$，状态为$s_j$的最大概率</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma_t(j)=\max p(y_1,...,y_t=j|x_1,...,x_t,\lambda)
+\end{aligned}</script><p>直观来说，在时序$t+1$状态为$s_j$的最大概率应该是时序$t$时所有状态转换到时序$t+1$、观测值为$x_{t+1}$并且状态为$s_j$的最大值，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma_{t+1}(j)=\max_k \gamma_{t}(k)a_{kj}b_{jx_{t+1}}
+\end{aligned}</script><p>并且，为了记忆路径，定义路径变量$\phi_t(j)$为该路径上的状态$s_j$的前一个状态，即从$t-1$时序到$t$的最优转移方式。</p>
+<p>维特比算法的描述如下：</p>
+<hr>
+<p>1 初始化：<br>2 $\quad \gamma_1(j)=\pi_i b_{ix_{1}},\;\phi_1(i)=0,1\le i \le N$<br>3 归纳计算：<br>4 $\quad \gamma_t(j)=\max_k \gamma_{t-1}(k)a_{kj}b_{jx_{t}}$<br>5 $\quad \phi_t(i)=\arg\max_j \gamma_{t-1}(j)a_{jk}b_{kx_{t}}$<br>6 确定路径：<br>7 $\quad y_T=\arg\max_{y_j} \gamma_{T}(j)$<br>8 $\quad for\;t=T-1,…,1$<br>9 $\quad \quad y_t=\phi_{t+1}(y_{t+1})$</p>
+<hr>
+<h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>HMM的学习就是给定观测序列$X=x_1,…,x_T$，试图找到最优的参数$\lambda$使得$p(X|\lambda)$最大。如果知道了状态序列，那么$\pi,A,B$就都可以统计出来。但是状态序列其实是隐变量，求解此问题的方法是前向后向算法，也叫做Baum-Welch算法。</p>
+<p>定义</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\beta_t(i)=p(x_{t+1},...,x_T|y_t=i,\lambda)
+\end{aligned}</script><p>表示<strong>当前$t$时刻状态为$s_i$，部分观测序列为$x_{t+1},…,x_T$的概率</strong>。与前向算法类似，$\beta_t(i)$也可以有效地计算，公式如下</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\beta_t(i)&=\left[\sum_{j=1}^N \beta_{t+1}(j)a_{ij}\right]b_{jx_{t+1}},\; 1\le t \le T-1 \\
+\beta_T(i)&=1
+\end{aligned}</script><p>进一步可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(X,y_t=i|\lambda)&=p(x_1,...,x_t,y_t=i|\lambda)p(x_{t+1},...,x_T,y_t=i|\lambda)=\theta_t(i)\beta_t(i) \\
+p(X,y_t=i|\lambda)&=\sum_{i=1}^N \theta_t(i)\beta_t(i)
+\end{aligned}</script><center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1fbacpj6v5zj20cc064jrl.jpg)</center>
+
+<p>在前后向算法中，定义<script type="math/tex">\xi_t(i,j)=p(y_t=i,y_{t+1}=j|X,\lambda)</script>表示给定HMM和观测序列$X$，$t,t+1$时刻的状态分别是$s_i,s_j$的概率。如上图所示，对上式的推导为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\xi_t(i,j)&=\frac{p(y_t=i,y_{t+1}=j,X|\lambda)}{p(X|\lambda)} \\
+&= \frac{\theta_t(i)a_{ij}\beta_{t+1}(j)b_{jx_{t+1}}} {\sum_{i=1}^N \sum_{j=1}^N \theta_t(i)a_{ij}\beta_{t+1}(j)b_{jx_{t+1}}}
+\end{aligned}</script><p>除此之外，再定义<script type="math/tex">\eta_t(i)=p(y_t=i|X,\lambda)</script>表示给定HMM和观测序列$X$，$t$时刻状态为$s_i$的概率，所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\eta_t(i) = \frac{p(y_t=i,X|\lambda)} {p(X|\lambda)} = \frac{\theta_t(i)\beta_t(i)}{\sum_{i=1}^N \theta_t(i)\beta_t(i)}
+\end{aligned}</script><p>考虑$\xi_t(i,j)$和$\eta_t(i)$的定义，就能够得到（想想就能得到）<script type="math/tex">\eta_t(i)=\sum_{i=1}^N \xi_t(i,j)</script>下面介绍前向后向算法的描述：</p>
+<hr>
+<p>1  初始化：随机初始化参数$A,B,\lambda$<br>2  不满足停止条件时迭代计算：<br>3  $\quad \beta_T(i)=1,1\le i \le N$<br>4  $\quad \beta_t(i)=\left[\sum_{j=1}^N \beta_{t+1}(j)a_{ij}\right]b_{jx_{t+1}},\; t \in \lbrace T-1,…,1 \rbrace,1\le i \le N $<br>5  $\quad \theta_{t}(i)=\left[\sum_{j=1}^N \theta_{t-1}(j)a_{ji}\right]b_{ix_{t}}$<br>6  $\quad$计算$\xi_t(i,j),\eta_t(i), 1\le i,j \le N,1 \le t \le T$<br>7  $\quad $更新参数：<br>8  $\quad \pi=\eta_1(i),1\le i \le N$<br>9  $\quad a_{ij}=\frac{\sum_{t=1}^{T-1}\xi_t(i,j)}{\sum_{t=1}^{T-1}\eta_t(i)},1\le i,j \le N$<br>10 $\quad b_{jk}=\frac{\sum_{t=1,x_t=k}^T\quad \eta_t(j)} {\sum_{t=1}^{T}\eta_t(j)} ,1\le j \le N,1\le k \le M$<br>11 输出HMM：$\lambda=(A,B,\pi)$</p>
+<p>$o_t=k$表示$t$时刻的观测值为第$k$种观测值。停止条件可以是：参数$\lambda=(A,B,\pi)$收敛。</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/31/Hidden-Markov-Model/" data-id="ckek3hk8y0044i0phqz4ju305" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Support-Vector-Machine" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/27/Support-Vector-Machine/">Support Vector Machine</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/27/Support-Vector-Machine/">
+            <time datetime="2016-12-27T02:59:50.000Z" itemprop="datePublished">2016-12-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="支持向量机（SVM）"><a href="#支持向量机（SVM）" class="headerlink" title="支持向量机（SVM）"></a>支持向量机（SVM）</h5><hr>
+<p>支持向量机是一种非常优秀的线性分类器。<br>给定数据集$D=\lbrace (x_1,y_1),(x_2,y_2),…,(x_m,y_m) \rbrace ,y_i\in \lbrace -1,1 \rbrace$，当$y_i=1$时，称$x_i$为正类；否则为负类。基本思想是在样本及空间内找到一个超平面将不同类别的样本分开。设超平面为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega^Tx+b=0
+\end{aligned}</script><p>将特征空间划分两个部分，一部分是正类，一部分是负类，法向量指向的一侧为正类，反之为负类。相应的分类决策函数为$f(x)=sign(\omega^Tx+b)$。</p>
+<hr>
+<h6 id="函数间隔"><a href="#函数间隔" class="headerlink" title="函数间隔"></a>函数间隔</h6><p>定义超平面$(\omega,b)$关于样本点$(x_i,y_i)$的函数间隔为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{\gamma_i}=y_i(\omega^Tx_i+b)
+\end{aligned}</script><p>函数间隔的正负可以表示分类结果是否准确，其大小可以<strong>相对地</strong>表示样本点到超平面的远近，越远置信度越高。<br>定义超平面$(\omega,b)$关于数据集$D$的函数间隔为$(\omega,b)$关于$D$中样本点$(x_i,y_i)$的函数间隔的最小值，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{\gamma}=\min_{i=1,...,m}\hat{\gamma_i}
+\end{aligned}</script><p>函数间隔可以表示分类的准确度和置信度。但是，函数间隔还存在一个明显问题，比如将$\omega$和$b$都扩大2倍，超平面不变，但是函数间隔却扩大了2倍，解决方案是对函数间隔添加规范化约束。</p>
+<h6 id="几何间隔"><a href="#几何间隔" class="headerlink" title="几何间隔"></a>几何间隔</h6><p>定义超平面$(\omega,b)$关于分类正确的样本点$(x_i,y_i)$的几何间隔为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma_i=\frac{y_i( \omega^Tx_i+b )}{\Vert \omega \Vert}
+\end{aligned}</script><p>定义超平面$(\omega,b)$关于数据集$D$的几何间隔为$(\omega,b)$关于$D$中样本点$(x_i,y_i)$的几何间隔的最小值，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\gamma=\min_{i=1,...,m}\gamma_i
+\end{aligned}</script><h6 id="间隔最大化"><a href="#间隔最大化" class="headerlink" title="间隔最大化"></a>间隔最大化</h6><p><strong>SVM学习的基本思想是求解能够正确划分训练数据集并且几何间隔最大的分离超平面</strong>，意味着以充分大的确信度对训练数据进行分类，以获得更好的泛化能力。所以问题就变成了</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& \max_{\omega,b}\quad\gamma \\
+& s.t. \quad \frac{y_i( \omega^Tx_i+b )}{\Vert \omega \Vert} \ge \gamma,\; i=1,2,...,m
+\end{aligned}</script><p>考虑到$\gamma=\frac{\hat{\gamma} }{\Vert \omega \Vert}$，所以上式可以写成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& \max_{\omega,b}\quad\frac{\hat{\gamma} }{\Vert \omega \Vert} \\
+& s.t. \quad y_i( \omega^Tx_i+b ) \ge \hat{\gamma},\; i=1,2,...,m
+\end{aligned}</script><p>前面提到将$(\omega,b)$按比例缩放不会影响最终结果，所以可以取$\hat{\gamma}=1$，所以原问题可以转化为如下问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& \max_{\omega,b}\quad\frac{1 }{\Vert \omega \Vert} \\
+& s.t. \quad y_i( \omega^Tx_i+b ) \ge 1,\; i=1,2,...,m
+\end{aligned}</script><p>即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\min_{\omega,b} \frac{1}{2}\Vert \omega \Vert^2 \\
+& s.t. \quad y_i( \omega^Tx_i+b ) \ge 1,\; i=1,2,...,m
+\end{aligned}</script><p>这就是SVM的基础形态，是一个凸二次规划问题。</p>
+<hr>
+<h6 id="拉格朗日对偶性"><a href="#拉格朗日对偶性" class="headerlink" title="拉格朗日对偶性"></a>拉格朗日对偶性</h6><p>考虑如下的优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\omega} f(\omega) \\
+\quad \quad s.t. \quad g_i(\omega) &\le 0  \\
+h_i(\omega) &= 0
+\end{aligned}</script><p>对应的拉格朗日函数如下，$\alpha,\beta$是拉格朗日乘子</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L(\omega,\alpha,\beta)=f(\omega)+\sum_{i=1}^k\alpha_ig_i(\omega) + \sum_{i=1}^l\beta_ih_i(\omega).
+\end{aligned}</script><p>考虑下面的优化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_P(\omega)=\max_{\alpha,\beta:\alpha_i\ge 0} L(\omega,\alpha,\beta)
+\end{aligned}</script><p>下标$P$是$primal$的意思，优化目标针对变量$\alpha,\beta$。给定$\omega$，如果$\omega$的任何一个分量违背了限制条件(比如$g_i(\omega)&gt;0$或者$h_i(\omega) \neq 0$)，那么$\theta_P(\omega)$就是无穷大！反之，如果限制条件没有被打破，那么$\theta_P(\omega)=f(\omega)$，所以</p>
+<script type="math/tex; mode=display">
+\theta_P(\omega)=\begin{cases}
+f(\omega)   &    如果 \omega满足限制条件 \\
+\infty      &    其他
+\end{cases}</script><p>下式成立</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\omega} \theta_P(\omega) = \min_{\omega} \max_{\alpha,\beta:\alpha_i\ge 0} L(\omega,\alpha,\beta) = p^{\*}
+\end{aligned}</script><hr>
+<p>下面考虑对偶问题，定义</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_D(\alpha,\beta) = \min_{\omega} L(\omega,\alpha,\beta)
+\end{aligned}</script><p>这里下标$D$表示$dual$，优化目标针对变量$\omega$。所以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\max_{\alpha,\beta:\alpha_i\ge 0} \theta_D(\alpha,\beta) = \max_{\alpha,\beta:\alpha_i\ge 0} \min_{\omega} L(\omega,\alpha,\beta) = d^{\*}
+\end{aligned}</script><hr>
+<p>对于上面的$p^{*}$和$d^{*}$，有如下的规律</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+d^{\*}=\max_{\alpha,\beta:\alpha_i\ge 0} \min_{\omega} L(\omega,\alpha,\beta) \le \min_{\omega} \max_{\alpha,\beta:\alpha_i\ge 0} L(\omega,\alpha,\beta) = p^{\*}
+\end{aligned}</script><p>上式中等号成立的条件是：函数$f$和$g_i$都是凸函数，$h_1,h_2,…,h_l$函数是同族函数。并且每个$g_i$函数都是严格合理的，即对每一个$i$，都存在一些$\omega$满足$g_i(\omega)小于0$。此外，存在$(\alpha,\beta,\omega)$满足<strong>KKT条件</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{dL(\alpha,\beta,\omega)}{d\omega_i} &= 0,\quad i=1,...,m \\
+h_i(\omega)&= 0,\quad i=1,...,l \\
+\alpha_i g_i(\omega) &= 0, \quad i=1,...,k \\
+g_i(\omega) &\le 0, \quad i=1,...,k \\
+\alpha_i &\ge 0 , \quad i=1,...,k
+\end{aligned}</script><hr>
+<h6 id="对偶问题"><a href="#对偶问题" class="headerlink" title="对偶问题"></a>对偶问题</h6><p>由最大化间隔得出的优化问题是一个凸二次规划问题，可以使用现成的工具完成。使用拉格朗日乘子法可得到其对偶问题，为其每项约束添加一个拉格朗日乘子$\alpha_i \ge 0$，拉格朗日目标函数为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L(\omega,b,\alpha) = \frac{1}{2}\Vert \omega \Vert^2 + \sum_{i=1}^m \alpha_i(1-y_i(\omega^Tx_i+b))
+\end{aligned}</script><p>其中，$\alpha=(\alpha_1;\alpha_2;…;\alpha_m)$。上式分别对$\omega,b$求偏导并令其为0可得</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega = \sum_{i=1}^m \alpha_iy_ix_i \\
+0 = \sum_{i=1}^m \alpha_iy_i
+\end{aligned}</script><p>将上式代入$L(\omega,b,\alpha)$中，消去$\omega,b$，则上式变成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L(\omega,b,\alpha) = \sum_{i=1}^m \alpha_i - \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i \alpha_j y_i y_j x_i^T x_j
+\end{aligned}</script><p>由于满足KKT条件，所以原问题$f(\omega)$的优化问题可以写成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\omega,b} f(\omega) &\to \min_{\omega,b} \max_{\alpha} L(\omega,b,\alpha) \\
+&\to \max_{\alpha} \min_{\omega,b} L(\omega,b,\alpha)
+\end{aligned}</script><p>这里$ \max_{\alpha} L(\omega,b,\alpha)$的意义在于选择参数$\alpha$使得$ L(\omega,b,\alpha)$最大，根据$ L(\omega,b,\alpha)$的公式，由于$1\le y_i(\omega^Tx_i+b)$，所以一旦出现$1 &lt; y_i(\omega^Tx_i+b)$的情况，就应该有$\alpha_i=0$，否则这一项就是负值，整体也就不是最小值了。所以，优化问题最终转化为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\max_{\alpha} \sum_{i=1}^m \alpha_i - \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i \alpha_j y_i y_j x_i^T x_j \\
+s.t. \; \sum_{i=1}^m\alpha_iy_i=0,\alpha_i \ge 0,\; i=1,...,m
+\end{aligned}</script><hr>
+<h6 id="Sequential-Minimal-Optimization"><a href="#Sequential-Minimal-Optimization" class="headerlink" title="Sequential Minimal Optimization"></a>Sequential Minimal Optimization</h6><p>对偶问题依旧是二次规划问题，但问题的规模正比于训练样本数。SMO是高效算法之一，其思想是每次选取两个变量$\alpha_i,\alpha_j$并固定其他的$\alpha_k$，不断执行迭代步骤。这种方法也称为坐标上升方法（coordinate ascent）。</p>
+<p>令<script type="math/tex">\alpha_iy_i+\alpha_jy_j=-\sum_{k\neq i,j}\alpha_ky_k=c</script>用这个式子消去优化目标函数中的$\alpha_j$可以得到一个以$\alpha_i$为单变量的二次规划问题，该问题有闭式解且简单易懂。解出之后，$\alpha_i,\alpha_j$就得到了更新。SMO选取$\alpha_i,\alpha_j$时，启发式地选择对应样本间隔最大的变量进行更新。</p>
+<p>然后根据$\omega = \sum_{i=1}^m \alpha_iy_ix_i$求出$\omega$，对于$b$，可以使用任意一个支持向量的性质$y_s \left(\omega^Tx_s+b \right)=1$来计算。当然更鲁棒的方法是使用所有的支持向量并对求出的$b$取均值。</p>
+<hr>
+<h5 id="软间隔支持向量机（Soft-Margin-SVM）"><a href="#软间隔支持向量机（Soft-Margin-SVM）" class="headerlink" title="软间隔支持向量机（Soft Margin SVM）"></a>软间隔支持向量机（Soft Margin SVM）</h5><p>基础型的SVM的假设所有样本在样本空间是线性可分的(硬间隔)，但是现实中的情况通常不满足这种特性。对应的软间隔允许某些样本不满足</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+y_i(\omega^Tx_i+b)\ge 1
+\end{aligned}</script><p>为了解决这个问题，可以对每个样本点引入一个松弛变量$\xi_i\ge 0$满足</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+y_i(\omega^Tx_i+b)+\xi_i\ge 1
+\end{aligned}</script><p>同时，对每个松弛变量支付一个代价$\xi_i$。训练时应该要保持不满足约束的样本尽量少，所以优化函数可以表示成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\min_{\omega,b,\xi_i} \frac{1}{2}\Vert \omega \Vert^2 + C\sum_{i=1}^m \xi_i \\
+&s.t. \; y_i(\omega^Tx_i+b) \ge 1-\xi_i \\
+&\quad \xi_i \ge 0,\;i=1,...,m
+\end{aligned}</script><p>其中，$C&gt;0$是一个惩罚参数，调节损失函数两项的权重。<br>这就是常用的软间隔支持向量机，通过拉格朗日乘子法，得到如下拉格朗日函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L(\omega,b,\alpha,\xi,\mu) = \frac{1}{2}\Vert \omega \Vert^2 + C\sum_{i=1}^m \xi_i + \sum_{i=1}^m \alpha_i(1-\xi_i-y_i(\omega^Tx_i+b)) - \sum_{i=1}^m \mu_i\xi_i
+\end{aligned}</script><p>其中，$\alpha_i,\mu_i$就是拉格朗日乘子。令$L(\omega,b,\alpha,\xi,\mu)$对$\omega,b,\xi$的偏导数为0得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega &= \sum_{i=1}^m \alpha_iy_ix_i \\
+0 &= \sum_{i=1}^m \alpha_iy_i \\
+C &= \alpha_i + \mu_i
+\end{aligned}</script><p>由上式可知$0 \le \alpha_i \le C$。将上式代入$L(\omega,b,\alpha,\xi,\mu)$中，并求解优化函数的对偶形式</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\max_{\alpha} \sum_{i=1}^m \alpha_i - \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i \alpha_j y_i y_j x_i^T x_j \\
+&s.t. \sum_{i=1}^m\alpha_iy_i=0 \\
+&0 \le \alpha_i \le C,\; i=1,...,m
+\end{aligned}</script><p>对于软间隔支持向量机，其KKT条件是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha_i y_i(\omega^x_i+b)-1+\xi_i &= 0, \quad i=1,...,m \\
+y_i(\omega^x_i+b)-1+\xi_i &\le 0, \quad i=1,...,m \\
+\alpha \ge 0,\mu_i &\ge 0, \quad i=1,...,m \\
+\xi_i \ge 0, \mu_i \xi_i &= 0, \quad i=1,...,m
+\end{aligned}</script><p>对于非支持向量，$\alpha_i=0$。对支持向量，有$0 &lt; \alpha_i \le C$，即有$y_i(\omega^x_i+b)=1-\xi_i$，样本点$x_i$到间隔边界的距离为$\frac{\xi_i}{\Vert \omega \Vert}$，软间隔的支持向量有以下几种情况</p>
+<ul>
+<li>或者在间隔边界上（$\alpha_i &lt; C,\xi_i=0$）</li>
+<li>或者在间隔边界与分离超平面之间（$\alpha_i=C,0 &lt; \xi_i &lt; 1$，此时分类也是正确的）</li>
+<li>或者在分离超平面误分那一侧（$\alpha_i=C,\xi_i&gt;1$，分类错误，该样本是异常点）</li>
+</ul>
+<p>上述优化问题依旧可以使用SMO算法，求出$\omega$之后，$b$的求法如下。注意到满足$0&lt;\alpha_i &lt; C$的样本是支持向量，即满足$y_i(\omega^Tx_i+b)=1$，所以$b$就可解了。</p>
+<h5 id="非线性核支持向量机（Kernal-SVM）"><a href="#非线性核支持向量机（Kernal-SVM）" class="headerlink" title="非线性核支持向量机（Kernal SVM）"></a>非线性核支持向量机（Kernal SVM）</h5><h6 id="核函数判定定理"><a href="#核函数判定定理" class="headerlink" title="核函数判定定理"></a>核函数判定定理</h6><p>设$X$是输入空间，$k(\cdot,\cdot)$是定义在$X\times X$的对称函数，则$k$是核函数当且仅当对于任意数据集$D=\lbrace x_1,x_2,…,x_m \rbrace$，核矩阵$K$总是半正定的，其中半正定是指对于每个非零的复向量$z$，$z^{*}Kz &gt; 0$，其中$z^{*}$是$z$的共轭转置。</p>
+<p>常用的核函数有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+Linear\; kernal &: \quad k(x_i,x_j)= x_i^Tx_j \\
+Multinomial\; kernal &: \quad k(x_i,x_j)= (x_i^Tx_j)^d \\
+Gaussian\; kernal &: \quad k(x_i,x_j)= e^{-\frac{\Vert x_i-x_j \Vert^2}{2\sigma^2}} \\
+Laplace\; kernal &: \quad k(x_i,x_j)= e^{-\frac{\Vert x_i-x_j \Vert}{\sigma}} \\
+Sigmoid\; kernal &: \quad k(x_i,x_j)= tanh(\beta x_i^Tx_j+\theta),\beta>0,0>\theta
+\end{aligned}</script><p>另外核函数的线性组合、乘积也是核函数。并且对于任意函数$g(\cdot)$，$k(x,z)=g(x)k_1(x,z)g(z)$也是核函数。</p>
+<hr>
+<h6 id="KSVM"><a href="#KSVM" class="headerlink" title="KSVM"></a>KSVM</h6><p>基础型的SVM的假设样本在样本空间是线性可分的，但是现实中的情况通常不满足这种特性。对于这种问题，一种可能的方法是将样本从原始空间映射到更高维的特征空间，使得其在线性可分。令$\phi (x)$表示将$x$映射后的特征向量，于是特征空间中的超平面可以表示为<script type="math/tex">f(x)=\omega^T \phi (x)+b</script>优化的对偶问题变成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\max_{\alpha} \sum_{i=1}^m \alpha_i - \frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m \alpha_i \alpha_j y_i y_j \phi (x_i)^T \phi (x_j) \\
+s.t. \; \sum_{i=1}^m\alpha_iy_i=0,\alpha_i \ge 0,\; i=1,...,m
+\end{aligned}</script><p>由于可能存在维度诅咒，计算$\phi (x_i)^T \phi (x_j)$将非常困难。这里引入<strong>核函数</strong>的概念</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+k(x_i,x_j) = \langle \phi (x_i),\phi (x_j) \rangle = \phi (x_i)^T \phi (x_j)
+\end{aligned}</script><p>满足$x_i,x_j$在特征空间的内积等于它们在原始样本空间中通过函数$k(\cdot)$计算的结果，核函数是避免维度诅咒的一种方法。</p>
+<p>引用<br>[1]. 统计学习方法. 李航著. 清华大学出版社<br>[2]. 机器学习. 周志华.</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/27/Support-Vector-Machine/" data-id="ckek3hkce009hi0phlwfpvkj3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Sparse-Coding" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/20/Sparse-Coding/">Sparse Coding</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/20/Sparse-Coding/">
+            <time datetime="2016-12-20T02:26:20.000Z" itemprop="datePublished">2016-12-20</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="字典学习"><a href="#字典学习" class="headerlink" title="字典学习"></a>字典学习</h5><p>字典学习是与稀疏性相关的学习方法，它被用来寻找一组“超完备”基向量来更高效地表示样本数据。稀疏性会降低计算和存储的开销，并且会提高模型的可解释性。</p>
+<pre><code>稀疏表示侧重于学习一个字典
+</code></pre><p>给定数据集$\lbrace x_1,x_2,…,x_m \rbrace$，字典学习的简单形式如下</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{B,\alpha_i} \sum_{i=1}^m \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1
+\end{aligned}</script><p>其中$B\in R^{d\times k}$为字典矩阵，$k$称为字典的词汇量，$\alpha_i \in R^k$是样本$x_i$的稀疏表示。实际中，根据应用场景的要求，第二项中的$\lambda \sum_{i=1}^m \Vert \alpha_i \Vert_1$也可以替换成别的代价函数。</p>
+<h6 id="奇异值分解简述SVD"><a href="#奇异值分解简述SVD" class="headerlink" title="奇异值分解简述SVD"></a>奇异值分解简述SVD</h6><p>对任意矩阵奇异值分解<script type="math/tex">M=U\Sigma V^T</script>其中，$\Sigma$是对角矩阵，对角线上是矩阵的奇异值，$U$中的每一列是经过$M$转化后的标准正交基组成之一，而$V$表示了原始域的标准正交基，每一列是一个向量。</p>
+<blockquote>
+<p>以后应该还有关于SVD的解释</p>
+</blockquote>
+<h6 id="训练方法"><a href="#训练方法" class="headerlink" title="训练方法"></a>训练方法</h6><p>上式的训练目标参数有$\alpha_i,B$，可以用<b>交替优化的方法</b>。</p>
+<hr>
+<p>1 为每个样本$x_i$找到相应的$\alpha_i$，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\alpha_i} \Vert x_i-B\alpha_i \Vert_2^2 + \lambda \Vert \alpha_i \Vert_1
+\end{aligned}</script><p>这一步可以使用lasso的优化方法。</p>
+<hr>
+<p>2 以$\alpha_i$为初值来更新字典$B$，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{B} \Vert X-BA \Vert_F^2
+\end{aligned}</script><p>其中，$X=(x_1,x_2,…,x_m)\in R^{d\times m},A=(\alpha_1,\alpha_2,…,\alpha_m)\in R^{k\times m}$，矩阵的F范数是矩阵每个元素的平方和再开方。</p>
+<p>上式的常用优化方法为<b>KSVD</b>，这是基于逐列更新的方法。令$b_i$表示字典$B$的第$i$列，$\alpha^i$表示稀疏矩阵$A$的第$i$行($\alpha_i$表示稀疏矩阵$A$的第$i$列)，$b_i\alpha^i$其实是个矩阵。则上式可以重写成</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{B} \Vert X-BA \Vert_F^2 &= \min_{b_i} \left\Vert X-\sum_{j=1}^k b_ja^j \right\Vert_F^2 \\
+&= \min_{b_i} \left\Vert X-\sum_{j=1,j\not i}^k b_ja^j - b_i\alpha^i \right\Vert_F^2 \\
+&= \min_{b_i} \Vert E_i-b_i\alpha^i \Vert_F^2
+\end{aligned}</script><p>更新字典第$i$列时，$E_i$是固定的，$E_i$表示没有$b_i$时表示的误差。所以最小化上式原则上就是对$E_i$进行奇异值分解(SVD)取得最大奇异值所对应的正交向量。对$E_i$进行奇异值分解$E_i=U\Sigma V^T$，那么$b_i$是$U$中最大奇异值对应的正交向量，但此时$\alpha^i$也需要更新，这就会破坏$\alpha^i$的稀疏性质。</p>
+<p>为了避免这种情况，KSVD做如下处理。注意到要保持稀疏性，我们不能将$\alpha_i$原来为0的位置变成非零数。$b_i \alpha^i$是一个矩阵，它的第$j$列是$b_i\alpha_j^i$。如果原来$\alpha_j^i=0$，那么$b_i\alpha_j^i$就是全为0的列向量。这里，我们可以把$E_i$对应位置的列变成全0，这样奇异值分解后的结果就不会破坏$A$的稀疏性。然后，对$E_i$进行奇异值分解，更新$b_i$为$U$中最大奇异值对应的正交向量，更新$\alpha^i$为$V$中最大奇异值对应的正交向量(列向量)乘以最大奇异值。</p>
+<hr>
+<h5 id="稀疏编码"><a href="#稀疏编码" class="headerlink" title="稀疏编码"></a>稀疏编码</h5><p>稀疏编码是字典学习的下一步，在学习到了字典$B$后，给定一个新的样本$x_k$，只需要通过优化</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\alpha_i}  \Vert x_k-B\alpha_k \Vert_2^2 + \lambda \Vert \alpha_k \Vert_1
+\end{aligned}</script><p>来找到$\alpha_k$，即求解出了基于字典$B$的关于$x_k$的稀疏表示。上式的优化方法即经典的Lasso优化问题，使用Proximal Gradient Descent方法。</p>
+<p>比如说：</p>
+<center>![](http://img.my.csdn.net/uploads/201304/09/1365483491_9524.jpg)</center>
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/20/Sparse-Coding/" data-id="ckek3hkcd009ei0php7sdlqd1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Manifold-Learning" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/18/Manifold-Learning/">Manifold Learning</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/18/Manifold-Learning/">
+            <time datetime="2016-12-18T03:50:16.000Z" itemprop="datePublished">2016-12-18</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="流形"><a href="#流形" class="headerlink" title="流形"></a>流形</h6><pre><code>流形学习是一类借鉴了拓扑流行概念的概念降维方法
+直观上来讲，一个流形好比是一个 d 维的空间
+在一个 m 维的空间中 (m &gt; d) 被扭曲之后的结果
+</code></pre><p>比如说一块布，可以把它看成一个二维平面，这是一个二维的欧氏空间，现在我们（在三维）中把它扭一扭，它就变成了一个流形（当然，不扭的时候，它也是一个流形，欧氏空间是流形的一种特殊情况），地球表面其实也只是一个二维流形。</p>
+<pre><code>流形的一个特点是：流形是在局部与欧式空间 同胚 的空间
+即局部上具有欧式空间的特性，距离度量可以使用欧氏距离
+</code></pre><p>所以，低维流形嵌入到高维空间中，数据样本在高维空间中的分布看上去会比较复杂，但在局部上具有欧式空间的特性。因此，可以容易地在局部建立降维映射关系，然后设法将局部关系映射到全局。<b>此种降维方法可被用于数据可视化</b>。</p>
+<hr>
+<h6 id="等度量映射（Isometric-Mapping）"><a href="#等度量映射（Isometric-Mapping）" class="headerlink" title="等度量映射（Isometric Mapping）"></a>等度量映射（Isometric Mapping）</h6><p>Isomap的出发点是：低维嵌入流形上两点距离是“测地线距离”（地理上的概念，比如地球上两点的距离就不是欧氏距离）<br>但是利用流形的局部与欧式空间同胚特性，我们就能<b>在局部空间内找到每个点的近邻点，从而建立一个近邻连接图。<br>所以，“测地线距离”就是图中的最短距离</b>。最短路径算法可以使用Dijkstra算法或者Floyd算法。<br>有了距离度量表示，就可以降维了，降维方法可以使用MDS算法（当然也可以使用其他方法）</p>
+<p>Isomap算法描述如下：</p>
+<hr>
+<p>输入：样本集$D= \lbrace x_1,x_2,…,x_m \rbrace $; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 $for\quad i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad x_i$与其$k$近邻的距离设置为其欧氏距离，与其他点的距离设置为无穷大<br>4 $end \quad for$<br>5 调用最短距离路径算法计算任意两点之间的距离$dist(x_i,x_j)$<br>6 将$dist(x_i,x_j)$作为MDS算法的输入，输出结果$Z$</p>
+<hr>
+<p>输出：样本集$D$在低维空间的投影$Z$</p>
+<hr>
+<h6 id="局部线性嵌入（Locally-Linear-Embedding）"><a href="#局部线性嵌入（Locally-Linear-Embedding）" class="headerlink" title="局部线性嵌入（Locally Linear Embedding）"></a>局部线性嵌入（Locally Linear Embedding）</h6><p>Isomap 希望保持任意两点之间的测地线距离，保存的信息量大，但是计算量随着节点数量的增长爆炸增长（Dijkstra算法$O(n^2)$或者Floyd算法$O(n^3)$）。<br>LLE 希望保持局部线性关系，信息量较小，但是对数据量较大的情形则比较有效。</p>
+<p>LLE假设$x_i$能够通过其邻域内的样本$x_j,x_k,x_l$线性表出，即<script type="math/tex">x_i=\omega_{ij}x_j+\omega_{ik}x_k+\omega_{il}x_l</script>所以，LLE需要先找出每个样本$x_i$的近邻下标集合$Q_i$，然后计算出基于$Q_i$中的样本对$x_i$进行线性重构的系数$\omega_i$：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{\omega_1,\omega_2,...,\omega_m} \sum_{i=1}^m \left\Vert x_i-\sum_{j \in Q_i}\omega_{ij}x_j \right\Vert^2 \\
+s.t. \quad \sum_{j \in Q_i}\omega_{ij}=1
+\end{aligned}</script><p>这里令$C_{jk}=(x_i-x_j)^T(x_i-x_k)$，$\omega_{ij}$有闭式解</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\omega_{ij}=\frac{\sum_{k\in Q_i}C_{jk}^{-1}}{\sum_{l,s\in Q_i}C_{ls}^{-1}}
+\end{aligned}</script><p>因为LLE假设在低维空间中保持$\omega_i$保持不变，令$Z=(z_1,z_2,…,z_m)\in R^{d^{‘}\times m},W_{ij}=\omega_{ij}$.所以$x_i$的低维坐标$z_i$可以通过</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-\sum_{j\in Q_i}\omega_{ij}z_j \right\Vert^2 \\
+\min_{z_1,z_2,...,z_m} \sum_{i=1}^m \left\Vert z_i-W_iZ \right\Vert^2
+\end{aligned}</script><p>求解，这里需要对$z_i$正规化以满足$\sum_i z_i=0,\frac{1}{m}\sum_i z_iz_i^T=I$。可以令$M=(I-W)^T(I-W)$，那么优化函数可以写成<script type="math/tex">\min_Z tr(ZMZ^T) \quad s.t \; ZZ^T=I</script>这里需要注意我们假设对$Z$正规化，才能满足$ZZ^T=I$。然后上面的优化函数可以通过特征值分解，取最小的$d^{‘}$个非零特征值对应的特征向量即为$Z^T$。</p>
+<p>LLE算法描述</p>
+<hr>
+<p>输入：样本集$D={x_1,x_2,…,x_m}$; 近邻参数$k$; 低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 $for\; i=1,…,m \quad do$<br>2 $\quad$确定$x_i$的$k$近邻<br>3 $\quad$求$\omega_{ij},\; j\in Q_i$, 不在$x_i$邻域内的系数为0<br>4 $end \; for$<br>5 求矩阵$M$<br>5 对$M$进行特征值分解<br>6 输出最小的$d^{‘}$个非零特征值对应的特征向量</p>
+<hr>
+<p>输出：样本集$D$在低维空间的投影$Z$</p>
+<hr>
+<h6 id="拉普拉斯特征映射-Laplacian-Eigenmaps"><a href="#拉普拉斯特征映射-Laplacian-Eigenmaps" class="headerlink" title="拉普拉斯特征映射(Laplacian Eigenmaps)"></a>拉普拉斯特征映射(Laplacian Eigenmaps)</h6><blockquote>
+<p>待更……</p>
+</blockquote>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/18/Manifold-Learning/" data-id="ckek3hka70061i0pheel5do48" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Multiple-Dimensional-Scaling" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/18/Multiple-Dimensional-Scaling/">Multiple Dimensional Scaling</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/18/Multiple-Dimensional-Scaling/">
+            <time datetime="2016-12-18T02:22:41.000Z" itemprop="datePublished">2016-12-18</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>Multiple Dimensional Scaling (MDS、多维缩放)是经典的聚类算法。</p>
+<hr>
+<p>假设原始$d$维样本空间中有$m$个样本$x_1,x_2,…,x_m$，其距离矩阵为$D \in R^{m\times m}$，$dist_{ij}$为$x_i$到$x_j$的距离。MDS的出发点是获得样本在$d^{‘}$维空间内的表示$Z\in R^{d^{‘} \times m}$，新空间内样本的距离等于原始空间的距离，即<script type="math/tex">\Vert z_i-z_j \Vert = dist_{ij}</script>令$B=Z^TZ \in R^{m\times m}$，其中$B$为降维后的样本内积矩阵，$b_{ij}=z_i^Tz_j$，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+dist_{ij}^2 &= \Vert z_i \Vert + \Vert z_j \Vert - 2z_i^Tz_j \\
+&= b_{ii}+b_{jj}-2b_{ij}
+\end{aligned}</script><p>假设样本$Z$被中心化(normalization)，即$\sum_{i=1}^m z_i=0$。于是有<script type="math/tex">\sum_{i=1}^mb_{ij}=\sum_{j=1}^mb_{ij}=0</script>。继而有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{i=1}^m dist_{ij}^2 = tr(B)+mb_{jj} \\
+\sum_{j=1}^m dist_{ij}^2 = tr(B)+mb_{ii} \\
+\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 = 2mtr(B)
+\end{aligned}</script><p>其中，$tr$表示矩阵的秩，$tr(B)=\sum_{i=1}^m \Vert z_i \Vert^2$，联立上式可得<script type="math/tex">b_{ij}=-\frac{1}{2} \left( dist_{ij}^2 - \frac{1}{m}\sum_{i=1}^m dist_{ij}^2 -\frac{1}{m}\sum_{j=1}^m dist_{ij}^2 + \frac{1}{m^2}\sum_{i=1}^m \sum_{j=1}^m dist_{ij}^2 \right)</script>由此即可通过降维前后保持不变的距离矩阵$D$求取内积矩阵$B$。</p>
+<p>那么，下面就需要求$Z$了。方法是对$B$做特征值分解，得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+B=Z^TZ=V\Lambda V^T
+\end{aligned}</script><p>其中，$\Lambda=diag(\lambda_1,…,\lambda_{d})$为$d$个特征值构成的对角矩阵，$\lambda_1 \ge \lambda_2 \ge … \ge \lambda_d$。令$\Lambda_{*}=diag(\lambda_1,…,\lambda_{d^{*}})$为对角矩阵，$\Lambda_{*}$表示对应的特征向量矩阵，则<script type="math/tex">Z=\Lambda_{\*}^{\frac{1}{2}}V_{\*}^T \in R^{d^{\*}\times m}</script>现实中，仅需要降维后的距离与原始空间内的距离尽可能接近，不必严格相等。此时可取$d^{*}$远小于$d$求解。</p>
+<p>MDS算法描述如下：</p>
+<hr>
+<p>输入：距离矩阵$D\in R^{m\times m}$，其元素$dist_{ij}$为样本$x_i$到$x_j$的距离；低维空间维度$d^{‘}$</p>
+<hr>
+<p>1 计算矩阵$B$<br>2 对$B$做特征值分解<br>3 取$\Lambda$为$d^{‘}$个最大特征值所构成的对角矩阵，$V$为相应的特征向量矩阵</p>
+<hr>
+<p>输出：$Z=\Lambda^{\frac{1}{2}}V^T$，其中$Z$的每列对应一个样本的低维坐标</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/18/Multiple-Dimensional-Scaling/" data-id="ckek3hkas006pi0phimj1kfut" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Logistic-Regression" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/13/Logistic-Regression/">Logistic Regression</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/13/Logistic-Regression/">
+            <time datetime="2016-12-13T05:52:06.000Z" itemprop="datePublished">2016-12-13</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Logistic-Regression"><a href="#Logistic-Regression" class="headerlink" title="Logistic Regression"></a>Logistic Regression</h5><p>Logistic Regression的思想源于<b>广义线性模型</b><script type="math/tex">y=g(\omega^Tx+b)</script>其中，函数$g()$称为联系函数。<br>逻辑回归中，联系函数其实<b>sigmoid函数</b>: <script type="math/tex">y=\frac{1}{1+e^{-z}}</script>其函数图如下：</p>
+<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1fap4kz80uzj208w05xt8q.jpg)</center>
+
+<p>令$z=\omega^T x $，所以<script type="math/tex">y=\frac{1}{1+e^{-(\omega^T x)}}</script>其中，（通过扩展训练数据将bias部分加入，就省去了bias部分）上式可以写成<script type="math/tex">ln\frac{y}{1-y}=\omega^T x</script>如果把$y$当作正样本的后验概率$p(y=1|x)$，那么$1-y$就是负样本的后验概率$p(y=0|x)$。所以有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y=1|x) = \frac{e^{-(\omega^T x)}}{1+e^{-(\omega^T x)}} \\
+p(y=0|x) = \frac{1}{1+e^{-(\omega^T x)}}
+\end{aligned}</script><p>我们通过极大似然法来估计$\omega$，给定数据集${(x_i,y_i)}_{i=1}^m$，对数似然函数可以写成：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\omega) &= ln\prod_{i=1}^m \left(\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}}\right)^{y_i} \cdot \left(\frac{1}{1+e^{-\omega^T x_i}}\right)^{1-y_i} \\
+&= \sum_{i=1}^m \left( y_i ln \frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} + (1-y_i) ln \frac{1}{1+e^{-\omega^T x_i}} \right)
+\end{aligned}</script><p>这里使用经典的方法，$l(\omega)$对$\omega$求导，闭式解不好表示，所以可以使用梯度上升的方法表示，其中</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{dl(\omega)}{d\omega} &= \sum_{i=1}^m \left( y_ix_i-\frac{x_i e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \\
+\omega &= \omega+\frac{dl(\omega)}{d\omega}
+\end{aligned}</script><p>将批量梯度下降转换成随机梯度下降有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& for\quad i\; \in \; \{1,2,...,m\} \\
+& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-\frac{e^{-\omega^T x_i}}{1+e^{-\omega^T x_i}} \right) \cdot x_i
+\end{aligned}</script><h5 id="Generalized-Linear-Models"><a href="#Generalized-Linear-Models" class="headerlink" title="Generalized Linear Models"></a>Generalized Linear Models</h5><p>上面提到，广义线性模型的形式如下&lt;/b&gt;<script type="math/tex">y=g(\omega^Tx+b)</script>联系线性回归、logistic回归。广义线性模型的训练，如果满足条件，其随机梯度下降的训练方法如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+& for\quad i\; \in \; \{1,2,...,m\} \\
+& \quad\quad\omega = \omega+\alpha \cdot \left(y_i-h_{\theta}(x_i) \right) \cdot x_i
+\end{aligned}</script><p>其中，$h_{\theta}(x) = g(\theta^Tx)$即是目标模型的形式.</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/13/Logistic-Regression/" data-id="ckek3hk9l0052i0pheojwb7z7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Expection-Maximization" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/09/Expection-Maximization/">Expection Maximization</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/09/Expection-Maximization/">
+            <time datetime="2016-12-09T14:58:01.000Z" itemprop="datePublished">2016-12-09</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="EM算法"><a href="#EM算法" class="headerlink" title="EM算法"></a>EM算法</h5><h6 id="极大似然估计"><a href="#极大似然估计" class="headerlink" title="极大似然估计"></a>极大似然估计</h6><p>从极大似然法的角度引入EM算法，先考虑这样的一个问题。</p>
+<p>给定训练数据，假设训练数据满足高斯分布$f(x|\mu,\sigma^2)$，求这个分布的参数.</p>
+<p>这便是典型的极大似然估计问题，对数似然函数为<script type="math/tex">l(\mu,\sigma^2|X)=\sum_iln(f(x_i|\mu,\sigma^2))</script>上面的式子分别对$\mu$和$\sigma$求偏导，并设置其偏导数为0，那么$\mu$和$\sigma$的解可以直接计算。</p>
+<h6 id="包含隐含变量的极大似然估计"><a href="#包含隐含变量的极大似然估计" class="headerlink" title="包含隐含变量的极大似然估计"></a>包含隐含变量的极大似然估计</h6><p>假设还有一个条件：数据X有两个类别，$\lambda_1,\lambda_2$分别表示$f(x|\mu_1,\sigma_1^2)$和$f(x|\mu_2,\sigma_2^2)$在总体中的比率。因此总体分布就可以是$g(x|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2)$，即两个分布的混合。所以有<script type="math/tex">g(x|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2)=\lambda_1f(x|\mu_1,\sigma_1^2)+\lambda_2f(x|\mu_2,\sigma_2^2) \quad s.t.: \quad \lambda_1+\lambda_2=1</script>极大似然估计的求解方法如下，似然公式为<script type="math/tex">l()=log(P(X|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2))=log\left(\sum_ig(x_i|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2) \right)</script>上面式子是先求和在取对数，求偏导的方法就不行了！</p>
+<h6 id="Jensen不等式"><a href="#Jensen不等式" class="headerlink" title="Jensen不等式"></a>Jensen不等式</h6><p>如果一个函数满足：对于任意的$x$都有$f^{‘’}(x) \ge 0$，那么$f(x)$是凸函数(如果输入$x$是向量，那么对应于其hessian矩阵(半)正定)，如果等号可以去掉即可称之为<strong>严格凸函数</strong>。<br>Jensen不等式的表述如下：假设$f$是凸函数，X是一个随机变量，那么有：<script type="math/tex">E[f(X)] \ge f(E[X])</script>对立面的表述是，如果函数$f$是凹(concave)函数($f^{‘’}(x) \le 0$)，那么有<script type="math/tex">E[f(X)] \le f(E[X])</script>当不等式中的等号成立时，$f(X)$是常数函数。</p>
+<h6 id="期望最大化"><a href="#期望最大化" class="headerlink" title="期望最大化"></a>期望最大化</h6><p>现在抽象化问题，已知模型为$p(x|\theta)$，$X=(x_1,x_2,…,x_n)$，求$\theta$。这里需要引入隐含变量$Z=(z_1,z_2,…,z_m)$，所以有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(X|\theta)=\sum_zP(x_i|z,\theta) \cdot P(z|\theta)
+\end{aligned}</script><p>定义似然函数为<script type="math/tex">l(\theta)=log(P(X|\theta))=log\sum_z(P(x_i|z,\theta) \cdot P(z|\theta))</script> EM算法也是通过迭代方法求得$l(\theta)$的极值，假设第$n$轮迭代计算出的$\theta$为$\theta_n$，只要下一轮的$\theta$优于$\theta_n$即可，推导如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\theta)-l(\theta_n) &= log(P(X|\theta))-log(P(X|\theta_n)) \\
+&= log(\sum_zP(x_i|z,\theta) \cdot P(z|\theta))-log(P(X|\theta_n)) \\
+&= log(\sum_z P(z|X,\theta_n)\cdot \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n)})-log(P(X|\theta_n)) \\
+&\ge \sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n)} \right) - \sum_z P(z|X,\theta_n) \cdot log(P(X|\theta_n)) \\
+&= \sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n) \cdot P(X|\theta_n)} \right) \\
+\end{aligned}</script><p>进而有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\theta) &\ge l(\theta_n)+\sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n) \cdot P(X|\theta_n)} \right) \\
+Set : l(\theta) &\ge M(\theta_n,\theta) \\
+PS : l(\theta_n)&=M(\theta_n,\theta_n)
+\end{aligned}</script><p>所以，我们只要</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_{n+1} &= \mathop{arg\;max}_{\theta} M(\theta_n,\theta) \\
+&= \mathop{arg\;max}_{\theta} \sum_z P(z|X,\theta_n) \cdot log(P(X|z,\theta) \cdot P(z|\theta)) \\
+&= \mathop{arg\;max}_{\theta} \sum_z P(z|X,\theta_n) \cdot log(P(X,z|\theta)) \\
+&= \mathop{arg\;max}_{\theta} E_{Z|X,\theta_n}[log(P(X,z|\theta)] \\
+Set: F(\theta)&=E_{Z|X,\theta_n}[log(P(X,z|\theta)]
+\end{aligned}</script><p>所以，EM算法的步骤如下：</p>
+<hr>
+<p>随机初始化$\theta_0$<br>迭代直到收敛：<br>E步：求条件期望$F(\theta,\theta_n)$<br>M步：求$F(\theta,\theta_n)$的极值$\theta_{n+1}$</p>
+<hr>
+<h5 id="高斯混合模型"><a href="#高斯混合模型" class="headerlink" title="高斯混合模型"></a>高斯混合模型</h5><p>高斯混合模型是EM算法在高斯分布上的应用。多元高斯分布函数的定义如下：<script type="math/tex">p(x|\mu,\Sigma)=\frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} e^{-\frac{(x-\mu)^T \Sigma^{-1} (x-\mu) }{2}}</script> 其中，$\mu,\Sigma$分别是均值和协方差矩阵。混合高斯模型的定义为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p_M(x)&=\sum_{i=1}^k \alpha_i \cdot p(x|\mu_i,\Sigma_i) \\
+s.t.: \sum_{i=1}^k \alpha_i &= 1
+\end{aligned}</script><p>为了方便性，定义$j$个样本由第$i$个高斯分布产生的概率：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p_M(z_j=i|x_j)&=\gamma_{ji} \\
+&= \frac{P(z_j=i) \cdot p_M(x_j|z_j=i)}{p_M(x_j)} \\
+&= \frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdotp(x_j|\mu_l,\Sigma_l)}
+\end{aligned}</script><p>于是，给定样本集$D={x_1,…,x_m}$，用极大似然估计法，最大化似然对数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(D)=ln\left( \prod_{j=1}^m p_M(x_j) \right)=\sum_{j=1}^m ln\left( \sum_{i=1}^k \alpha_i \cdot p(x_j|\mu_i,\Sigma_i) \right)
+\end{aligned}</script><p>上式中，分别由$l(D)$对$\mu_i,\Sigma_i,\alpha_i$求偏导，由于$p_M(z_j=i|x_j)=\gamma_{ji}$，所以令偏导数=0的结果如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mu_i &= \frac{\sum_{j=1}^m \gamma_{ji} \cdot x_j}{\sum_{j=1}^m \gamma_{ji}} \\
+\Sigma_i &= \frac{\sum_{j=1}^m \gamma_{ji}(x_j-\mu_i)(x_j-\mu_i)^T}{\sum_{j=1}^m \gamma_{ji}} \\
+\end{aligned}</script><p>对于混合系数$\alpha_i$，除了考虑$l(D)$外，他还有一个限制$\sum_{i=1}^k \alpha_i=1$，所以这里可以使用拉格朗日乘子法：<script type="math/tex">l(D)+\lambda \left( \sum_{i=1}^k \alpha_i-1 \right)</script>上式对$\alpha_i$求导并设结果为0有(注意联系$\gamma_{ji}的定义式$)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{j=1}^m \frac{p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)} &= -\lambda \\
+multiply\; \alpha_i,\; and\;get\; sum\; with\; respect\; to\; i \\
+\sum_{i=1}^k \sum_{j=1}^m \frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)} &= \sum_{i=1}^k -\lambda \cdot \alpha_i \\
+hence: \lambda &= -m \\
+\alpha_i &= \frac{1}{m} \sum_{j=1}^m \gamma_{ji}
+\end{aligned}</script><p>所以，混合高斯的EM方法就是：先根据当前参数计算每个样本属于每个高斯成分的后验概率$\gamma_{ji}$（E步）；然后根据上面的规则更新模型参数${(\mu_i,\Sigma_i,\alpha_i)|1\le i \le k}$.</p>
+<p>最后给出<b>高斯混合聚类算法</b>表述：</p>
+<hr>
+<p>输入：样本集$D={x_1,…,x_m}$，高斯混合成分个数$k$;</p>
+<hr>
+<p>1  初始化高斯混合分布的模型参数${(\mu_i,\Sigma_i,\alpha_i)|1\le i \le k}$.<br>2  迭代，直到满足停止条件<br>3  $\quad  for\; j=1,…m \quad do$<br>4  $\quad \quad$计算$p_M(z_j=i|x_j)=\gamma_{ji},(1 \le i \le k)$<br>5  $\quad end\; for$<br>6  $\quad  for\; i=1,…k \quad do$<br>7  $\quad \quad$更新模型参数$(\mu_i,\Sigma_i,\alpha_i)$<br>8  $C_i=\emptyset,(1\le i \le k)$<br>9  $for\; j=1,…m \quad do$<br>10 $\quad$根据最大后验概率规则确定每个$x_j$的簇$\lambda_j$<br>11 $\quad C_{\lambda_j}=C_{\lambda_j}\cup \{x_j\}$<br>12 $end\; for$</p>
+<hr>
+<p>输出：簇划分结果$C={C_1,..,C_k}$</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="ckek3hk85002vi0phiidd0rwa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-DDoS的简单实现" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -310,7 +1936,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="ckeiowf7400204gphdfauql1y" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="ckek3hk7r0029i0phpac0qwwx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -446,1244 +2072,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="ckeiowf7k00304gphri6k28px" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Happy-Number" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/12/01/Happy-Number/">Happy Number</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/12/01/Happy-Number/">
-            <time datetime="2016-12-01T01:04:43.000Z" itemprop="datePublished">2016-12-01</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h6><p>Write an algorithm to determine if a number is “happy”.</p>
-<p>A happy number is a number defined by the following process: Starting with any positive integer, <b>replace the number by the sum of the squares of its digits, and repeat the process until the number equals 1 </b>(where it will stay), or it loops endlessly in a cycle which does not include 1. Those numbers for which this process ends in 1 are happy numbers.</p>
-<pre><code>Example: 19 is a happy number
-
-12 + 92 = 82
-82 + 22 = 68
-62 + 82 = 100
-12 + 02 + 02 = 1
-</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>可以使用hashset记录出现过的值，然后判断重复的是否是1<br>本质上，这题可以使用<a href="http://atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/">Floyd Cycle Detection</a>来解。其中</p>
-<ul>
-<li>由一个数跳转到另一个数可以当作是链表寻找下一个节点</li>
-<li>设置两个指针，每次分别前进1、2位</li>
-<li>如果最后相交于1，那么输出true；否则输出no</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">digitSquareSum</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = <span class="number">0</span>, tmp;</span><br><span class="line">    <span class="keyword">while</span> (n) &#123;</span><br><span class="line">        tmp = n % <span class="number">10</span>;</span><br><span class="line">        sum += tmp * tmp;</span><br><span class="line">        n /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">bool <span class="title">isHappy</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> slow, fast;</span><br><span class="line">    slow = fast = n;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        slow = digitSquareSum(slow);</span><br><span class="line">        fast = digitSquareSum(fast);</span><br><span class="line">        fast = digitSquareSum(fast);</span><br><span class="line">    &#125; <span class="keyword">while</span>(slow != fast);</span><br><span class="line">    <span class="keyword">if</span> (slow == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="ckeiowf7u003l4gph888ipmwc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Unique-Binary-Search-Trees" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/30/Unique-Binary-Search-Trees/">Unique Binary Search Trees</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/30/Unique-Binary-Search-Trees/">
-            <time datetime="2016-11-30T05:48:00.000Z" itemprop="datePublished">2016-11-30</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Unique-Binary-Search-Trees"><a href="#Unique-Binary-Search-Trees" class="headerlink" title="Unique Binary Search Trees"></a>Unique Binary Search Trees</h5><h6 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h6><p>Given n, how many structurally unique BST’s (binary search trees) that store values 1…n?</p>
-<p>For example,<br>Given n = 3, there are a total of 5 unique BST’s.</p>
-<pre><code>1         3     3      2      1
- \       /     /      / \      \
-  3     2     1      1   3      2
- /     /       \                 \
-2     1         2                 3
-</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>使用DP的思想解题<br>定义两个函数：</p>
-<ul>
-<li>G(n)：n个数组成的序列能构成的BST的总数目</li>
-<li>F(i,n), 1&lt;=i&lt;=n：1-n序列以第i个节点为根节点的BST的数目</li>
-<li>G(n)由根节点分别为每个节点的BST组成。对每个F(i,n)，i是根，则左子树有i-1个节点，右子树有n-i个节点</li>
-</ul>
-<p>显然，根据上面的定义有：<script type="math/tex">G(n)=\sum_{i=1}^nF(i,n)</script> <script type="math/tex">F(i,n)=G(i-1) \times G(n-i)</script>初始条件：G(0)=1, G(1)=1<br>所以有：<script type="math/tex">G(n)=\sum_{i=1}^nG(i-1)\times G(n-i)</script> 代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numTrees</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> [] G = <span class="keyword">new</span> <span class="keyword">int</span>[n+<span class="number">1</span>];</span><br><span class="line">    G[<span class="number">0</span>] = G[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>; i&lt;=n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>; j&lt;=i; ++j) &#123;</span><br><span class="line">            G[i] += G[j-<span class="number">1</span>] * G[i-j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> G[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="Unique-Binary-Search-Trees-II"><a href="#Unique-Binary-Search-Trees-II" class="headerlink" title="Unique Binary Search Trees II"></a>Unique Binary Search Trees II</h5><h6 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h6><p>Given an integer n, generate all structurally unique BST’s (binary search trees) that store values 1…n.</p>
-<p>For example,<br>Given n = 3, there are a total of 5 unique BST’s.</p>
-<pre><code>1         3     3      2      1
- \       /     /      / \      \
-  3     2     1      1   3      2
- /     /       \                 \
-2     1         2                 3
-</code></pre><h6 id="解题思路-1"><a href="#解题思路-1" class="headerlink" title="解题思路"></a>解题思路</h6><p>与上一题的区别在于本题需要返回所有的BST，而不是仅仅计算结果。<br>这题可以使用分治递归的思想，大致思想是：</p>
-<ul>
-<li>对于1-n组成的节点，每个节点都可能是root</li>
-<li>如果根结点是i，则分别求其左子树和右子树，然后所有左子树和右子树两两配对，加上根节点就是一棵树</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;TreeNode&gt; <span class="title">generateTrees</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> generateSubtrees(<span class="number">1</span>, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> List&lt;TreeNode&gt; <span class="title">generateSubtrees</span><span class="params">(<span class="keyword">int</span> s, <span class="keyword">int</span> e)</span> </span>&#123;</span><br><span class="line">    List&lt;TreeNode&gt; res = <span class="keyword">new</span> LinkedList&lt;TreeNode&gt;();</span><br><span class="line">    <span class="keyword">if</span> (s &gt; e) &#123;</span><br><span class="line">        res.add(<span class="keyword">null</span>); <span class="comment">// empty tree</span></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s; i &lt;= e; ++i) &#123;</span><br><span class="line">        List&lt;TreeNode&gt; leftSubtrees = generateSubtrees(s, i - <span class="number">1</span>);</span><br><span class="line">        List&lt;TreeNode&gt; rightSubtrees = generateSubtrees(i + <span class="number">1</span>, e);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (TreeNode left : leftSubtrees) &#123;</span><br><span class="line">            <span class="keyword">for</span> (TreeNode right : rightSubtrees) &#123;</span><br><span class="line">                TreeNode root = <span class="keyword">new</span> TreeNode(i);</span><br><span class="line">                root.left = left;</span><br><span class="line">                root.right = right;</span><br><span class="line">                res.add(root);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="ckeiowfbd009j4gphzlpi675o" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Minimum-Spanning-Tree" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/27/Minimum-Spanning-Tree/">Minimum Spanning Tree</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/27/Minimum-Spanning-Tree/">
-            <time datetime="2016-11-27T02:30:03.000Z" itemprop="datePublished">2016-11-27</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Tree/">Tree</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <p>最小生成树（MST）算法是给定一个无向带权图（V, E），求解最小生成树。</p>
-<h5 id="普里姆算法-Prim"><a href="#普里姆算法-Prim" class="headerlink" title="普里姆算法 Prim"></a>普里姆算法 Prim</h5><p>Prim算法是逐渐加入点的算法</p>
-<pre><code>输入：一个加权连通图，其中顶点集合为V，边集合为E；
-
-初始化：Vnew = {x}，其中x为集合V中的任一节点（起始点），Enew = {},为空；
-
-重复下列操作，直到Vnew = V：
-
-1. 在集合E中选取权值最小的边&lt;u, v&gt;，其中u为集合Vnew中的元素，而v不在Vnew集合当中，并且v∈V（如果存在有多条满足前述条件即具有相同权值的边，则可任意选取其中之一）；
-
-2. 将v加入集合Vnew中，将&lt;u, v&gt;边加入集合Enew中；
-
-输出：使用集合Vnew和Enew来描述所得到的最小生成树
-</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Prim</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">// dis数组维护的是已经找过的点集 到 每一个点 的最小距离</span></span><br><span class="line">    <span class="comment">// 每个点到第一个点的距离就是其直接距离</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;=n; i++)</span><br><span class="line">        dis[i]=map[<span class="number">1</span>][i];</span><br><span class="line">    vis[<span class="number">1</span>]=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> min=INF;</span><br><span class="line">        <span class="comment">// 找到最近的点</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>; j&lt;=n; j++)</span><br><span class="line">            <span class="keyword">if</span>(!vis[j]&amp;&amp;dis[j]&lt;min) &#123;</span><br><span class="line">                min=dis[j];</span><br><span class="line">                k=j;</span><br><span class="line">            &#125;</span><br><span class="line">        sum+=min;</span><br><span class="line">        vis[k]=<span class="number">1</span>; <span class="comment">//标记访问</span></span><br><span class="line">        <span class="comment">// 更新由于引入k点可能带来的距离变化</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>; j&lt;=n; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span>(!vis[j]&amp;&amp;map[k][j]&lt;dis[j]) &#123;</span><br><span class="line">                dis[j]=map[k][j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>复杂度：$O(n^2)$, 其中$n$为点的个数，适用于边稠密的图。</p>
-<h5 id="克鲁斯卡尔算法-Kruskal"><a href="#克鲁斯卡尔算法-Kruskal" class="headerlink" title="克鲁斯卡尔算法 Kruskal"></a>克鲁斯卡尔算法 Kruskal</h5><h6 id="并查集-Union-Find"><a href="#并查集-Union-Find" class="headerlink" title="并查集 Union-Find"></a>并查集 Union-Find</h6><p>并查集是解决动态连通性一类问题的一种算法，主要思想与树的思想类似，利用根来确定连通性。并查集本质上由两个操作组成，分别是find和join，其中find用于查找最顶层的节点（root），join将两个连通子集合并起来。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> pre[<span class="number">1000</span> ]; <span class="comment">// 存储每一个节点的前继</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 查找根节点</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> r=x;</span><br><span class="line">    <span class="keyword">while</span> ( pre[r ] != r )</span><br><span class="line">        r=pre[r ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> r ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接根节点</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">join</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fx = find(x);</span><br><span class="line">    <span class="keyword">int</span> fy = find(y);</span><br><span class="line">    <span class="comment">// 设置根之间的关系</span></span><br><span class="line">    <span class="keyword">if</span> (fx != fy)</span><br><span class="line">        pre[fx]=fy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Kruskal是逐渐加入边的算法</p>
-<pre><code>记Graph中有v个顶点，e个边
-
-新建图Graphnew，Graphnew中拥有原图中相同的e个顶点，但没有边
-
-将原图Graph中所有e个边按权值从小到大排序
-
-循环：从权值最小的边开始遍历每条边 直至图Graph中所有的节点都在同一个连通分量(并查集思想)中
-        if 这条边连接的两个节点于图Graphnew中不在同一个连通分量中
-                添加这条边到图Graphnew中
-</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 间接排序</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cmp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> i,<span class="keyword">const</span> <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> w[i]&lt;w[j];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> p[x]==x ? x : p[x]=find(p[x]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kruskal</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> cou=<span class="number">0</span>,x,y,i,ans=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 将每个点的前缀初始化为为自己</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;n;i++) p[i]=i;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;m;i++) r[i]=i;</span><br><span class="line">    <span class="comment">// 间接排序，排序后第i小的边保存在r[i]中</span></span><br><span class="line">    sort(r,r+m,cmp);</span><br><span class="line">    <span class="comment">// 从小到大取边</span></span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;m;i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> e=r[i];</span><br><span class="line">        x=find(u[e]);</span><br><span class="line">        y=find(v[e]);</span><br><span class="line">        <span class="comment">// 来自不同的连通分量就可以加入</span></span><br><span class="line">        <span class="keyword">if</span>(x!=y) &#123;</span><br><span class="line">            ans += w[e];</span><br><span class="line">            p[x]=y;</span><br><span class="line">            cou++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(cou&lt;n-<span class="number">1</span>) ans=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>复杂度：$O(elog_2^e)$，其中$e$为边的数量，适用于边稀疏的图。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="ckeiowf9c00664gph89s82dah" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Tile-Cover-Problem" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/25/Tile-Cover-Problem/">Tile Cover Problem</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/25/Tile-Cover-Problem/">
-            <time datetime="2016-11-25T01:42:46.000Z" itemprop="datePublished">2016-11-25</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/POJ/">POJ</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><p>POJ 2411<br>编程之美<br>用 1 x 2 的瓷砖覆盖 n x m 的地板，问共有多少种覆盖方式？</p>
-<h5 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h5><p>这是个<b>状态压缩DP问题</b>，意思就是把状态用比特位的形式表示出来，然后使用DP求解</p>
-<pre><code>每个位置，有砖为1，无砖为0
-由于转是1x2规格的，规定：
-横着铺是连续两个都设成1
-竖着铺时上面的设为0，下面的为1（因为上面的砖头对第二行有影响，如果上面的为0，那么下面的必须为1）
-把每一行看作是一个二进制整数，这个整数就表示状态(有多少种01序列就有多少种状态)
-因此每行都有很多状态，状态即为这一行01序列对应的值
-</code></pre><ul>
-<li><b>DP[i][j]表示第i行状态为j时有多少种方法</b>。</li>
-<li><b>如果上一行的某个状态DP(i-1,k) 可以达到 DP(i, j) 那么两个状态是兼容的</b>。</li>
-<li><b>如果DP(i-1,k)和DP(i, j)兼容并且 DP(i-1, k)有S种铺设方案，那么DP(i, j)就可以从DP(i-1, k)这条路径中获得S个方案</b>。</li>
-</ul>
-<p><b>兼容性：</b><br>兼容性指的是上一行和下一行的关系。Concretely，<b>x和y兼容指的是x、y对应的二进制串对应的状态是兼容的</b>。<br>检测兼容性的方法是从左到右依次检测每一列是否兼容，具体检查内容包括：(假如现在铺设第i行x列)</p>
-<pre><code>     x  x+1
-i-1
-  i  0
-</code></pre><p>如果第i行x列上的值(i,x)是0， 那么第 i-1行x列上一定是1</p>
-<pre><code>     x  x+1
-i-1
-  i  1
-</code></pre><p>如果(i,x)为1，那么</p>
-<ul>
-<li>(i-1,x)为0，竖着铺的，下一步检测(i, x+1)</li>
-<li>(i-1,x)为1，下一步检测(i, x+2).因为(i,x)是横着铺，跨越两个格子。</li>
-</ul>
-<p>第一行得兼容性</p>
-<ul>
-<li>如果 (0,x) 是1，那么 (0,x+1) 也一定是1，然后测试到 (0,x+2)</li>
-<li>如果(0,x)是0， 那么直接测试下一个(0,x+1)</li>
-<li>因为是第一行，所以兼容只能获得一个方案</li>
-</ul>
-<p>所以具体思路就是：</p>
-<pre><code>对每一行，遍历其所有可能得状态
-检查其与上一行所有状态得兼容性，兼容则获取上一行状态所对应的方案数
-第一行单独处理
-最后一行结束后，返回DP[n-1][2^m-1]，因为最后一行必须全部为1
-</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;memory.h&gt;</span><br><span class="line">#include &lt;math.h&gt;</span><br><span class="line">#include &lt;algorithm&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#define MAX_ROW 11</span><br><span class="line">#define MAX_STATUS 2048</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> DP[MAX_ROW][MAX_STATUS];</span><br><span class="line"><span class="keyword">int</span> g_Width, g_Height;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test the first line</span></span><br><span class="line"><span class="function">bool <span class="title">TestFirstLine</span><span class="params">(<span class="keyword">int</span> nStatus)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 状态的每一个位</span></span><br><span class="line">    <span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line">        <span class="keyword">if</span>(nStatus &amp; (<span class="number">0x1</span> &lt;&lt; i)) &#123;</span><br><span class="line">            <span class="keyword">if</span>( i == g_Width -<span class="number">1</span> || (nStatus &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) == <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            i += <span class="number">2</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// test if status (i, nStatusA) and (i-1, nStatusB) is compatable.</span></span><br><span class="line"><span class="function">bool <span class="title">CompatablityTest</span><span class="params">(<span class="keyword">int</span> nStatusA, <span class="keyword">int</span> nStatusB)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( i &lt; g_Width) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; i))  == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            i++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>((nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; i)) == <span class="number">0</span> )</span><br><span class="line">                i++;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>( (i == g_Width - <span class="number">1</span>) || ! ( (nStatusA &amp; (<span class="number">0x1</span> &lt;&lt; (i+<span class="number">1</span>))) &amp;&amp; (nStatusB &amp; (<span class="number">0x1</span> &lt;&lt; (i + <span class="number">1</span>)))) )</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                i += <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i,j;</span><br><span class="line">    <span class="keyword">int</span> k;</span><br><span class="line">    <span class="keyword">while</span>(scanf(<span class="string">"%d%d"</span>, &amp;g_Height, &amp;g_Width) != EOF ) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(g_Width == <span class="number">0</span> &amp;&amp; g_Height == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(g_Width &gt; g_Height)</span><br><span class="line">            swap(g_Width, g_Height);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> nAllStatus = <span class="number">1</span> &lt;&lt; g_Width;</span><br><span class="line">        memset(DP, <span class="number">0</span>, sizeof(DP));</span><br><span class="line">        <span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span>(TestFirstLine(j))</span><br><span class="line">                DP[<span class="number">0</span>][j] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>( i = <span class="number">1</span>; i &lt; g_Height; i++) &#123; </span><br><span class="line">            <span class="comment">// iterate all status for line i</span></span><br><span class="line">            <span class="keyword">for</span>( j = <span class="number">0</span>; j &lt; nAllStatus; j++) &#123;</span><br><span class="line">                <span class="comment">// iterate all status for line i-1</span></span><br><span class="line">                <span class="keyword">for</span>( k = <span class="number">0</span>; k &lt; nAllStatus; k++) &#123;</span><br><span class="line">                    <span class="keyword">if</span>(CompatablityTest(j, k))</span><br><span class="line">                        DP[i][j] += DP[i-<span class="number">1</span>][k];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        printf(<span class="string">"%lld\n"</span>, DP[g_Height-<span class="number">1</span>][nAllStatus - <span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ckeiowfb000924gphbsl7bkw9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Flip-Game" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/24/Flip-Game/">Flip Game</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/24/Flip-Game/">
-            <time datetime="2016-11-24T13:55:34.000Z" itemprop="datePublished">2016-11-24</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/POJ/">POJ</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1fa3jk4clc9g208w07wmx0.gif)</center>
-
-<p>有一个4*4的方格，每个方格中放一粒棋子，这个棋子一面是白色，一面是黑色。游戏规则为每次任选16颗中的一颗，<b>把选中的这颗以及它四周的棋子一并反过来</b>，当所有的棋子都是同一个颜色朝上时，游戏就完成了。现在给定一个初始状态，要求输出能够完成游戏所需翻转的最小次数，如果初始状态已经达到要求输出0。如果不可能完成游戏，输出Impossible.</p>
-<h5 id="解题思想"><a href="#解题思想" class="headerlink" title="解题思想"></a>解题思想</h5><h6 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h6><p>1.如果用一个4*4的数组存储每一种状态，不但存储空间很大，而且在穷举状态时也不方便记录。因为每一颗棋子都只有两种状态，所以可以用二进制0和1表示每一个棋子的状态，则棋盘的状态就可以用一个16位的整数唯一标识。而翻转的操作也可以通过通过位操作来完成。显然当棋盘状态id为0(全白)或65535(全黑)时，游戏结束。</p>
-<p>2.对于棋盘的每一个状态，都有十六种操作，首先要判断这十六种操作之后是否有完成的情况，<b>如果没有，则再对这十六种操作的结果分别再进行上述操作</b>，显然这里就要用到队列来存储了。而且在翻转的过程中有可能会回到之前的某种状态，而这种重复的状态是不应该再次入队的，所以维护isVis[i]数组来判断id==i的状态之前是否已经出现过，如果不是才将其入队。<b>如果游戏无法完成，状态必定会形成循环，由于重复状态不会再次入队，所以最后的队列一定会是空队列</b>。</p>
-<p>3.由于0^1=1，1^1=0，所以翻转的操作可以通过异或操作来完成，而翻转的位置可以通过移位来确定。</p>
-<h6 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h6><p>4x4得棋盘最多需要翻转16次就可以完成，因为同一位置上得两次翻转等于没有翻转。<br>可以根据步数从0到16依次枚举，第一个符合条件的就是最小的步数，为了容易深搜，可以设定顺序为一行一行深搜，当一行搜完时从下一行开头搜。下面的代码也可以使用bit的思想压缩空间。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">DFS</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> dp)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// step表示当前尝试的步数上限</span></span><br><span class="line">    <span class="comment">// dp表示在step步数上限的前提下，当前的步数</span></span><br><span class="line">    <span class="keyword">if</span>(dp == step)&#123;</span><br><span class="line">        flag=range();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(flag||i==<span class="number">4</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    turn(i,j); <span class="comment">//翻转当前位置</span></span><br><span class="line">    <span class="keyword">if</span>(j&lt;<span class="number">3</span>)</span><br><span class="line">        DFS(i,j+<span class="number">1</span>,dp+<span class="number">1</span>); <span class="comment">// 下一个列</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        DFS(i+<span class="number">1</span>,<span class="number">0</span>,dp+<span class="number">1</span>); <span class="comment">// 下一行</span></span><br><span class="line">    turn(i,j); <span class="comment">// 消除当前位置的翻转</span></span><br><span class="line">    <span class="keyword">if</span>(j&lt;<span class="number">3</span>)</span><br><span class="line">        DFS(i,j+<span class="number">1</span>,dp); <span class="comment">// 当前位置不动的情况下，到下一列</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        DFS(i+<span class="number">1</span>,<span class="number">0</span>,dp); <span class="comment">// 当前位置不动的情况下，到下一行</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">    其余代码省略</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// step表示步数0到16枚举</span></span><br><span class="line">    <span class="keyword">for</span>(step=<span class="number">0</span>; step&lt;=<span class="number">16</span>; step++) &#123;</span><br><span class="line">        flag=<span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 从(0,0)开始，开始第0步</span></span><br><span class="line">        dfs(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 如果找到了，输出即可。因为步数上限step是逐渐提高的</span></span><br><span class="line">        <span class="keyword">if</span>(flag)<span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ckeiowf7m00344gphzl54pwaz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Principal-Component-Analysis" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/21/Principal-Component-Analysis/">Principal-Component-Analysis</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/21/Principal-Component-Analysis/">
-            <time datetime="2016-11-21T02:10:34.000Z" itemprop="datePublished">2016-11-21</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="主成分分析"><a href="#主成分分析" class="headerlink" title="主成分分析"></a>主成分分析</h5><p>主成分分析是很常用降维方法之一。通过对原始数据进行投影而达到将其降维、划分的作用。</p>
-<p>PCA的出发点有两个：</p>
-<ul>
-<li>最近重构性：样本点到投影面的距离都足够近</li>
-<li>最大可分性：样本点在投影面上的投影尽可能分开</li>
-</ul>
-<h6 id="预处理-均值和方差的正规化"><a href="#预处理-均值和方差的正规化" class="headerlink" title="预处理(均值和方差的正规化)"></a>预处理(均值和方差的正规化)</h6><p>求均值$\hat{x}=\frac{1}{m}\sum_{i=1}^mx^{(i)}$</p>
-<p>将所有$x^{(i)}$替换成$x^{(i)}-\hat{x}$.</p>
-<p>求方差 $\sigma_{j}^2=\frac{1}{m}\sum_i(x_j^{(i)})^2$</p>
-<p>将所有$x_j^{(i)}$替换成$x_j^{(i)}/\sigma_j$.</p>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9zjud8hdxj20iv0h4dg5.jpg)</center>
-
-<p>假设现在有两组二维空间的点，我们需要将他们投影到一维空间。也就是要找到一个单位投影向量$\mu$，使<b>投影后的点方差最大</b>，分的最开，上图中，右下角的方法比右上角的差。点$x^{(i)}$投影过后到原点的距离是$\mu^T x^{(i)}$，那么所有的投影过的数据的均值就是$\frac{1}{m}\sum_i \mu^T x^{(i)}=\frac{1}{m} \mu^T \sum_i x^{(i)}$，因为我们已经对原数据进行了正规化，所以投影过的数据均值是$0$. 因此，我们的目标函数就是最大化：<script type="math/tex">\frac{1}{m}\sum_{i=1}^m (\mu^T x^{(i)})^2=\mu^T \left( \frac{1}{m}\sum_{i=1}^mx^{(i)}(x^{(i)})^T \right) \mu \quad .s.t. \quad \mu^T\mu =1</script> <b>上式中括号括起来的也就是原始数据的协方差矩阵$\Sigma=\frac{1}{m}\sum_{i=1}^mx^{(i)}(x^{(i)})^T$，最大化这个公式也就是求解$\Sigma$的特征向量(拉格朗日乘子法)。所以如果需要将原始空间的数据降到k维，那么只需要取$\Sigma$前k大的特征值对应的特征向量作为投影向量即可。</b></p>
-<p>PCA的算法描述如下：</p>
-<pre><code>输入：样本集D,和目标维度k
-
-1. 对所有样本正规化
-
-2. 计算样本的协方差矩阵
-
-3. 对协方差矩阵做特征值分解
-
-4. 降序排序特征值，取前k个特征值对应的特征向量组成投影矩阵
-</code></pre><h5 id="白化"><a href="#白化" class="headerlink" title="白化"></a>白化</h5><p>处理图像时，相邻像素点通常是有关系，所以图像原始数据是冗余的。<strong>白化就是要降低输入的冗余性，并且保证每个特征具有相同的方差</strong>。</p>
-<p>做法是：先将图片数据经过PCA处理，维度之间的相关度变为0，然后我们对每个维度都除以那个维度的标准差，这样每个维度就具有单位方差了。PCA做白化时，可以选取前k个成分，而另一种叫ZCA的方法，会保留所有成分，并且最后会<strong>左乘一个特征向量矩阵，把特征旋转回去</strong></p>
-<script type="math/tex; mode=display">
-X_{PCA,i}=\frac{X_{root,i}}{\sqrt{\lambda_i}} \\
-X_{ZCA}=UX_{PCA}</script><p>二者差异如下：</p>
-<ul>
-<li>PCA白化需要保证数据各维度的方差为1，ZCA白化只需保证方差相等</li>
-<li>PCA白化可进行降维也可以去相关性，而ZCA白化主要用于去相关性</li>
-<li>ZCA白化相比于PCA白化使得处理后的数据更加的接近原始数据</li>
-</ul>
-<h5 id="Robust主成分分析"><a href="#Robust主成分分析" class="headerlink" title="Robust主成分分析"></a>Robust主成分分析</h5><p>PCA假设数据的噪声是高斯的，对于大的噪声或者严重的离群点，PCA会被它影响，导致无法正常工作。而<b>鲁棒PCA只假设噪声是稀疏的</b>。所以，RPCA的出发点是将原数据分解成两个矩阵，一个是稀疏的（噪声点），另一个是低秩的（内部有一定的结构信息，造成各行或列间是线性相关的）。也就是：<script type="math/tex">\min_{A,E}rank(A)+\lambda \Vert E \Vert_0 \quad .s.t. \; X=A+E</script> 其中，$rank$是矩阵求秩的意思。但是上式有着非凸和非平滑等问题，可以转化成优化<script type="math/tex">\min_{A,E}\Vert A \Vert_{*}+\lambda \Vert E \Vert_1 \quad .s.t. \; X=A+E</script>求秩操作可以近似为求核范数，L0范数可以用L1范数逼近。求解出来上式，然后在对矩阵A运行PCA算法就可以得到对噪声有着比较好的鲁棒性的结果。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ckeiowfa0007f4gphso6idhey" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Norm-Rule-of-Machine-Learning" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/17/Norm-Rule-of-Machine-Learning/">Norm Rule of Machine Learning</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/17/Norm-Rule-of-Machine-Learning/">
-            <time datetime="2016-11-17T03:05:32.000Z" itemprop="datePublished">2016-11-17</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Math/">Math</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <pre><code>L0范数是指向量中非0的元素的个数。
-L1范数是指向量中各个元素绝对值之和，也称为“稀疏规则算子”（Lasso regularization）
-L2范数是指向量各元素的平方和然后求平方根
-核范数是指矩阵奇异值的和
-</code></pre><h6 id="L0和L1范数"><a href="#L0和L1范数" class="headerlink" title="L0和L1范数"></a>L0和L1范数</h6><p>L0和L1范数都有使得参数变得稀疏的作用，因为L0范数的求解困难（NP难），所以一般使用L1范数来逼近L0范数。<br>稀疏的重要性在于：</p>
-<ol>
-<li>特征选择</li>
-<li>可解释性（减小多种特征带来的复杂性）</li>
-</ol>
-<h6 id="L2范数"><a href="#L2范数" class="headerlink" title="L2范数"></a>L2范数</h6><p>L2范数也是使用颇为广泛的范数，再回归里使用L2范数的叫做<b>“岭回归”</b><br><b>condition number<b></b></b></p>
-<pre><code>condition number是一个矩阵（或者它所描述的线性系统）的稳定性或者敏感度的度量
-如果一个矩阵的condition number在1附近，那么它就是well-conditioned的
-如果远大于1，那么它就是ill-conditioned的，如果一个系统是ill-conditioned的
-比如：AX=b方程，稍微改动矩阵A的值，b就有很大变化，那么这个方程是ill-conditioned的
-</code></pre><p>非奇异方阵的condition number定义为：<script type="math/tex">k(A)=\Vert A \Vert \times \Vert A^{-1} \Vert</script>.</p>
-<p>L2范数的重要性在于</p>
-<ol>
-<li>改善过拟合现象</li>
-<li>处理 condition number不好的情况下矩阵求逆很困难的问题</li>
-</ol>
-<p>关于2的解释<br>因为目标函数如果是二次的，对于线性回归来说，那实际上是有解析解的，求导并令导数等于零即可得到最优解为: <script type="math/tex">w=(X^TX)^{-1}X^Ty</script><br>当样本X的数目比每个样本的维度还要小的时候，矩阵$X^TX$将会不是满秩的，也就是不可逆，所以$w$就没办法直接计算出来了，也可以说是有无穷多个解。这就是发生了<b>过拟合</b>。</p>
-<p>但是如果加入了L2范数约束，就有：<script type="math/tex">w=(X^TX+\lambda I)^{-1}X^Ty</script> 这样求逆就简单些了。</p>
-<h6 id="L1范数容易产生稀疏解的原因"><a href="#L1范数容易产生稀疏解的原因" class="headerlink" title="L1范数容易产生稀疏解的原因"></a>L1范数容易产生稀疏解的原因</h6><center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9yxypfys9j20hb0a7q60.jpg)</center>
-
-<h6 id="核范数"><a href="#核范数" class="headerlink" title="核范数"></a>核范数</h6><p>低秩矩阵：如果矩阵的秩远小于它的行数和列数，那么它就是低秩矩阵。<br>核范数是指<b>矩阵奇异值的和</b>，可以用来<b>近似低秩矩阵的秩</b>。<br>低秩的应用：</p>
-<ol>
-<li>矩阵填充，矩阵各行(列)之间的线性相关求出丢失的元素</li>
-<li>鲁棒PCA</li>
-<li>背景建模</li>
-<li>低秩纹理映射算法</li>
-</ol>
-<h6 id="近似梯度下降-Proximal-Gradient-Descent"><a href="#近似梯度下降-Proximal-Gradient-Descent" class="headerlink" title="近似梯度下降(Proximal Gradient Descent)"></a>近似梯度下降(Proximal Gradient Descent)</h6><p>近似梯度下降是解决L1优化问题的算法，优化问题的定义形式如下：<script type="math/tex">\min_x f(x)+\lambda \Vert x \Vert_1</script>其中$f(x)$是凸函数并且可微，而$\lambda \Vert x \Vert_1$是凸函数但是不可微(non-differentiable)，所以不能按照岭回归那样求解。若$f(x)$可导，且$\nabla f$满足L-Lipschitz条件，即存在常数$L&gt;0$使得<script type="math/tex">\Vert \nabla f(x_1)-\nabla f(x) \Vert_2^2 \le L \Vert x_1-x \Vert,\; (\forall x,x_1)</script>在$x_k$附近将$f(x)$通过二阶泰勒展开式可以写成：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-f(x) &\simeq f(x_k)+\nabla f(x_k)(x-x_k)+\frac{ \frac{\nabla f(x)-\nabla f(x_k)}{x-x_k} }{2} \Vert x-x_k \Vert^2 \\
-&= f(x_k)+\nabla f(x_k)(x-x_k)+\frac{L}{2} \Vert x-x_k \Vert^2 \\
-&= \frac{L}{2} \left\Vert x-\left( x_k-\frac{1}{L}\nabla f(x_k) \right) \right\Vert_2^2 + \varphi (x_k)
-\end{aligned}</script><p>其中，最后一步将关于$x$的项集中到一起，以及一个$\varphi (x_k)$只包含$x_k$不包含$x$。$\varphi (x_k)$可通过将最后一个式子拆开并和倒数第二个式子比较得到。这样，上式的最小值即为<script type="math/tex">x_{k+1}=x_k-\frac{1}{L}\nabla f(x_k)</script>这就是梯度下降的思想，梯度下降的每次迭代其实是在最小化原目标的一个二次近似函数。</p>
-<p>将这种转化$f(x)$的思想应用到L1优化的目标函数上，可得每一步迭代其实是<script type="math/tex">x_{k+1}=arg\min_x \frac{L}{2} \left\Vert x-\left( x_k-\frac{1}{L}\nabla f(x_k) \right) \right\Vert_2^2 + \lambda \Vert x \Vert_1</script>即在每一步对$f(x)$进行梯度下降的时候同时考虑优化L1范数。<br>此时，可以先计算$z=x_k-\frac{1}{L}\nabla f(x_k)$，然后求解</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-x_{k+1} = arg\min_x \frac{L}{2} \Vert x-z \Vert_2^2 + \lambda \Vert x \Vert_1
-\end{aligned}</script><p>这里考虑整个$x$就不合适了，考虑$x$的每个分量不会相互影响，即没有$x^ix^j$项。对于第$i$个分量$x^i$所以有<script type="math/tex">x_{k+1}^i = arg\min_x \frac{L}{2} (x^i-z_i)^2+\lambda \vert x^i \vert</script>所以每个分量的更新方法为（高中知识，二次函数、分类讨论）</p>
-<script type="math/tex; mode=display">
-x_{k+1}^i=\begin{cases}
-z^i-\frac{\lambda}{L}    & { \frac{\lambda}{L}<z^i } \\
-0                        & { \vert z^i \vert \le \frac{\lambda}{L}} \\
-z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
-\end{cases}</script><p>上面就是PGD方法的详细说明，通过PGD就可以求解L1优化问题。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ckeiowf9o006r4gphympg02mj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Binary-Search-Tree-Iterator" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/16/Binary-Search-Tree-Iterator/">Binary Search Tree Iterator</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/16/Binary-Search-Tree-Iterator/">
-            <time datetime="2016-11-16T14:34:46.000Z" itemprop="datePublished">2016-11-16</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.</p>
-<p>Calling <b>next()</b> will return the next smallest number in the BST.</p>
-<p>Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.</p>
-<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>思路是使用栈。</p>
-<ol>
-<li>给定根节点root，从root开始不断向左，将遇到的每个节点入栈</li>
-<li>使用next函数时，栈顶top节点出栈，将top节点设置为root，执行步骤1</li>
-<li>hasNext函数：查看栈是否为空即可</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSTIterator</span> </span>&#123;</span><br><span class="line">    stack&lt;TreeNode *&gt; myStack;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    BSTIterator(TreeNode *root) &#123;</span><br><span class="line">        pushAll(root);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> whether we have a next smallest number */</span></span><br><span class="line">    <span class="function">bool <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !myStack.empty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> the next smallest number */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        TreeNode *tmpNode = myStack.top();</span><br><span class="line">        myStack.pop();</span><br><span class="line">        pushAll(tmpNode-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> tmpNode-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 从root开始不断向左，将遇到的每个节点入栈</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pushAll</span><span class="params">(TreeNode *node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (; node != NULL; myStack.push(node), node = node-&gt;left);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ckeiowf62000a4gph3sglty0y" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="ckek3hk8b0035i0phhtzhie6s" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1760,7 +2149,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 
     <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/5/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/7/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/5/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/7/">下一页 &raquo;</a>
     </nav>
 </section>
             
@@ -1776,7 +2165,45 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="thumbnail">
+                            <a href="/2020/09/01/Python-Functions/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Dev/">Dev</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Python-Functions/" class="title">Python Functions</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:15:14.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Bounds-in-Binary-Search/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Bounds-in-Binary-Search/" class="title">Bounds in Binary Search</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:12:12.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/BM25/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1787,72 +2214,15 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/08/30/NLP-Pre-train-Models-after-Bert/" class="title">NLP Pre-train Models after Bert</a></p>
-                            <p class="item-date"><time datetime="2020-08-30T05:16:49.000Z" itemprop="datePublished">2020-08-30</time></p>
+                            <p class="item-title"><a href="/2020/09/01/BM25/" class="title">BM25</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:06:49.000Z" itemprop="datePublished">2020-09-01</time></p>
                         </div>
                     </li>
                 
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2020/08/30/XGboost/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/08/30/XGboost/" class="title">XGboost</a></p>
-                            <p class="item-date"><time datetime="2020-08-30T05:00:24.000Z" itemprop="datePublished">2020-08-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/08/30/Bert/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/08/30/Bert/" class="title">Bert</a></p>
-                            <p class="item-date"><time datetime="2020-08-30T04:58:01.000Z" itemprop="datePublished">2020-08-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/08/30/Transformer/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/08/30/Transformer/" class="title">Transformer</a></p>
-                            <p class="item-date"><time datetime="2020-08-30T04:53:14.000Z" itemprop="datePublished">2020-08-30</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/08/30/First-Order-Optimization/" class="thumbnail">
+                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -1863,8 +2233,27 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/08/30/First-Order-Optimization/" class="title">First Order Optimization</a></p>
-                            <p class="item-date"><time datetime="2020-08-30T04:46:31.000Z" itemprop="datePublished">2020-08-30</time></p>
+                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
                         </div>
                     </li>
                 
@@ -1877,7 +2266,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">55</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
         </div>
     </div>
 
@@ -1886,7 +2275,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1895,7 +2284,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 11.11px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 13.33px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 13.33px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

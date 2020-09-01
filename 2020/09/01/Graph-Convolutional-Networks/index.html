@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    
+    <title>Graph Convolutional Networks | atlantic8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="GCN是GNN中比较常用的一种网络结构，其主要思想是将卷积操作迁移到图结构上以提取图的结构特征。 研究GCN的原因如下：  图是一种定义拓扑关系的广义结构，可以表达丰富的结构特征 CNN的方法不能对图做卷积，图中每个顶点的相邻顶点数目都可能不同，无法用一个同样尺寸的卷积核来进行卷积运算  网络结构图上的卷积操作大体上有如下两种思路 spatial domain这里是将卷积做了一个概念上的泛化。这里">
+<meta name="keywords" content="deep learning,Graph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Graph Convolutional Networks">
+<meta property="og:url" content="atlantic8.github.io/2020/09/01/Graph-Convolutional-Networks/index.html">
+<meta property="og:site_name" content="atlantic8">
+<meta property="og:description" content="GCN是GNN中比较常用的一种网络结构，其主要思想是将卷积操作迁移到图结构上以提取图的结构特征。 研究GCN的原因如下：  图是一种定义拓扑关系的广义结构，可以表达丰富的结构特征 CNN的方法不能对图做卷积，图中每个顶点的相邻顶点数目都可能不同，无法用一个同样尺寸的卷积核来进行卷积运算  网络结构图上的卷积操作大体上有如下两种思路 spatial domain这里是将卷积做了一个概念上的泛化。这里">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/Atlantic8/picture/master/GCN-idea.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Atlantic8/picture/master/GCN-simplify.png">
+<meta property="og:updated_time" content="2020-09-01T14:57:17.064Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Graph Convolutional Networks">
+<meta name="twitter:description" content="GCN是GNN中比较常用的一种网络结构，其主要思想是将卷积操作迁移到图结构上以提取图的结构特征。 研究GCN的原因如下：  图是一种定义拓扑关系的广义结构，可以表达丰富的结构特征 CNN的方法不能对图做卷积，图中每个顶点的相邻顶点数目都可能不同，无法用一个同样尺寸的卷积核来进行卷积运算  网络结构图上的卷积操作大体上有如下两种思路 spatial domain这里是将卷积做了一个概念上的泛化。这里">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Atlantic8/picture/master/GCN-idea.jpeg">
+    
+
+    
+
+    
+        <link rel="icon" href="/css/images/logo.png">
+    
+
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-brands.min.css">
+    <link rel="stylesheet" href="/libs/font-awesome5/css/fa-solid.min.css">
+    <link rel="stylesheet" href="/libs/open-sans/styles.css">
+    <link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+    
+    
+        <link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?ff86ad40748d96af89d192e9b0a3ae62";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+    
+
+
+</head>
+</html>
+<body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">atlantic8</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">Home</a>
+                
+                    <a class="main-nav-link" href="/archives">Archives</a>
+                
+                    <a class="main-nav-link" href="/categories/OJ">OJ</a>
+                
+                    <a class="main-nav-link" href="/categories/Algorithm">Algorithm</a>
+                
+                    <a class="main-nav-link" href="/categories/Math">Math</a>
+                
+                    <a class="main-nav-link" href="/categories/Dev">Dev</a>
+                
+                    <a class="main-nav-link" href="/about">About</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/me.png" />
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fas fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">Home</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">Archives</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/OJ">OJ</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Algorithm">Algorithm</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Math">Math</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories/Dev">Dev</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">About</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile" class="profile-fixed">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/me.png" />
+            <h2 id="name">Atlantic8</h2>
+            <h3 id="title">algorithm engineer</h3>
+            <span id="location"><i class="fas fa-map-marker-alt" style="padding-right: 5px"></i>Beijing, China</span>
+            <a id="follow" target="_blank" href="https://github.com/Atlantic8">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                132
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                48
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Atlantic8" target="_blank" title="github" class=tooltip>
+                            
+                                <i class="fab fa-github"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="https://www.linkedin.com/in/wenqiang-cao-704236b8/" target="_blank" title="linkedin" class=tooltip>
+                            
+                                <i class="fab fa-linkedin"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="mailto:atlantic8@outlook.com" target="_blank" title="envelope" class=tooltip>
+                            
+                                <i class="fas fa-envelope"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="http://weibo.com/2614093607" target="_blank" title="weibo" class=tooltip>
+                            
+                                <i class="fab fa-weibo"></i>
+                            
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="facebook" class=tooltip>
+                            
+                                <i class="fab fa-facebook"></i>
+                            
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-Graph-Convolutional-Networks" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Graph Convolutional Networks
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2020/09/01/Graph-Convolutional-Networks/">
+            <time datetime="2020-09-01T14:55:41.000Z" itemprop="datePublished">2020-09-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Graph/">Graph</a>, <a class="tag-link" href="/tags/deep-learning/">deep learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>GCN是GNN中比较常用的一种网络结构，其主要思想是将卷积操作迁移到图结构上以提取图的结构特征。</p>
+<p>研究GCN的原因如下：</p>
+<ul>
+<li>图是一种定义拓扑关系的广义结构，可以表达丰富的结构特征</li>
+<li>CNN的方法不能对图做卷积，图中每个顶点的相邻顶点数目都可能不同，无法用一个同样尺寸的卷积核来进行卷积运算</li>
+</ul>
+<h3 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h3><p>图上的卷积操作大体上有如下两种思路</p>
+<h4 id="spatial-domain"><a href="#spatial-domain" class="headerlink" title="spatial domain"></a>spatial domain</h4><p>这里是将卷积做了一个概念上的泛化。这里有两个概念</p>
+<ul>
+<li>aggregation：<strong>用邻居的特征更新当前节点下一层的hidden state</strong></li>
+<li>readout<ul>
+<li>单个节点的表征</li>
+<li>聚合所有节点的特征，得到<strong>整个图的表征</strong></li>
+</ul>
+</li>
+</ul>
+<p>根据aggregation和readout的不同，就有不同的算法</p>
+<h6 id="NN4G（Neural-Networks-for-Graph-2009）"><a href="#NN4G（Neural-Networks-for-Graph-2009）" class="headerlink" title="NN4G（Neural Networks for Graph. 2009）"></a>NN4G（Neural Networks for Graph. 2009）</h6><p>aggregation：节点$v$的第$k$隐层节点值为</p>
+<script type="math/tex; mode=display">
+h_v^{(k)}=f\left(x_vW_{k}+\sum_{u\in N(v)}h_u^{(k-1)}W_{k,k-1}\right)</script><p>其中，$x_v$为节点$v$的原始特征。</p>
+<p>readout：<strong>将每一层的hidden state求均值，然后加权求和作为整个图的表征</strong></p>
+<h6 id="DCNN（Diffusion-Convolution-Neural-Network-2016）"><a href="#DCNN（Diffusion-Convolution-Neural-Network-2016）" class="headerlink" title="DCNN（Diffusion-Convolution Neural Network. 2016）"></a>DCNN（Diffusion-Convolution Neural Network. 2016）</h6><p>DCNN将迭代看成是图上的扩散过程，每一层相当于在上一层的基础上再进行一跳。<br>aggregation：</p>
+<script type="math/tex; mode=display">
+h_v^{(k)}=f\left( W_{k,v}\cdot MEAN(d(v,.)=k)\right)</script><p>其中，$MEAN(d(v,.)=k)$表示与点$v$距离为$k$的节点的<strong>原始特征</strong>（<strong>$x$</strong>）的均值，这里注意不是用$k-1$层的hidden state，而是原始特征。</p>
+<p>readout：将每一层的hidden state拼成矩阵，所有的矩阵就是图的表征；单个节点对应的所有hidden state拼一起就是单个节点的表征</p>
+<h6 id="DGC（Diffusion-Graph-Convolution）"><a href="#DGC（Diffusion-Graph-Convolution）" class="headerlink" title="DGC（Diffusion Graph Convolution）"></a>DGC（Diffusion Graph Convolution）</h6><p>整体上与DCNN类似，唯一不同的是在readout阶段，表征不再用各个hidden state拼接的结果，而是用<strong>相加</strong>的结果</p>
+<h6 id="MoNet（Mixture-Model-Network-2017）"><a href="#MoNet（Mixture-Model-Network-2017）" class="headerlink" title="MoNet（Mixture Model Network. 2017）"></a>MoNet（Mixture Model Network. 2017）</h6><p>aggregation：</p>
+<ul>
+<li>考虑了邻居的权重，不再使用邻居的简单相加，而是使用加权求和</li>
+<li>节点$x,y$的边权重定义为：$u(x,y)=(\frac{1}{\sqrt{\deg(x)}},\frac{1}{\sqrt{\deg(y)}})^T$，其中$\deg()$表示节点的度函数</li>
+</ul>
+<p>readout：-</p>
+<h6 id="GAT（Graph-Attention-Network-2017）"><a href="#GAT（Graph-Attention-Network-2017）" class="headerlink" title="GAT（Graph Attention Network. 2017）"></a>GAT（Graph Attention Network. 2017）</h6><p>MoNet将权重写死了，GAT通过attention机制计算出邻居节点的权重。这是较为常用的一种方法</p>
+<h6 id="GIN（Graph-Isomorphism-Network-How-Powerful-are-Graph-Neural-Networks-2019）"><a href="#GIN（Graph-Isomorphism-Network-How-Powerful-are-Graph-Neural-Networks-2019）" class="headerlink" title="GIN（Graph Isomorphism Network. How Powerful are Graph Neural Networks?. 2019）"></a>GIN（Graph Isomorphism Network. How Powerful are Graph Neural Networks?. 2019）</h6><p>主要思想如下</p>
+<ul>
+<li>aggregation的时候不要使用mean或者max pooling操作，而是使用sum。因为max、mean操作会丢失掉一些图的结构信息，比如3个2和4个2的均值、最大值都是2，但是和不一样</li>
+<li>aggregation按如下公示计算</li>
+</ul>
+<script type="math/tex; mode=display">
+h_v^{(k)}=MLP^{(k)}\left( (1+\epsilon^{(k)})h_v^{(k-1)}+\sum_{u\in N_{v}}h_{u}^{(k-1)} \right)</script><h5 id="spectrum-domain"><a href="#spectrum-domain" class="headerlink" title="spectrum domain"></a>spectrum domain</h5><p>结论：</p>
+<blockquote>
+<p>信号在时域上的卷积等价于其在频域上的乘法</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/GCN-idea.jpeg" width="550" height="250" alt="" align="center"></p>
+<p>所以，这种方法的思想是<strong>将图信号上的卷积操作转换到频域上的乘法操作，最后再逆转回去</strong></p>
+<h6 id="谱图理论-vertex-domain-gt-spectral-domain"><a href="#谱图理论-vertex-domain-gt-spectral-domain" class="headerlink" title="谱图理论(vertex domain -&gt; spectral domain)"></a>谱图理论(vertex domain -&gt; spectral domain)</h6><p>给定包含$N$个节点的图，定义$A,D$分别为图的邻接矩阵和度矩阵。<br>定义图上的拉普拉斯矩阵：$L=D-A$，对称，半正定。有如下特性</p>
+<ul>
+<li>对称矩阵一定N个线性无关的特征向量</li>
+<li>半正定矩阵的特征值一定非负</li>
+<li>对阵矩阵的特征向量相互正交</li>
+</ul>
+<p>对这个矩阵做SVD分解得到$L=U\Lambda U^T$（这里$U^T=U^{-1}$且$UU^T=E$），其中$\Lambda=diag(\lambda_0,…,\lambda_{N-1})$，$U=[u_0,…,u_{N-1}]$为包含正交向量（列向量）的特征矩阵。$\lambda_l$可以看成<strong>频率</strong>概念，而$u_l$则是对应的基（basis）。[这里频率概念的解释可以参考文献1中的视频解释]</p>
+<p><strong>图傅立叶变换</strong>：给定信号$x$，经过图傅立叶变换后得到(这里其实和PCA很像了)</p>
+<script type="math/tex; mode=display">
+\hat{x}=U^Tx</script><p>其中$U$是上述的特征矩阵。<strong>图傅立叶逆变换</strong>则如下：</p>
+<script type="math/tex; mode=display">
+x=U\hat{x}</script><p>有了经过图傅立叶变换的信号$\hat{x}$后，我们可以在频域上对信号做一个变换（滤波），简单的做法是做对应位相乘，引入参数$\theta$。为了表述统一，令$g_{\theta}(\Lambda)$为对角矩阵的对角$\theta$（参数写成$\Lambda$只是为了和频率对上）。所以有</p>
+<script type="math/tex; mode=display">
+\hat{y}=g_{\theta}(\Lambda)\hat{x}=g_{\theta}(\Lambda)U^Tx</script><p>再将频域信号转换到时域（或者说vertex domain），有</p>
+<script type="math/tex; mode=display">
+y=U\hat{y}=Ug_{\theta}(\Lambda)U^Tx=g_{\theta}(U\Lambda U^T)x=g_{\theta}(L)x</script><p>所以，要学$g_{\theta}()$函数。这个函数的选取需要考虑两个方面</p>
+<ul>
+<li><strong>参数规模</strong>：上述推导的参数规模是$N$，不希望这么大</li>
+<li><strong>局部视野特性</strong>：我们不希望当前节点能看到所有节点，所以函数不能分解成无限多项（因为矩阵$L$的$N$次方表示当前节点可以看到任何连通节点的信息）</li>
+</ul>
+<p><strong>ChebNet</strong></p>
+<script type="math/tex; mode=display">
+g_{\theta}(L)=\sum_{k=0}^K\theta_kL^k</script><p>优点：</p>
+<ul>
+<li>参数规模：O(K)</li>
+<li>局部视野特性：K-localized<br>缺陷：</li>
+<li>复杂度问题：矩阵乘法复杂度为O(N^2)，K次方下计算量大</li>
+</ul>
+<p>根据Chebyshev多项式，满足</p>
+<script type="math/tex; mode=display">
+T_0(\hat{\Lambda})=I, I\ is\ identity\ matrix \\ 
+T_1(\hat{\Lambda})=\hat{\Lambda} \\
+T_k(\hat{\Lambda})=2xT_{k-1}(\hat{\Lambda})-T_{k-2}(\hat{\Lambda})</script><p>其中$\hat{\Lambda}=\frac{2\Lambda}{\lambda_{max}}-I, \hat{\lambda}\in[-1, 1]$。这个公式可以利用推倒结构，以</p>
+<script type="math/tex; mode=display">
+y=\sum_{k=0}^K\theta'_kT_k(\hat{L})x \tag{1}</script><p>代替原来的计算方式，降低计算复杂度。<br>每组$\theta$等价于一个filter，可以有多个filter，当作多个特征提取工具。</p>
+<hr>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/GCN-simplify.png" width="550" height="250" alt="" align="center"></p>
+<p>GCN是在公示1的基础上再做简化</p>
+<ul>
+<li>令K=1，即只考虑两项</li>
+<li>$\hat{L}\approx L-I$，如果$L$是normalized laplacian，有$\lambda_{max} \approx2$，又$\hat{L}=\frac{2L}{\lambda_{max}}-I$</li>
+<li>根据<strong>Symmetric normalized Laplacian</strong>定义有$L=I-D^{-\frac{1}{2}}AD^{-\frac{1}{2}}$</li>
+<li>再次简化模型，令：$\theta=\theta’_0=-\theta’_1$<ul>
+<li>$y=\theta(I+D^{-\frac{1}{2}}AD^{-\frac{1}{2}})x$</li>
+</ul>
+</li>
+<li>再次trick，$I+D^{-\frac{1}{2}}AD^{-\frac{1}{2}} \to \hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}$<ul>
+<li>$\hat{A}=A+I$</li>
+<li>$\hat{D}_{ii}=\sum_j\hat{A}_{ij}$，参考原paper</li>
+<li>$H^{(l+1)}=\sigma(\hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}H^{(l)}W^{(l)})$，这里$W$对应$\theta$</li>
+</ul>
+</li>
+</ul>
+<p>上面重写一下(邻域要包含自己)：</p>
+<script type="math/tex; mode=display">
+h_v=f\left( \frac{1}{|N(v)|}\sum_{u\in N(v)}Wx_u+b \right)</script><hr>
+<p>[1]. <a href="https://www.bilibili.com/video/BV1G54y1971S?p=2" target="_blank" rel="noopener">https://www.bilibili.com/video/BV1G54y1971S?p=2</a></p>
+<p>[2]. <a href="https://arxiv.org/pdf/1609.02907.pdf" target="_blank" rel="noopener">SEMI-SUPERVISED CLASSIFICATION WITH GRAPH CONVOLUTIONAL NETWORKS</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2020/09/01/Graph-Convolutional-Networks/" data-id="ckek3hk8l003ji0ph4dwjasrk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2020/09/01/TextGCN/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    TextGCN
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/09/01/Graph-Embedding/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Graph Embedding</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    
+
+</section>
+            
+                
+<aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Python-Functions/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Dev/">Dev</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Python-Functions/" class="title">Python Functions</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:15:14.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Bounds-in-Binary-Search/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Bounds-in-Binary-Search/" class="title">Bounds in Binary Search</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:12:12.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/BM25/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2020/09/01/BM25/" class="title">BM25</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:06:49.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
+                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
+                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://xueshu.glgoo.org/">Google Scholar Mirror</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://www.kaggle.com/">Kaggle</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://mlr.cs.umass.edu/ml/datasets.html">UCI dataset</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://leetcode.com/problemset/algorithms/">LeetCode</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fas fa-angle-up"></div>
+</aside>
+
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2020 Atlantic8<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+        </div>
+    </div>
+</footer>
+        
+
+
+    
+        <script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-share.min.js"></script>
+        <script src="/libs/lightgallery/js/lg-video.min.js"></script>
+    
+    
+        <script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+    
+    
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>
