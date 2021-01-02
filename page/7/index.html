@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                132
+                134
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,287 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-DDoS的简单实现" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/06/DDoS的简单实现/">DDoS的简单实现</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/06/DDoS的简单实现/">
+            <time datetime="2016-12-06T02:52:57.000Z" itemprop="datePublished">2016-12-06</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Dev/">Dev</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/other/">other</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="Scapy实现SYN泛洪攻击"><a href="#Scapy实现SYN泛洪攻击" class="headerlink" title="Scapy实现SYN泛洪攻击"></a>Scapy实现SYN泛洪攻击</h5><center>![](http://ww4.sinaimg.cn/large/9bcfe727jw1fagvyplc77j20b0052mxg.jpg)</center>
+
+<p>Scapy是一个可以让用户发送、侦听和解析并伪装网络报文的Python程序。这些功能可以用于制作侦测、扫描和攻击网络的工具。它的作用很多，简单如上图描述。</p>
+<p>SYN泛洪攻击(SYN Flood)是一种比较常用的DoS方式之一。通过发送大量伪造的Tcp连接请求，使被攻击主机资源耗尽(通常是CPU满负荷或者内存不足) 的攻击方式。SYN泛洪攻击利用三次握手，客户端向服务器发送SYN报文之后就不再响应服务器回应的报文。由于服务器在处理TCP请求时，会在协议栈留一块缓冲区来存储握手的过程，当然如果超过一定的时间内没有接收到客户端的报文，本次连接在协议栈中存储的数据将会被丢弃。攻击者如果利用这段时间发送大量的连接请求，全部挂起在半连接状态。这样将不断消耗服务器资源，直到拒绝服务。</p>
+<p>利用scapy构造一个SYN数据包的方法是：</p>
+<pre><code>pkg = IP(src=&quot;202.121.0.12&quot;,dst=&quot;192.168.0.100&quot;)/TCP(sport=100,dport=80,flags=&quot;S&quot;)
+send(pkt)
+</code></pre><p>其中，IP包中指定了源地址src和目的地址dst，其中src是我们伪造的地址，这是DoS攻击中保护攻击者的一种方式。<br>flags的值我们设定为S,说明我们要发送的是SYN数据包，目标端口dport为80，发送端口sport为100。</p>
+<h5 id="Socket实现DDoS攻击"><a href="#Socket实现DDoS攻击" class="headerlink" title="Socket实现DDoS攻击"></a>Socket实现DDoS攻击</h5><p>总体采用CS模式，客户机连接服务器，服务器发送指令，然后客户机发起攻击，客户机使用伪装的IP攻击。<br>事先规定攻击命令：</p>
+<pre><code>#-H xxx.xxx.xxx.xxx -p xxxx -c &lt;start|stop&gt;
+</code></pre><p>‘xxx.xxx.xxx.xxx’是目标地址， xxxx表示端口号，int型<br>命令可以是start：开始攻击；stop：停止攻击</p>
+<h6 id="python中的socket使用"><a href="#python中的socket使用" class="headerlink" title="python中的socket使用"></a>python中的socket使用</h6><p><b>客户端</b><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">#创建socket: AF_INET表示IPV4协议, SOCK_STREAM表示基于流的TCP协议</span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">#建立连接, 指定服务器的IP和端口</span><br><span class="line">s.connect((<span class="string">'192.168.0,100'</span>, <span class="number">7786</span>))</span><br></pre></td></tr></table></figure></p>
+<p><b>服务器</b><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">cliList = []</span><br><span class="line"># 创建socket</span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line"># 绑定地址和端口号</span><br><span class="line">s.bind((<span class="string">'0.0.0.0'</span>, <span class="number">7786</span>))：</span><br><span class="line"># 开始监听，指定最大连接数为10</span><br><span class="line">s.listen(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">while</span> True:</span><br><span class="line">    # 接受一个新的连接:</span><br><span class="line">    sock, addr = s.accept()</span><br><span class="line">    #将sock添加到列表中</span><br><span class="line">    cliList.append(sock)</span><br></pre></td></tr></table></figure></p>
+<h6 id="python多线程-amp-多进程"><a href="#python多线程-amp-多进程" class="headerlink" title="python多线程 &amp; 多进程"></a>python多线程 &amp; 多进程</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">t = Thread(target = func, args = (arg1, arg2))</span><br><span class="line">t.start()</span><br><span class="line"></span><br><span class="line">p = Process(target = func, args = (arg1, arg2))</span><br><span class="line">p.start()</span><br></pre></td></tr></table></figure>
+<p>客户机接受了服务器的命令后，启动一个进程发动攻击，一个客户端可以伪造不同的IP发送大量的SYN请求，大量客户端一起工作瘫痪目标。</p>
+<p><a href="https://github.com/Atlantic8/Project/tree/master/simple%20implementation%20of%20DDoS" target="_blank" rel="noopener">具体的实现点击这里</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="ckjflh7ti0039woph5oo6rmak" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Floyd-Cycle-Detection" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/01/Floyd-Cycle-Detection/">Floyd Cycle Detection</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/01/Floyd-Cycle-Detection/">
+            <time datetime="2016-12-01T01:06:54.000Z" itemprop="datePublished">2016-12-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)。该算法由美国科学家罗伯特·弗洛伊德发明，是一个可以在有限状态机、迭代函数或者链表上判断是否存在环，求出该环的起点与长度的算法。</p>
+<pre><code>如果有限状态机、迭代函数或者链表上存在环，那么在某个环上以不同速度前进的2个指针必定会在某个时刻相遇
+如果从同一个起点(即使这个起点不在某个环上)同时开始以不同速度前进的2个指针最终相遇，那么可以判定存在一个环，且可以求出2者相遇处所在的环的起点与长度
+</code></pre><h6 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h6><pre><code>假设已知某个起点节点为节点S。现设两个指针t和h，将它们均指向S
+同时让t和h往前推进，但是二者的速度不同：t每前进1步，h前进2步
+    当h无法前进，即到达某个没有后继的节点时，就可以确定从S出发不会遇到环
+    当t与h再次相遇(在点M)时，就可以确定从S出发一定会进入某个环，设其为环C
+        令h仍均位于节点M，而令t返回起点节点S
+        让t和h往前推进，且保持二者的速度都为1
+        t和h相遇的地方即为环C的入口
+</code></pre><h6 id="相关问题"><a href="#相关问题" class="headerlink" title="相关问题"></a>相关问题</h6><p><a href="http://atlantic8.github.io/2016/09/04/Linked-List-Cycle/">Linked List Cycle</a></p>
+<p><a href="http://atlantic8.github.io/2016/12/01/Happy-Number/">Happy Number</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="ckjflh7uy004hwophs424wnl8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Happy-Number" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -308,7 +589,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="ckiri7oo7003sqsphd1j4i5wb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="ckjflh7vb0052wophe7vynrbv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -463,7 +744,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="ckiri7osg00a8qsph0bfylnlt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="ckjflh7zb00auwoph3vu3r96x" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -620,7 +901,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="ckiri7oq1006eqsph0h6tdnn6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="ckjflh7wo007dwoph6qodp628" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -787,7 +1068,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ckiri7os8009uqsphx93x46a7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ckjflh7z400alwoph96susdm4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -923,7 +1204,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ckiri7ony003fqsphau24ybv1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ckjflh7ur0048wophryto7hfk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1086,7 +1367,7 @@ X_{ZCA}=UX_{PCA}</script><p>二者差异如下：</p>
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ckiri7or10081qsphyil9a0cg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ckjflh7xv008rwophfcehfpew" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1264,7 +1545,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ckiri7oqe006sqsphqw347lhh" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ckjflh7x7007uwophb6col8xu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1402,322 +1683,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ckiri7olc000gqsph8aqypk40" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Gibbs-Sampling" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/16/Gibbs-Sampling/">Gibbs Sampling</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/16/Gibbs-Sampling/">
-            <time datetime="2016-11-16T07:39:21.000Z" itemprop="datePublished">2016-11-16</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/random-algorithm/">random algorithm</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="蒙特卡洛数值积分"><a href="#蒙特卡洛数值积分" class="headerlink" title="蒙特卡洛数值积分"></a>蒙特卡洛数值积分</h5><p>如果我们要求f(x)的积分$ \int_a^b f(x) \,dx $，而f(x)的形式比较复杂积分不好求，则可以通过数值解法来求近似的结果。常用的方法是蒙特卡洛积分:<script type="math/tex">\int_a^b \frac{f(x)}{q(x)}q(x) \,dx</script>这样把q(x)看做是x在区间内的概率分布，而把前面的分数部门看做一个函数，然后在q(x)下抽取n个样本，当n足够大时，可以用采用均值来近似:<script type="math/tex">\frac{1}{n}\sum_{i}\frac{f(x_i)}{q(x_i)}</script>因此只要q(x)比较容易采到数据样本就行了。随机模拟方法的核心就是如何对一个概率分布得到样本，即抽样（sampling）.</p>
-<h5 id="Box-Muller-变换"><a href="#Box-Muller-变换" class="headerlink" title="Box-Muller 变换"></a>Box-Muller 变换</h5><p>如果随机变量 $U_1,U_2$ 独立且$U_1,U_2 ∼ Uniform[0,1]$，如果有：<script type="math/tex">Z_0=\sqrt{-2lnU_1}cos(2\pi U_2)</script> <script type="math/tex">Z_1=\sqrt{-2lnU_1}sin(2\pi U_2)</script> 则 $Z_0,Z_1$ 独立且服从标准正态分布。</p>
-<h5 id="Monte-Carlo-principle"><a href="#Monte-Carlo-principle" class="headerlink" title="Monte Carlo principle"></a>Monte Carlo principle</h5><p>X 表示随机变量，服从概率分布 p(x), 那么要计算 f(x) 的期望，只需要我们不停从 p(x) 中抽样$x_i$，然后对这些$f(x_i)$取平均即可近似f(x)的期望:<script type="math/tex">E(f)=\frac{1}{N}\sum_{i=1}^Nf(x^i)</script>其中$E(f)$即为f的期望。</p>
-<center>![](http://ww4.sinaimg.cn/large/9bcfe727jw1f9u6nr4wtmj20cx08ht98.jpg)</center>
-
-<h5 id="接受-拒绝抽样（Acceptance-Rejection-sampling"><a href="#接受-拒绝抽样（Acceptance-Rejection-sampling" class="headerlink" title="接受-拒绝抽样（Acceptance-Rejection sampling)"></a>接受-拒绝抽样（Acceptance-Rejection sampling)</h5><p>有时候，p(x)是很难直接采样的的。<br>既然 p(x) 太复杂在程序中没法直接采样，那么我设定一个程序可抽样的分布 q(x) 比如高斯分布，然后按照一定的方法拒绝某些样本，达到接近 p(x) 分布的目的，其中q(x)叫做 proposal distribution。<br>具体操作如下，设定一个方便抽样的函数 q(x)，以及一个常量 k，使得 p(x) 总在 kq(x) 的下方。</p>
-<ul>
-<li>x 轴方向：从 q(x) 分布抽样得到 a。(如果是高斯，就用之前说过的 tricky and faster 的算法更快）</li>
-<li>y 轴方向：从均匀分布（0, kq(a)) 中抽样得到 u。</li>
-<li>如果刚好落到灰色区域： u &gt; p(a), 拒绝， 否则接受这次抽样</li>
-<li>重复以上过程</li>
-</ul>
-<p>在高维的情况下，Rejection Sampling 会出现两个问题，第一是合适的 q 分布比较难以找到，第二是很难确定一个合理的 k 值。这两个问题会导致拒绝率很高，无用计算增加。</p>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u6s3wo7hj20fa07vdgd.jpg)</center>
-
-
-<h5 id="马尔科夫稳态"><a href="#马尔科夫稳态" class="headerlink" title="马尔科夫稳态"></a>马尔科夫稳态</h5><p>马氏链即马尔可夫链。社会学家经常把人按其经济状况分成3类：下层(lower-class)、中层(middle-class)、上层(upper-class)，我们用1,2,3 分别代表这三个阶层。社会学家们发现决定一个人的收入阶层的最重要的因素就是其父母的收入阶层。如果一个人的收入属于下层类别，那么他的孩子属于下层收入的概率是 0.65, 属于中层收入的概率是 0.28, 属于上层收入的概率是 0.07。事实上，从父代到子代，收入阶层的变化的转移概率如下：</p>
-<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u6zizzbaj20ch06hq2y.jpg)</center>
-
-<p>经过迭代，三种阶层的状态converge to</p>
-<pre><code>[0.286, 0.489, 0.225]
-</code></pre><p><b>马氏链定理</b></p>
-<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u72rq6c8j20fa0btwfv.jpg)</center>
-
-<h5 id="Markov-Chain-Monte-Carlo-MCMC"><a href="#Markov-Chain-Monte-Carlo-MCMC" class="headerlink" title="Markov Chain Monte Carlo (MCMC)"></a>Markov Chain Monte Carlo (MCMC)</h5><p>由于马氏链能收敛到平稳分布， 于是一个很的漂亮想法是：如果我们能构造一个转移矩阵为P的马氏链，使得该马氏链的平稳分布恰好是p(x), 那么我们从任何一个初始状态$x_0$出发沿着马氏链转移, 得到一个转移序列 $x_0,x_1,x_2,⋯x_n,x_{n+1}⋯$,， 如果马氏链在第n步已经收敛了，于是我们就得到了 π(x) 的样本$x_n,x_{n+1}⋯$。这是Metropolis算法的基本思想。MCMC 算法是 Metropolis 算法的一个改进变种，马氏链的收敛性质主要由转移矩阵P 决定, 所以基于马氏链做采样的关键问题是如何构造转移矩阵P,使得平稳分布恰好是我们要的分布p(x)。</p>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7negt9mj20fa0f7tcc.jpg)</center>
-假设我们已经有一个转移矩阵Q(对应元素为q(i,j)), 用于采样概率分布p(x)的算法如下：
-<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7psj1wdj20fa06nmxc.jpg)</center>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7qj49bbj20fa0fk42d.jpg)</center>
-<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u7r9o55vj20fa07emxe.jpg)</center>
-
-
-<h5 id="MCMC-——-Gibbs-Sampling算法"><a href="#MCMC-——-Gibbs-Sampling算法" class="headerlink" title="MCMC —— Gibbs Sampling算法"></a>MCMC —— Gibbs Sampling算法</h5><center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7s3xbp5j20fa0ddmzx.jpg)</center>
-<center>![](http://ww1.sinaimg.cn/large/9bcfe727jw1f9u7sldz89j20ad08qgls.jpg)</center>
-<center>![](http://ww4.sinaimg.cn/large/9bcfe727jw1f9u7tgi99tj20fa082q4m.jpg)</center>
-<center>![](http://ww2.sinaimg.cn/large/9bcfe727jw1f9u7ueeigyj20fa0f1wj6.jpg)</center>
-<center>![](http://ww3.sinaimg.cn/large/9bcfe727jw1f9u7uy86ffj20fa08oaa7.jpg)</center>
-
-<p>以上算法收敛后，得到的就是概率分布$p(x_1,x_2,⋯,x_n)$的样本。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/16/Gibbs-Sampling/" data-id="ckiri7oo2003mqsphm91957o4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-3Sum-Closest" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/09/3Sum-Closest/">3Sum Closest</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/09/3Sum-Closest/">
-            <time datetime="2016-11-09T02:21:26.000Z" itemprop="datePublished">2016-11-09</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.</p>
-<pre><code>For example, given array S = {-1 2 1 -4}, and target = 1.
-
-The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
-</code></pre><h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>最简单的莫过于O(n^3)的遍历算法了。<br>这里介绍一个O(n^2)的方法：</p>
-<ul>
-<li>设置first,second和third三个下标。将数组先排序</li>
-<li>第一层循环固定住first，将second放在first+1，将third放在最后</li>
-<li>计算当前和curSum<ul>
-<li>如果curSum等于目标值target，直接返回</li>
-<li>如果curSum比记录值更好，更新记录值</li>
-<li>然后更改second或third。如果curSum大于target，则third—，否则second++</li>
-<li>当second和third相遇，内层循环结束。first++迭代</li>
-</ul>
-</li>
-</ul>
-<p>由于second和third这样移动的复杂度为O(n)，所以整体的复杂度为O(n^2).</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">threeSumClosest</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(nums.size() &lt; <span class="number">3</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> closest = nums[<span class="number">0</span>]+nums[<span class="number">1</span>]+nums[<span class="number">2</span>];</span><br><span class="line">    sort(nums.begin(), nums.end());</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> first = <span class="number">0</span> ; first &lt; nums.size()-<span class="number">2</span> ; ++first) &#123;</span><br><span class="line">        <span class="keyword">if</span>(first &gt; <span class="number">0</span> &amp;&amp; nums[first] == nums[first-<span class="number">1</span>]) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">int</span> second = first+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> third = nums.size()-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(second &lt; third) &#123;</span><br><span class="line">            <span class="keyword">int</span> curSum = nums[first]+nums[second]+nums[third];</span><br><span class="line">            <span class="keyword">if</span>(curSum == target) <span class="keyword">return</span> curSum;</span><br><span class="line">            <span class="keyword">if</span>(abs(target-curSum)&lt;abs(target-closest)) &#123;</span><br><span class="line">                closest = curSum;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(curSum &gt; target) &#123;</span><br><span class="line">                --third;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ++second;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> closest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/09/3Sum-Closest/" data-id="ckiri7okb0000qsphdoyiqj2w" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ckjflh7qp000nwophkm0dd2s1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1810,6 +1776,44 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Monotonous-Sequence/" class="title">Monotonous Sequence</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T08:12:40.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/01/02/Factorization-Machines/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Factorization-Machines/" class="title">Factorization Machines</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T07:49:44.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2020/09/01/Python-Functions/" class="thumbnail">
     
     
@@ -1864,44 +1868,6 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1911,7 +1877,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -1920,7 +1886,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1929,7 +1895,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
@@ -1970,7 +1936,7 @@ The sum that is closest to the target is 2. (-1 + 2 + 1 = 2)
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2020 曹文强<br>
+            &copy; 2021 曹文强<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

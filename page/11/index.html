@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                132
+                134
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,306 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Linked-List-Cycle" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/04/Linked-List-Cycle/">Linked List Cycle</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/04/Linked-List-Cycle/">
+            <time datetime="2016-09-04T07:41:13.000Z" itemprop="datePublished">2016-09-04</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="Problem-1"><a href="#Problem-1" class="headerlink" title="Problem 1"></a>Problem 1</h4><p>Description</p>
+<p>Given a linked list, determine if it has a cycle in it.</p>
+<p>Note: Solve it using O(1) space</p>
+<h4 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution 1"></a>Solution 1</h4><p>决定一个list是否有环的方法是：</p>
+<ul>
+<li>使用一个慢指针slow每次移动1步</li>
+<li>使用一个快指针fast每次移动2步</li>
+<li>如果快指针和慢指针在迭代一定次数后相遇，则存在回路</li>
+<li>否则，如果fast.next=null或者slow.next=null，说明不存在回路</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasCycle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(head==<span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    ListNode walker = head;</span><br><span class="line">    ListNode runner = head;</span><br><span class="line">    <span class="keyword">while</span>(runner.next!=<span class="keyword">null</span> &amp;&amp; runner.next.next!=<span class="keyword">null</span>) &#123;</span><br><span class="line">        walker = walker.next;</span><br><span class="line">        runner = runner.next.next;</span><br><span class="line">        <span class="keyword">if</span> (walker==runner) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Problem-2"><a href="#Problem-2" class="headerlink" title="Problem 2"></a>Problem 2</h4><p>Description</p>
+<p>Given a linked list, return the node where the cycle begins. If there is no cycle, return null.</p>
+<p>Note: Do not modify the linked list.<br>      Solve it using O(1) space</p>
+<h4 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution 2"></a>Solution 2</h4><p>确认一个list是否有回路的方法如上。确定回路入口的方法如下：</p>
+<ul>
+<li>不妨假设list头到loop入口的距离是 l1</li>
+<li>loop入口到两个指针相遇点的距离是 l2</li>
+<li>loop的长度位 c，n表示fast指针绕loop的圈数</li>
+<li>指针相遇时，slow指针走过的距离是：l1 + l2 + m x c，fast指针走过的距离是：l1 + l2 + n x c</li>
+<li>因为fast指针的路程是slow指针的两倍， 所以：l1 + l2 + n x c = 2 x (l1 + l2 + m x c)</li>
+<li>l1 = (c-l2) + (n-2 x m-1)c，而c-l2是相遇点到loop入口的距离</li>
+<li>所以分别从list头和指针相遇点出发、每次移动步长均为1的两个指针会在loop入口回合</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">detectCycle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        ListNode slow = head;</span><br><span class="line">        ListNode fast = head;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (fast!=<span class="keyword">null</span> &amp;&amp; fast.next!=<span class="keyword">null</span>)&#123;</span><br><span class="line">            fast = fast.next.next;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            <span class="comment">// 找到快指针和慢指针的汇合点，说明loop存在</span></span><br><span class="line">            <span class="keyword">if</span> (fast == slow)&#123;</span><br><span class="line">                ListNode slow2 = head;</span><br><span class="line">                <span class="comment">// 分别从链表头和汇合点出发的指针，在loop入口处相遇</span></span><br><span class="line">                <span class="keyword">while</span> (slow2 != slow)&#123;</span><br><span class="line">                    slow = slow.next;</span><br><span class="line">                    slow2 = slow2.next;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> slow;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相似问题：<a href="http://atlantic8.github.io/2016/09/04/Find-the-Duplicate-Number/">Find the Duplicate Number</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/04/Linked-List-Cycle/" data-id="ckjflh7vt0063wophpfx62hj0" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Find-the-Duplicate-Number" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/09/04/Find-the-Duplicate-Number/">Find the Duplicate Number</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/09/04/Find-the-Duplicate-Number/">
+            <time datetime="2016-09-04T07:28:10.000Z" itemprop="datePublished">2016-09-04</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>Description</p>
+<p>Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.</p>
+<p>Note:</p>
+<ul>
+<li>You must not modify the array (assume the array is read only).</li>
+<li>You must use only constant, O(1) extra space.</li>
+<li>Your runtime complexity should be less than O(n2).</li>
+<li>There is only one duplicate number in the array, but it could be repeated more than once.</li>
+</ul>
+<h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><ul>
+<li>题中给定的是数组，由于长度位n+1的数组只有1-n的整数，所以可以把数组看成静态链表，数组下标是节点值，对应的值指示下一节点的值</li>
+<li>我们所要求的重复元素其实就是：不同的下标对应相同的值，在静态链表中也就是loop的入口节点的值</li>
+<li>由于必然存在重复，所以这个静态链表肯定存在loop，查找loop入口节点的值方法和Linked List Cycle II一致</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findDuplicate</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> slow=nums[<span class="number">0</span>], fast=nums[nums[<span class="number">0</span>]];</span><br><span class="line">        <span class="keyword">while</span> (fast != slow) &#123;</span><br><span class="line">            slow=nums[slow];</span><br><span class="line">            fast=nums[nums[fast]];</span><br><span class="line">        &#125;</span><br><span class="line">        fast = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (fast != slow) &#123;</span><br><span class="line">            slow=nums[slow];</span><br><span class="line">            fast=nums[fast];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> fast;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="http://atlantic8.github.io/2016/09/04/Linked-List-Cycle/">相关问题：Linked List Cycle II</a></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/09/04/Find-the-Duplicate-Number/" data-id="ckjflh7uk0041wophxnejufi5" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Majority-Element" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -305,7 +605,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/04/Majority-Element/" data-id="ckiri7opk005mqsphc0qild97" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/04/Majority-Element/" data-id="ckjflh7vx0069woph2s0jzgna" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -448,7 +748,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/04/Count-Primes/" data-id="ckiri7omi001rqsph5xnvjhoz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/04/Count-Primes/" data-id="ckjflh7rd001kwophj77zwatj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -585,7 +885,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/04/Super-Ugly-Number/" data-id="ckiri7os2009kqsphf8aaa9cx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/04/Super-Ugly-Number/" data-id="ckjflh7z200aiwophtslk14sm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -730,7 +1030,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/03/Maximal-Rectangle/" data-id="ckiri7opp005tqsphsraode5g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/03/Maximal-Rectangle/" data-id="ckjflh7w1006gwophfrfzdrqa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -888,7 +1188,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/03/Minimum-Height-Trees/" data-id="ckiri7oq2006iqsph2y0q8hiy" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/03/Minimum-Height-Trees/" data-id="ckjflh7wj0076woph52lq4gz2" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1032,7 +1332,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/02/Increasing-Triplet-Subsequence/" data-id="ckiri7oou004kqsphaqunrbdc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/02/Increasing-Triplet-Subsequence/" data-id="ckjflh7vf005bwoph74k0bkfv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1174,7 +1474,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/01/Design-Twitter/" data-id="ckiri7on3002fqsphsyop8kwh" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/01/Design-Twitter/" data-id="ckjflh7tq003dwophj9e1k7ca" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1312,311 +1612,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/09/01/Median-of-Two-Sorted-Arrays/" data-id="ckiri7opv0064qsphb9sxgt2a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Perfect-Rectangle" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/08/30/Perfect-Rectangle/">Perfect Rectangle</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/08/30/Perfect-Rectangle/">
-            <time datetime="2016-08-30T11:50:39.000Z" itemprop="datePublished">2016-08-30</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Geometry/">Geometry</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>Given N axis-aligned rectangles where N &gt; 0, determine if they all together form an exact cover of a rectangular region.</p>
-<p>Each rectangle is represented as a bottom-left point and a top-right point. For example, a unit square is represented as [1,1,2,2]. (coordinate of bottom-left point is (1, 1) and top-right point is (2, 2)).</p>
-<p>Example</p>
-<center>![](https://leetcode.com/static/images/problemset/rectangle_perfect.gif)</center>
-
-<p>rectangles = [<br>  [1,1,3,3],<br>  [3,1,4,2],<br>  [3,2,4,4],<br>  [1,3,2,4],<br>  [2,3,3,4]<br>]<br>Return true. All 5 rectangles together form an exact cover of a rectangular region.</p>
-<h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><p>可以拼凑成矩形的情形应当满足一下条件：</p>
-<ul>
-<li>大矩形面积 = sum(小矩形面积)</li>
-<li>除了最外边的4个角(corner)，其他角都应该重复偶数次(2或者4次)</li>
-<li>重复在同一个点的角(corner)应该方向不同(左下、左上、右下、右上)</li>
-</ul>
-<p>解决思路：</p>
-<ul>
-<li>使用哈希表维护边角()和其类型，类型分别取值1、2、4、8</li>
-<li>这些类型其二进制都只有一个位是1。与运算结果不为0时表示出现重复(方块重叠发生)，否则做或运算并更新哈希表(保持这个值的存在)</li>
-<li>单独考虑总体矩形的边角，最后哈希表里值为1、2、4、8的只能且必须有4个</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">HashMap&lt;String, Integer&gt; mapp = new HashMap&lt;&gt;();</span><br><span class="line">    public boolean isRectangleCover(int[][] rectangles) &#123;</span><br><span class="line">        <span class="keyword">if</span> (rectangles.length==<span class="number">0</span> || rectangles[<span class="number">0</span>].length==<span class="number">0</span>) <span class="keyword">return</span> false;</span><br><span class="line">        int minx=Integer.MAX_VALUE,miny=Integer.MAX_VALUE,maxx=<span class="number">0</span>,maxy=<span class="number">0</span>,sum=<span class="number">0</span>,count=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (int[] rect : rectangles) &#123;</span><br><span class="line">            minx = Math.min(minx, rect[<span class="number">0</span>]);</span><br><span class="line">            miny = Math.min(miny, rect[<span class="number">1</span>]);</span><br><span class="line">            maxx = Math.max(maxx, rect[<span class="number">2</span>]);</span><br><span class="line">            maxy = Math.max(maxy, rect[<span class="number">3</span>]);</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">0</span>]+<span class="string">" "</span>+rect[<span class="number">1</span>], <span class="number">1</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">0</span>]+<span class="string">" "</span>+rect[<span class="number">3</span>], <span class="number">2</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">2</span>]+<span class="string">" "</span>+rect[<span class="number">1</span>], <span class="number">4</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">2</span>]+<span class="string">" "</span>+rect[<span class="number">3</span>], <span class="number">8</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            sum += (rect[<span class="number">2</span>]-rect[<span class="number">0</span>])*(rect[<span class="number">3</span>]-rect[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (Integer tmp : mapp.values())</span><br><span class="line">            // 只有整体矩形的四个边角才是这些值</span><br><span class="line">            <span class="keyword">if</span> (tmp==<span class="number">1</span> || tmp==<span class="number">2</span> || tmp==<span class="number">4</span> || tmp==<span class="number">8</span>) count += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> count==<span class="number">4</span> &amp;&amp; sum==(maxx-minx)*(maxy-miny);</span><br><span class="line">    &#125;</span><br><span class="line">    // 确定mapp中是否已经存在两个一样的pair</span><br><span class="line">    public boolean isRectangleCover_assist(String key, int value) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mapp.containsKey(key) &amp;&amp; (mapp.get(key)&amp;value)!=<span class="number">0</span>) <span class="keyword">return</span> true;</span><br><span class="line">        mapp.put(key, mapp.containsKey(key)?mapp.get(key)|value:value);</span><br><span class="line">        <span class="keyword">return</span> false;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/08/30/Perfect-Rectangle/" data-id="ckiri7oqu007nqsphc47jmu68" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Longest-Substring" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/08/27/Longest-Substring/">Longest Substring</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/08/27/Longest-Substring/">
-            <time datetime="2016-08-27T02:55:20.000Z" itemprop="datePublished">2016-08-27</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Sliding-window/">Sliding window</a>, <a class="tag-link" href="/tags/String/">String</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="Longest-Substring"><a href="#Longest-Substring" class="headerlink" title="Longest Substring"></a>Longest Substring</h4><h5 id="Problem-—-Without-Repeating-Characters"><a href="#Problem-—-Without-Repeating-Characters" class="headerlink" title="Problem — Without Repeating Characters"></a>Problem — Without Repeating Characters</h5><p>Given a string, find the length of the longest substring without repeating characters.</p>
-<p>Examples:</p>
-<p>Given “abcabcbb”, the answer is “abc”, which the length is 3.</p>
-<p>Given “bbbbb”, the answer is “b”, with the length of 1.</p>
-<p>Given “pwwkew”, the answer is “wke”, with the length of 3. Note that the answer must be a substring, “pwke” is a subsequence and not a substring.</p>
-<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><ul>
-<li>双指针思想，滑动窗口</li>
-<li>没找到T包含所有字符时，end指针移动，找到时移动start指针</li>
-<li>注意滑动窗口、双指针类的题目一般都是这么解的</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++&gt;<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="keyword">while</span>(counter&gt;<span class="number">0</span>) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--&gt;<span class="number">1</span>) counter--;</span><br><span class="line">        d=max(d, end-begin); <span class="comment">//while valid, update d</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="Problem-—-At-Most-Two-Distinct-Characters"><a href="#Problem-—-At-Most-Two-Distinct-Characters" class="headerlink" title="Problem — At Most Two Distinct Characters"></a>Problem — At Most Two Distinct Characters</h5><p>Given a string, find the length of the longest substring T that contains at most 2 distinct characters.</p>
-<p>For example, Given s = “eceba”,</p>
-<p>T is “ece” which its length is 3.</p>
-<h5 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h5><ul>
-<li>子串只能包含最多2个不同的字符，所以扫描的时候，count表示子串不同字符的数量</li>
-<li>需要记录子串中每个字符出现的次数，第一次出现时count+1，第二次、三次等不需要</li>
-<li>加入字符后，如果count&gt;2，需要从子串的头部删除元素，直到满足count&lt;=2为止</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstringTwoDistinct</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="comment">// add a new character</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++==<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="comment">// at most 2 distinct characters, so, count &lt;= 2</span></span><br><span class="line">        <span class="comment">// only when map[s[begin]]--==1, we get rid of s[begin] completely</span></span><br><span class="line">        <span class="keyword">while</span>(counter&gt;<span class="number">2</span>) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--==<span class="number">1</span>) counter--;</span><br><span class="line">        <span class="comment">// update d</span></span><br><span class="line">        d=max(d, end-begin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="Problem-—-At-Most-k-Distinct-Characters"><a href="#Problem-—-At-Most-k-Distinct-Characters" class="headerlink" title="Problem — At Most k Distinct Characters"></a>Problem — At Most k Distinct Characters</h5><p>Given a string s, find the length of the longest substring T that contains at most k distinct characters.</p>
-<p>Example<br>For example, Given s = “eceba”, k = 3,</p>
-<p>T is “eceb” which its length is 4</p>
-<h5 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution"></a>Solution</h5><p>思路同上一题，只需要将2变成k即可</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstringKDistinct</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="comment">// add a new character</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++==<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="comment">// at most k distinct characters, so, count &lt;= k</span></span><br><span class="line">        <span class="comment">// only when map[s[begin]]--==1, we get rid of s[begin] completely</span></span><br><span class="line">        <span class="keyword">while</span>(counter&gt;k) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--==<span class="number">1</span>) counter--;</span><br><span class="line">        <span class="comment">// update d</span></span><br><span class="line">        d=max(d, end-begin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="Generalization"><a href="#Generalization" class="headerlink" title="Generalization"></a>Generalization</h4><p>对于要求寻找特定要求的子串的问题，通用解法就是滑动窗口的思想，使用哈希表和双指针，可以有如下模板：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findSubstring</span><span class="params">(<span class="built_in">string</span> s)</span></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter; <span class="comment">// check whether the substring is valid</span></span><br><span class="line">    <span class="keyword">int</span> begin=<span class="number">0</span>, end=<span class="number">0</span>; <span class="comment">//two pointers, one point to tail and one  head</span></span><br><span class="line">    <span class="keyword">int</span> d; <span class="comment">//the length of substring</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>() &#123; <span class="comment">/* initialize the hash map here */</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]-- ?)&#123;  <span class="comment">/* modify counter here */</span> &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(<span class="comment">/* counter condition */</span>)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* update d here if finding minimum*/</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//increase begin to make it invalid/valid again</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]++ ?)&#123; <span class="comment">/*modify counter here*/</span> &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* update d here if finding maximum*/</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><a href="https://discuss.leetcode.com/topic/30941/here-is-a-10-line-template-that-can-solve-most-substring-problems" target="_blank" rel="noopener">原文地址</a>，感谢作者</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/08/27/Longest-Substring/" data-id="ckiri7opb0055qsphowomt35a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/09/01/Median-of-Two-Sorted-Arrays/" data-id="ckjflh7wn0079wophf5ym7qv6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1709,6 +1705,44 @@ var _hmt = _hmt || [];
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Monotonous-Sequence/" class="title">Monotonous Sequence</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T08:12:40.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/01/02/Factorization-Machines/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Factorization-Machines/" class="title">Factorization Machines</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T07:49:44.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2020/09/01/Python-Functions/" class="thumbnail">
     
     
@@ -1763,44 +1797,6 @@ var _hmt = _hmt || [];
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1810,7 +1806,7 @@ var _hmt = _hmt || [];
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -1819,7 +1815,7 @@ var _hmt = _hmt || [];
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1828,7 +1824,7 @@ var _hmt = _hmt || [];
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
@@ -1869,7 +1865,7 @@ var _hmt = _hmt || [];
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2020 曹文强<br>
+            &copy; 2021 曹文强<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

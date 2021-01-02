@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                132
+                134
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,310 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Perfect-Rectangle" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/08/30/Perfect-Rectangle/">Perfect Rectangle</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/08/30/Perfect-Rectangle/">
+            <time datetime="2016-08-30T11:50:39.000Z" itemprop="datePublished">2016-08-30</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Geometry/">Geometry</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>Given N axis-aligned rectangles where N &gt; 0, determine if they all together form an exact cover of a rectangular region.</p>
+<p>Each rectangle is represented as a bottom-left point and a top-right point. For example, a unit square is represented as [1,1,2,2]. (coordinate of bottom-left point is (1, 1) and top-right point is (2, 2)).</p>
+<p>Example</p>
+<center>![](https://leetcode.com/static/images/problemset/rectangle_perfect.gif)</center>
+
+<p>rectangles = [<br>  [1,1,3,3],<br>  [3,1,4,2],<br>  [3,2,4,4],<br>  [1,3,2,4],<br>  [2,3,3,4]<br>]<br>Return true. All 5 rectangles together form an exact cover of a rectangular region.</p>
+<h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><p>可以拼凑成矩形的情形应当满足一下条件：</p>
+<ul>
+<li>大矩形面积 = sum(小矩形面积)</li>
+<li>除了最外边的4个角(corner)，其他角都应该重复偶数次(2或者4次)</li>
+<li>重复在同一个点的角(corner)应该方向不同(左下、左上、右下、右上)</li>
+</ul>
+<p>解决思路：</p>
+<ul>
+<li>使用哈希表维护边角()和其类型，类型分别取值1、2、4、8</li>
+<li>这些类型其二进制都只有一个位是1。与运算结果不为0时表示出现重复(方块重叠发生)，否则做或运算并更新哈希表(保持这个值的存在)</li>
+<li>单独考虑总体矩形的边角，最后哈希表里值为1、2、4、8的只能且必须有4个</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">HashMap&lt;String, Integer&gt; mapp = new HashMap&lt;&gt;();</span><br><span class="line">    public boolean isRectangleCover(int[][] rectangles) &#123;</span><br><span class="line">        <span class="keyword">if</span> (rectangles.length==<span class="number">0</span> || rectangles[<span class="number">0</span>].length==<span class="number">0</span>) <span class="keyword">return</span> false;</span><br><span class="line">        int minx=Integer.MAX_VALUE,miny=Integer.MAX_VALUE,maxx=<span class="number">0</span>,maxy=<span class="number">0</span>,sum=<span class="number">0</span>,count=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (int[] rect : rectangles) &#123;</span><br><span class="line">            minx = Math.min(minx, rect[<span class="number">0</span>]);</span><br><span class="line">            miny = Math.min(miny, rect[<span class="number">1</span>]);</span><br><span class="line">            maxx = Math.max(maxx, rect[<span class="number">2</span>]);</span><br><span class="line">            maxy = Math.max(maxy, rect[<span class="number">3</span>]);</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">0</span>]+<span class="string">" "</span>+rect[<span class="number">1</span>], <span class="number">1</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">0</span>]+<span class="string">" "</span>+rect[<span class="number">3</span>], <span class="number">2</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">2</span>]+<span class="string">" "</span>+rect[<span class="number">1</span>], <span class="number">4</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            <span class="keyword">if</span> (isRectangleCover_assist(rect[<span class="number">2</span>]+<span class="string">" "</span>+rect[<span class="number">3</span>], <span class="number">8</span>)) <span class="keyword">return</span> false;</span><br><span class="line">            sum += (rect[<span class="number">2</span>]-rect[<span class="number">0</span>])*(rect[<span class="number">3</span>]-rect[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (Integer tmp : mapp.values())</span><br><span class="line">            // 只有整体矩形的四个边角才是这些值</span><br><span class="line">            <span class="keyword">if</span> (tmp==<span class="number">1</span> || tmp==<span class="number">2</span> || tmp==<span class="number">4</span> || tmp==<span class="number">8</span>) count += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> count==<span class="number">4</span> &amp;&amp; sum==(maxx-minx)*(maxy-miny);</span><br><span class="line">    &#125;</span><br><span class="line">    // 确定mapp中是否已经存在两个一样的pair</span><br><span class="line">    public boolean isRectangleCover_assist(String key, int value) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mapp.containsKey(key) &amp;&amp; (mapp.get(key)&amp;value)!=<span class="number">0</span>) <span class="keyword">return</span> true;</span><br><span class="line">        mapp.put(key, mapp.containsKey(key)?mapp.get(key)|value:value);</span><br><span class="line">        <span class="keyword">return</span> false;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/08/30/Perfect-Rectangle/" data-id="ckjflh7xs008owoph4ywe0mio" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Longest-Substring" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/08/27/Longest-Substring/">Longest Substring</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/08/27/Longest-Substring/">
+            <time datetime="2016-08-27T02:55:20.000Z" itemprop="datePublished">2016-08-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/Sliding-window/">Sliding window</a>, <a class="tag-link" href="/tags/String/">String</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="Longest-Substring"><a href="#Longest-Substring" class="headerlink" title="Longest Substring"></a>Longest Substring</h4><h5 id="Problem-—-Without-Repeating-Characters"><a href="#Problem-—-Without-Repeating-Characters" class="headerlink" title="Problem — Without Repeating Characters"></a>Problem — Without Repeating Characters</h5><p>Given a string, find the length of the longest substring without repeating characters.</p>
+<p>Examples:</p>
+<p>Given “abcabcbb”, the answer is “abc”, which the length is 3.</p>
+<p>Given “bbbbb”, the answer is “b”, with the length of 1.</p>
+<p>Given “pwwkew”, the answer is “wke”, with the length of 3. Note that the answer must be a substring, “pwke” is a subsequence and not a substring.</p>
+<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><ul>
+<li>双指针思想，滑动窗口</li>
+<li>没找到T包含所有字符时，end指针移动，找到时移动start指针</li>
+<li>注意滑动窗口、双指针类的题目一般都是这么解的</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++&gt;<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="keyword">while</span>(counter&gt;<span class="number">0</span>) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--&gt;<span class="number">1</span>) counter--;</span><br><span class="line">        d=max(d, end-begin); <span class="comment">//while valid, update d</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Problem-—-At-Most-Two-Distinct-Characters"><a href="#Problem-—-At-Most-Two-Distinct-Characters" class="headerlink" title="Problem — At Most Two Distinct Characters"></a>Problem — At Most Two Distinct Characters</h5><p>Given a string, find the length of the longest substring T that contains at most 2 distinct characters.</p>
+<p>For example, Given s = “eceba”,</p>
+<p>T is “ece” which its length is 3.</p>
+<h5 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h5><ul>
+<li>子串只能包含最多2个不同的字符，所以扫描的时候，count表示子串不同字符的数量</li>
+<li>需要记录子串中每个字符出现的次数，第一次出现时count+1，第二次、三次等不需要</li>
+<li>加入字符后，如果count&gt;2，需要从子串的头部删除元素，直到满足count&lt;=2为止</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstringTwoDistinct</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="comment">// add a new character</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++==<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="comment">// at most 2 distinct characters, so, count &lt;= 2</span></span><br><span class="line">        <span class="comment">// only when map[s[begin]]--==1, we get rid of s[begin] completely</span></span><br><span class="line">        <span class="keyword">while</span>(counter&gt;<span class="number">2</span>) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--==<span class="number">1</span>) counter--;</span><br><span class="line">        <span class="comment">// update d</span></span><br><span class="line">        d=max(d, end-begin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Problem-—-At-Most-k-Distinct-Characters"><a href="#Problem-—-At-Most-k-Distinct-Characters" class="headerlink" title="Problem — At Most k Distinct Characters"></a>Problem — At Most k Distinct Characters</h5><p>Given a string s, find the length of the longest substring T that contains at most k distinct characters.</p>
+<p>Example<br>For example, Given s = “eceba”, k = 3,</p>
+<p>T is “eceb” which its length is 4</p>
+<h5 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution"></a>Solution</h5><p>思路同上一题，只需要将2变成k即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstringKDistinct</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter=<span class="number">0</span>, begin=<span class="number">0</span>, end=<span class="number">0</span>, d=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line">        <span class="comment">// add a new character</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]++==<span class="number">0</span>) counter++;</span><br><span class="line">        <span class="comment">// at most k distinct characters, so, count &lt;= k</span></span><br><span class="line">        <span class="comment">// only when map[s[begin]]--==1, we get rid of s[begin] completely</span></span><br><span class="line">        <span class="keyword">while</span>(counter&gt;k) <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]--==<span class="number">1</span>) counter--;</span><br><span class="line">        <span class="comment">// update d</span></span><br><span class="line">        d=max(d, end-begin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Generalization"><a href="#Generalization" class="headerlink" title="Generalization"></a>Generalization</h4><p>对于要求寻找特定要求的子串的问题，通用解法就是滑动窗口的思想，使用哈希表和双指针，可以有如下模板：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findSubstring</span><span class="params">(<span class="built_in">string</span> s)</span></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="built_in">map</span>(<span class="number">128</span>,<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> counter; <span class="comment">// check whether the substring is valid</span></span><br><span class="line">    <span class="keyword">int</span> begin=<span class="number">0</span>, end=<span class="number">0</span>; <span class="comment">//two pointers, one point to tail and one  head</span></span><br><span class="line">    <span class="keyword">int</span> d; <span class="comment">//the length of substring</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>() &#123; <span class="comment">/* initialize the hash map here */</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(end&lt;s.size())&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">map</span>[s[end++]]-- ?)&#123;  <span class="comment">/* modify counter here */</span> &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(<span class="comment">/* counter condition */</span>)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* update d here if finding minimum*/</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//increase begin to make it invalid/valid again</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>[s[begin++]]++ ?)&#123; <span class="comment">/*modify counter here*/</span> &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* update d here if finding maximum*/</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><a href="https://discuss.leetcode.com/topic/30941/here-is-a-10-line-template-that-can-solve-most-substring-problems" target="_blank" rel="noopener">原文地址</a>，感谢作者</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/08/27/Longest-Substring/" data-id="ckjflh7w0006dwophb7jtv16l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Minimum-Window-Substring" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -308,7 +612,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/27/Minimum-Window-Substring/" data-id="ckiri7opr005xqsphdqaf9gtw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/27/Minimum-Window-Substring/" data-id="ckjflh7wp007gwophwsxewdxb" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -449,7 +753,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/27/Substring-with-Concatenation-of-All-Words/" data-id="ckiri7os0009hqsph3k8259jg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/27/Substring-with-Concatenation-of-All-Words/" data-id="ckjflh7z200afwophsb88648g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -586,7 +890,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/25/Remove-Duplicate-Letters/" data-id="ckiri7or30084qsphryyqkb1a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/25/Remove-Duplicate-Letters/" data-id="ckjflh7y50098wophs8my1gr7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1096,7 +1400,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/15/python数据规整-分组-聚合/" data-id="ckiri7otk00bvqsphgq7wlz4w" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/15/python数据规整-分组-聚合/" data-id="ckjflh80h00cpwophoyq4vks9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1506,7 +1810,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/15/python时间序列分析/" data-id="ckiri7oup00elqsph8ialvb7a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/15/python时间序列分析/" data-id="ckjflh80l00cwwophn5dg5jh6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1791,7 +2095,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/08/15/NumPy进阶/" data-id="ckiri7oqv007qqsph0cuphb3u" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/08/15/NumPy进阶/" data-id="ckjflh7xd0084wophjth8bcm6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1937,7 +2241,7 @@ var _hmt = _hmt || [];
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/07/19/Count-Complete-Tree-Nodes/" data-id="ckiri7om8001dqsphs0lipwz9" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/07/19/Count-Complete-Tree-Nodes/" data-id="ckjflh7rf001nwophmea3iq7v" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2109,316 +2413,7 @@ The possible combination ways are:
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/07/19/Combination-Sum/" data-id="ckiri7olu000xqsphfxpz55q1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Binary-Tree-Maximum-Path-Sum" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/07/19/Binary-Tree-Maximum-Path-Sum/">Binary Tree Maximum Path Sum</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/07/19/Binary-Tree-Maximum-Path-Sum/">
-            <time datetime="2016-07-19T07:01:56.000Z" itemprop="datePublished">2016-07-19</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h3 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h3><p>Given a binary tree, find the maximum path sum.</p>
-<p>For this problem, a path is defined as any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The path does not need to go through the root.</p>
-<p>For example:<br>Given the below binary tree,</p>
-<pre><code>   1
-  / \
- 2   3
-</code></pre><p>Return 6.</p>
-<h5 id="Original-Address"><a href="#Original-Address" class="headerlink" title="Original Address"></a><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank" rel="noopener">Original Address</a></h5><h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p>function getMaxRoot(r) compute max value edged with node r<br>also, r is the highest node. for example:</p>
-<pre><code>   1
-  / \
- 2   3
-</code></pre><p>getMaxRoot(1) returns 4.<br>each path has a highest node.<br>for a single node:<br>    maxPrice = max(maxPrice, getMaxRoot(r-&gt;left)+getMaxRoot(r-&gt;right)+r-&gt;val);<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">int</span> maxPrice;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxPathSum</span><span class="params">(TreeNode *root)</span> </span>&#123;</span><br><span class="line">        maxPrice=INT_MIN;</span><br><span class="line">        getMaxRoot(root);</span><br><span class="line">        <span class="keyword">return</span> maxPrice;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// compute the maximum value of the path with hightest and edge node r.</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMaxRoot</span><span class="params">(TreeNode *r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (r == NULL)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">           <span class="keyword">int</span> leftM  = max(<span class="number">0</span>,getMaxRoot(r-&gt;left));</span><br><span class="line">        <span class="keyword">int</span> rightM = max(<span class="number">0</span>,getMaxRoot(r-&gt;right));  </span><br><span class="line">        maxPrice = max(maxPrice, leftM+rightM+r-&gt;val);</span><br><span class="line">        <span class="keyword">return</span> max(leftM,rightM)+r-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/07/19/Binary-Tree-Maximum-Path-Sum/" data-id="ckiri7ol7000cqsphvrol7d9v" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Best-Time-to-Buy-and-Sell-Stock" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/07/19/Best-Time-to-Buy-and-Sell-Stock/">Best Time to Buy and Sell Stock</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/07/19/Best-Time-to-Buy-and-Sell-Stock/">
-            <time datetime="2016-07-19T06:32:38.000Z" itemprop="datePublished">2016-07-19</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/DP/">DP</a>, <a class="tag-link" href="/tags/Greedy/">Greedy</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>, <a class="tag-link" href="/tags/State-Machine/">State Machine</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h3 id="Problem-Time-to-Buy-and-Sell-Stock-II"><a href="#Problem-Time-to-Buy-and-Sell-Stock-II" class="headerlink" title="Problem : Time to Buy and Sell Stock II"></a>Problem : Time to Buy and Sell Stock II</h3><p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
-<p>Design an algorithm to find the maximum profit. You may complete <b>as many transactions as you like</b> (ie, buy one and sell one share of the stock multiple times). However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><b>贪心算法</b>：条件是假设一天内卖完了可以再买，1-2-3可以拆分成1-2和2-3.<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt; prices.length-<span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (prices[i+<span class="number">1</span>]&gt;prices[i]) total += prices[i+<span class="number">1</span>]-prices[i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> total;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果不允许在一天内卖完了可以再买，贪心的算法是没有意义的，虽然答案是对的。<br>这时，每一次需要找到local最小值和local最大值，然后把差值加到返回值上。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> profit = <span class="number">0</span>, i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; prices.length) &#123;</span><br><span class="line">        <span class="comment">// 找到local最小值</span></span><br><span class="line">        <span class="keyword">while</span> (i &lt; prices.length-<span class="number">1</span> &amp;&amp; prices[i+<span class="number">1</span>] &lt;= prices[i]) i++;</span><br><span class="line">        <span class="keyword">int</span> min = prices[i++]; <span class="comment">// 因为price[i+1]&gt;price[i]，所以将i++</span></span><br><span class="line">        <span class="comment">// 找到local最大值</span></span><br><span class="line">        <span class="keyword">while</span> (i &lt; prices.length-<span class="number">1</span> &amp;&amp; prices[i+<span class="number">1</span>] &gt;= prices[i]) i++;</span><br><span class="line">        profit += i &lt; prices.length ? prices[i++] - min : <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> profit;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="Problem-Time-to-Buy-and-Sell-Stock-III"><a href="#Problem-Time-to-Buy-and-Sell-Stock-III" class="headerlink" title="Problem : Time to Buy and Sell Stock III"></a>Problem : Time to Buy and Sell Stock III</h3><p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
-<p>Design an algorithm to find the maximum profit. You may complete at most two transactions.</p>
-<p>Note:<br>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
-<h5 id="Original-Address"><a href="#Original-Address" class="headerlink" title="Original Address"></a><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/" target="_blank" rel="noopener">Original Address</a></h5><h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h3><p>依旧是DP问题，如果用a[i][j]表示从标号i到j单次最大的利润，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = prices.length;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span>[][] minElement=<span class="keyword">new</span> <span class="keyword">int</span>[n][n], maxpay=<span class="keyword">new</span> <span class="keyword">int</span>[n][n];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        minElement[i][i] = prices[i];</span><br><span class="line">        maxpay[i][i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> len=<span class="number">1</span>; len&lt;n; len++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i+len&lt;n; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> j = i+len;</span><br><span class="line">            <span class="keyword">if</span> (prices[i]-minElement[i][j-<span class="number">1</span>] &gt; maxpay[i][j-<span class="number">1</span>])</span><br><span class="line">                maxpay[i][j] = prices[i]-minElement[i][j-<span class="number">1</span>];</span><br><span class="line">            minElement[i][j] = Math.min(prices[j], minElement[i][j-<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> div = <span class="number">2</span>, maxprofit = maxpay[<span class="number">0</span>][n-<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">3</span>)</span><br><span class="line">        <span class="keyword">return</span> maxprofit;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=div; i&lt;n-<span class="number">2</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> x1 = maxpay[<span class="number">0</span>][i];</span><br><span class="line">        <span class="keyword">int</span> x2 = maxpay[i][n-<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">if</span> (x1+x2 &gt; maxprofit)</span><br><span class="line">            maxprofit = x1+x2;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxprofit;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>但是，这样时间复杂度为O(n^2)。TLE！！！！！！！！！<br>然后参考了别人的思路：——————————————-<br><b><br>以f[k][i]表示第k个transaction后从开始到标号i-1得到的最大利润<br>迭代方程要考虑两种情况：</b></p>
-<ol>
-<li>p[i]不比前一个售出点的price高，所以f[k][i]=f[k][i-1]</li>
-<li>p[i]  比前一个售出点的price高，所以f[k][i]=max{f[k-1][j]+p[i]-p[j]}=p[i]+max{f[k-1][j]-p[j]} (其中1&lt;j&lt;i-1)</li>
-</ol>
-<p>所以，f[k][i] = max{f[k][i-1], max{f[k-1][j]+p[i]-p[j]} }<br>问题来了，如果这么实现，复杂度又会达到O(n^2).<br>注意到情况2中的“ max{f[k-1][j]-p[j]} ”，可以使用一个变量记录最大的f[k-1][j]-p[j]，然后每次更新它即可<br>对于每个transaction循环，它的初始值为：tmp = maxpay[k-1][0]-p[0], 每到一个新的i，更新tmp=max{tmp, f[k-1][i]-p[i])。<br>所以迭代方程就可以写成：f[k][i]=p[i]+tmp. 这样，时间复杂度就降到了O(n). &lt;/b&gt;<br>本题也可以变形为至多执行k个transaction，只需要把代码中2,3改成k,k+1即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = prices.length;</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// maxpay[t][i] indicates the max profit in t-th transaction</span></span><br><span class="line">        <span class="keyword">int</span>[][] maxpay=<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>][n];</span><br><span class="line">        <span class="comment">// initialize maxpay, when t=0, maxpay[t][i]=0</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;<span class="number">3</span>; j++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++)</span><br><span class="line">                maxpay[j][i] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> t=<span class="number">1</span>; t&lt;<span class="number">3</span>; t++) &#123;</span><br><span class="line">            <span class="comment">// for every t, initialize t</span></span><br><span class="line">            <span class="keyword">int</span> tmp = maxpay[t-<span class="number">1</span>][<span class="number">0</span>]-prices[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;n; i++) &#123;</span><br><span class="line">                <span class="comment">//iteration formula</span></span><br><span class="line">                <span class="comment">//maxpay[t][i] = Math.max&#123; maxpay[t][i-1] , prices[i]+max&lt;j&gt;&#123;maxpay[t-1][j]-prices[j]&#125; &#125;;</span></span><br><span class="line">                maxpay[t][i] = Math.max(maxpay[t][i-<span class="number">1</span>], prices[i]+tmp);</span><br><span class="line">                <span class="comment">// make sure that tmp = max(tmp , maxpay[t-1][i]-prices[i])</span></span><br><span class="line">                tmp = Math.max(tmp, maxpay[t-<span class="number">1</span>][i]-prices[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxpay[<span class="number">2</span>][n-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="Problem-Time-to-Buy-and-Sell-Stock-IV"><a href="#Problem-Time-to-Buy-and-Sell-Stock-IV" class="headerlink" title="Problem : Time to Buy and Sell Stock IV"></a>Problem : Time to Buy and Sell Stock IV</h3><p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
-<p>Design an algorithm to find the maximum profit. You may complete at most k transactions.</p>
-<p>Note:<br>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).</p>
-<h5 id="Original-Address-1"><a href="#Original-Address-1" class="headerlink" title="Original Address"></a><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/" target="_blank" rel="noopener">Original Address</a></h5><h3 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution"></a>Solution</h3><p>we are allowed to perform at most k transactions<br>we can apply the algorithm above, but there is one thing to notice,<br>    when k is very large: k&gt;=n/2, that’s to say, we perform one transaction on each day.<br>    so, the problem becomes Best Time to Buy and Sell Stock II,<br>    greedy algorithm is ok, otherwise we get TLE.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span> k, <span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = prices.length;</span><br><span class="line">        <span class="keyword">if</span> (k &gt;= len / <span class="number">2</span>) <span class="keyword">return</span> quickSolve(prices);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span>[][] t = <span class="keyword">new</span> <span class="keyword">int</span>[k + <span class="number">1</span>][len];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= k; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> tmpMax =  -prices[<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; len; j++) &#123;</span><br><span class="line">                t[i][j] = Math.max(t[i][j - <span class="number">1</span>], prices[j] + tmpMax);</span><br><span class="line">                tmpMax =  Math.max(tmpMax, t[i - <span class="number">1</span>][j - <span class="number">1</span>] - prices[j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t[k][len - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">quickSolve</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> len = prices.length, profit = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)</span><br><span class="line">            <span class="comment">// as long as there is a price gap, we gain a profit.</span></span><br><span class="line">            <span class="keyword">if</span> (prices[i] &gt; prices[i - <span class="number">1</span>]) profit += prices[i] - prices[i - <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">return</span> profit;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="Problem-Best-Time-to-Buy-and-Sell-Stock-with-Cooldown"><a href="#Problem-Best-Time-to-Buy-and-Sell-Stock-with-Cooldown" class="headerlink" title="Problem : Best Time to Buy and Sell Stock with Cooldown"></a>Problem : Best Time to Buy and Sell Stock with Cooldown</h3><p>Say you have an array for which the ith element is the price of a given stock on day i.</p>
-<p>Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times) with the following restrictions:</p>
-<p>You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).<br><b>After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)</b></p>
-<pre><code>Example:
-
-prices = [1, 2, 3, 0, 2]
-maxProfit = 3
-transactions = [buy, sell, cooldown, buy, sell]
-</code></pre><h3 id="Solution-3"><a href="#Solution-3" class="headerlink" title="Solution"></a>Solution</h3><p>本题中，可能的操作有buy、sell、rest(啥也不干)。可以使用状态机来解题：<br>由题可以绘制如下状态机：<br><img src="http://ww4.sinaimg.cn/mw690/9bcfe727jw1f7xj05lgqrj20e20710t1.jpg" alt=""><br>转移方程表示如下：</p>
-<pre><code>s0[i] = max(s0[i - 1], s2[i - 1]);
-s1[i] = max(s1[i - 1], s0[i - 1] - prices[i]);
-s2[i] = s1[i - 1] + prices[i];
-</code></pre><p>由于s1状态是买完以后的状态，所以最值最大值肯定不在s1上出现，只要找到最大的s0和s2.<br>关于初值设置：</p>
-<ul>
-<li>s0=0，因为如果以s0为开始，你没有任何股票</li>
-<li>如果以s1为开始，通过buy第一天的股票获得，可以设置s1的初值为-price[0]</li>
-<li>设置s2的初值为INT_MIN，当然设置为0也完全没有问题(没有股票卖也卖不到钱)</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; prices)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (prices.size() &lt;= <span class="number">1</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">s0</span><span class="params">(prices.size()</span>, 0)</span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">s1</span><span class="params">(prices.size()</span>, 0)</span>;</span><br><span class="line">        <span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">s2</span><span class="params">(prices.size()</span>, 0)</span>;</span><br><span class="line">        s1[<span class="number">0</span>] = -prices[<span class="number">0</span>];</span><br><span class="line">        s0[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">        s2[<span class="number">0</span>] = INT_MIN;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; prices.size(); i++) &#123;</span><br><span class="line">            s0[i] = max(s0[i - <span class="number">1</span>], s2[i - <span class="number">1</span>]);</span><br><span class="line">            s1[i] = max(s1[i - <span class="number">1</span>], s0[i - <span class="number">1</span>] - prices[i]);</span><br><span class="line">            s2[i] = s1[i - <span class="number">1</span>] + prices[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max(s0[prices.size() - <span class="number">1</span>], s2[prices.size() - <span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>空间复杂度为O(n)，可以降低到O(1).</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; prices)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (prices.size() &lt; <span class="number">2</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> s0 = <span class="number">0</span>, s1 = -prices[<span class="number">0</span>], s2 = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; prices.size(); ++i) &#123;</span><br><span class="line">            <span class="keyword">int</span> last_s2 = s2;</span><br><span class="line">            s2 = s1 + prices[i];</span><br><span class="line">            s1 = max(s0 - prices[i], s1);</span><br><span class="line">            s0 = max(s0, last_s2);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max(s0, s2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/07/19/Best-Time-to-Buy-and-Sell-Stock/" data-id="ckiri7okx0005qsphioii0uti" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/07/19/Combination-Sum/" data-id="ckjflh7qw000xwophckxkkcu6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2511,6 +2506,44 @@ s2[i] = s1[i - 1] + prices[i];
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Monotonous-Sequence/" class="title">Monotonous Sequence</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T08:12:40.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/01/02/Factorization-Machines/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Factorization-Machines/" class="title">Factorization Machines</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T07:49:44.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2020/09/01/Python-Functions/" class="thumbnail">
     
     
@@ -2565,44 +2598,6 @@ s2[i] = s1[i - 1] + prices[i];
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2612,7 +2607,7 @@ s2[i] = s1[i - 1] + prices[i];
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -2621,7 +2616,7 @@ s2[i] = s1[i - 1] + prices[i];
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2630,7 +2625,7 @@ s2[i] = s1[i - 1] + prices[i];
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
@@ -2671,7 +2666,7 @@ s2[i] = s1[i - 1] + prices[i];
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2020 曹文强<br>
+            &copy; 2021 曹文强<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

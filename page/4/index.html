@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                132
+                134
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,317 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Super-Washing-Machines" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/04/02/Super-Washing-Machines/">Super Washing Machines</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/04/02/Super-Washing-Machines/">
+            <time datetime="2017-04-02T02:08:53.000Z" itemprop="datePublished">2017-04-02</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>You have $n$ super washing machines on a line. Initially, each washing machine has some dresses or is empty.</p>
+<p>For each move, you could <strong>choose any $m (1 ≤ m ≤ n)$ washing machines, and pass one dress of each washing machine to one of its adjacent washing machines at the same time</strong> .</p>
+<p>Given an integer array representing the number of dresses in each washing machine from left to right on the line, you should find the minimum number of moves to make all the washing machines have the same number of dresses. If it is not possible to do it, return -1.</p>
+<pre><code>Example1
+
+Input: [1,0,5]
+Output: 3
+
+Explanation: 
+1st move:    1     0 &lt;-- 5    =&gt;    1     1     4
+2nd move:    1 &lt;-- 1 &lt;-- 4    =&gt;    2     1     3    
+3rd move:    2     1 &lt;-- 3    =&gt;    2     2     2   
+Example2
+
+Input: [0,3,0]
+Output: 2
+
+Explanation: 
+1st move:    0 &lt;-- 3     0    =&gt;    1     2     0    
+2nd move:    1     2 --&gt; 0    =&gt;    1     1     1     
+Example3
+
+Input: [0,2,0]
+Output: -1
+
+Explanation: 
+It&#39;s impossible to make all the three washing machines have the same number of dresses. 
+Note:
+The range of n is [1, 10000].
+The range of dresses number in a super washing machine is [0, 1e5].
+</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>首先，如果所有洗衣机的衣服总和不能被$n$整除，返回-1.<br>然后对于每个洗衣机，计算它的<code>gain/lose</code>数组，表示还需要移除多少件衣服使得自己达到平衡状态。</p>
+<p>举个栗子：<br>对于<code>[0,0,11,5]</code>，每个洗衣机应该有4件衣服，所以它的<code>gain/lose</code>数组为<code>[-4,-4,7,1]</code>。从第一个机器开始考虑，第一个要加入4件，得从第二个机器中过来，所以这个状态可以以4次移动的代价变成<code>[0,-8,7,1]</code>。同理第二个状态也可以以8次移动的代价变成状态三<code>[0,0,-1,1]</code>，最后以一次移动的代价变成<code>[0,0,0,0]</code>。</p>
+<p>因为每一次移动可以选取任意个元素，并朝左边或者右边移动一个元素，所以总共需要的移动次数就是<code>gain/lose</code>数组中出现的最大值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">        tmp += num-n;</span><br><span class="line">        ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码中<code>num-n</code>没加绝对值，我的理解是对于初始<code>gain/lose</code>数组的负数，可以从两边同时添加衣服，如果是正数，那么那么每次只能移除一件衣服。而<code>tmp</code>加了绝对值，是因为<code>tmp</code>表示左边一个缺少/多的衣服数，这些衣服得从右边过来，并且一个一个达到当前位置，所以得加绝对值。</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="ckjflh7z600aowophtn6j4eap" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-Contiguous-Array" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/04/01/Contiguous-Array/">Contiguous Array</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/04/01/Contiguous-Array/">
+            <time datetime="2017-04-01T06:09:56.000Z" itemprop="datePublished">2017-04-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/OJ/">OJ</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定一个只包含0和1的整形数组，输出最长的连续子串的长度，要求子串中0和1的个数相同。</p>
+<pre><code>Input: [0,1]
+Output: 2
+Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
+
+Input: [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+</code></pre><p>数组长度不会超过50000.</p>
+<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>$O(n^2)$的思路容易想到，但是数组长度太长，会超时。</p>
+<p>方法如下：</p>
+<ul>
+<li>先将数组中的<code>0</code>变成<code>-1</code>，这样连续子序列的和为<code>0</code>的时候满足条件</li>
+<li>记录下<code>0-k</code>位置的和与<code>k</code>的对应关系，可以hash map的方法。和相同的只记录最左边的，毕竟长度要最长嘛</li>
+<li>如果后面遇到了记录过的和，位置相减就能得到满足条件的子序列长度</li>
+<li>时间复杂度为$O(n)$</li>
+</ul>
+<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">    unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">    map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        sum += nums[i];</span><br><span class="line">        <span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">        <span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">            ret = max(ret, i-map[sum]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">            map[sum] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="ckjflh7r7001awoph3s4npgxn" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Remove-Boxes" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -313,7 +624,7 @@ for\;& p\; with\;boxes[p]==boxes[j]: \\
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/04/01/Remove-Boxes/" data-id="ckiri7or60088qsphfwbpogwe" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/04/01/Remove-Boxes/" data-id="ckjflh7y0008ywophssmxtq6a" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -539,7 +850,7 @@ U3  a1,a3,a6,……
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/31/word2vec/" data-id="ckiri7otm00byqsphz777k15l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/31/word2vec/" data-id="ckjflh80d00cjwophn3szt3y8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -824,7 +1135,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/" data-id="ckiri7op4004yqsphc6znlivm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/31/Latent-Dirichlet-Allocation/" data-id="ckjflh7w4006kwophbgloj9o7" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -962,7 +1273,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/18/Prime-Factor-Index-in-Factorial/" data-id="ckiri7oqx007uqsphl1o3gvu6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/18/Prime-Factor-Index-in-Factorial/" data-id="ckjflh7y30094wophu8l8vxau" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1154,7 +1465,7 @@ p(z_k|d_i,w_j)&=\frac{p(z_k,d_i,w_j)}{\sum_{l=1}^Kp(z_l,d_i,w_j)}=\frac{\phi_{kj
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="ckiri7omn001xqsphe0akno6h" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/16/Cpp-Rule-Fragment3/" data-id="ckjflh7rj001qwoph18jj8s95" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1309,7 +1620,7 @@ kmy
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="ckiri7os6009rqsph2zzliv84" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/15/Sunday/" data-id="ckjflh7z000abwophg4v70hbx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1467,7 +1778,7 @@ kmy
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/07/K-Nearest-Neighbor/" data-id="ckiri7ooo004dqsphwdkans6g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/07/K-Nearest-Neighbor/" data-id="ckjflh7vo005swoph3fk1y8zj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2164,377 +2475,7 @@ TeddyBear();
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/" data-id="ckiri7omf001nqsphyml2r9pa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-BM" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/04/BM/">BM</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/04/BM/">
-            <time datetime="2017-03-04T12:33:18.000Z" itemprop="datePublished">2017-03-04</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/String/">String</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="BM介绍"><a href="#BM介绍" class="headerlink" title="BM介绍"></a>BM介绍</h6><p>KMP算法是一种利用模式串前缀移动的字符串匹配算法，时间复杂度为<code>O(n)</code>。<br>BM算法是一种使用了两个跳转表的字符串匹配算法，单模式匹配有更加出色的表现。</p>
-<p><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fdb3b45fkbj216t0d8753" alt=""></p>
-<p>上图表述了BM算法的大致过程，模式串是<code>AT-THAT</code>，于KMP不同，BM算法<strong>对每一次匹配尝试从后向前匹配的方法</strong>。</p>
-<ol>
-<li><p>第一次匹配从第7位开始。第7为不能匹配，移动模式串，注意到目标串第7为为<code>F</code>，<code>F</code>不在模式串中，所以可以直接将模式串的首位移到目标串第8位。</p>
-</li>
-<li><p>接着从后向前匹配，目标串的14位<code>-</code>与模式串最后一位不匹配，但是<code>-</code>在模式串中，所以将模式串中最靠后的<code>-</code>移到与目标串的14位对齐。</p>
-</li>
-<li><p>再从后向前匹配，目标串的第18位<code>T</code>与模式串的最后一位匹配，向前看一位，17位<code>L</code>不匹配，且<code>L</code>不在模式串中，所以把模式串第一位移到目标串第18位。</p>
-</li>
-<li><p>接着从后向前匹配，第23、24位匹配，22位不匹配，由于模式串的前两位等于后两位，所以将模式串移动使其前两位到后两位的位置上。</p>
-</li>
-</ol>
-<h6 id="坏字符规则"><a href="#坏字符规则" class="headerlink" title="坏字符规则"></a>坏字符规则</h6><p>假设目标串T长度为n，模式串P长度为m</p>
-<p>坏字符规则分为两种情况：</p>
-<ul>
-<li>坏字符没出现在模式串中，这时可以把模式串首移动到坏字符的下一个字符</li>
-<li>坏字符出现在模式串中，这时可以<strong>把模式串第一个出现的坏字符和母串的坏字符对齐</strong>（当然，这样可能造成模式串倒退移动）</li>
-</ul>
-<p>使用一个数组<code>bad</code>，<code>bad[&#39;k&#39;]</code>表示坏字符在模式串中最左侧的字符<code>&#39;k&#39;</code>距离模式串末尾的长度，如果字符’k’不在模式串中，<code>bad[&#39;k&#39;]=m</code>。那么遇到坏字符时模式串可以移动的距离为：<code>bad[T[i]]-(m-1-i)</code>.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// m为模式串长度</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_bad</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* P, <span class="keyword">int</span> m, <span class="keyword">int</span>* bad)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line">         bad[i] = m;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;m; i++)</span><br><span class="line">        bad[P[i]] = m-i-<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h6 id="好后缀规则"><a href="#好后缀规则" class="headerlink" title="好后缀规则"></a>好后缀规则</h6><p>发现某个字符不匹配的同时，已有部分字符匹配成功。假设模式串P已经匹配成功的部分为Q</p>
-<ul>
-<li>模式串中有子串匹配上好后缀，此时移动模式串，让该子串和好后缀对齐即可，如果超过一个子串匹配上好后缀，则选择最靠左边的子串对齐</li>
-<li>模式串中没有子串匹配上好后缀，此时需要寻找模式串的一个最长前缀，并让该前缀等于好后缀的后缀，寻找到该前缀后，让该前缀和好后缀对齐即可</li>
-<li>模式串中没有子串匹配上后后缀，并且在模式串中找不到最长前缀，让该前缀等于好后缀的后缀。此时，直接移动模式到好后缀的下一个字符</li>
-</ul>
-<p>为了实现好后缀规则，需要定义一个数组<code>suffix[]</code>，其中<code>suffix[i] = s</code> 表示以<code>i</code>为右边界，与模式串后缀匹配的最大长度为<code>s</code>，即<code>P[i-s:s]==P[m-s:m]</code>，</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">suffixes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">int</span> *suff)</span> </span>&#123;</span><br><span class="line">    suff[m-<span class="number">1</span>]=m;</span><br><span class="line">        <span class="keyword">for</span> (i=m-<span class="number">2</span>；i&gt;=<span class="number">0</span>；--i)&#123;</span><br><span class="line">            q=i;</span><br><span class="line">            <span class="keyword">while</span>(q&gt;=<span class="number">0</span>&amp;&amp;P[q]==P[m-<span class="number">1</span>-i+q])</span><br><span class="line">                --q;</span><br><span class="line">            suff[i]=i-q;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>定义<code>good[]</code>数组表示遇到好后缀时，模式串应该移动的距离。其中<code>i</code>表示好后缀前面一个字符的位置（也就是坏字符的位置）.对应上面三种情况，<code>good</code>数组构建方法如下：<br><img src="http://ww1.sinaimg.cn/large/9bcfe727ly1fdb6nka0aqj20y013zgq7" alt=""></p>
-<p>上面的三种情况，移动的距离是逐渐增大的，在满足不止一种情况时，应该移动最小的距离。所以分三部分考虑，</p>
-<ul>
-<li>对第三种情况，移动距离就是P的长度</li>
-<li>对第二种情况，我们要找前缀，所以如果位置<code>i</code>到第一个是满足条件的话，必然有<code>suff[i]=i+1</code>，满足条件时，坏字符出现在<code>[0,m-1-i)</code>位置上时都可以移动<code>m-1-i</code>位使得模式串前<code>i+1</code>位与后<code>i+1</code>位重叠。对于<code>i</code>，从大到小计算是因为越长的前缀意味着越小的移动步数，我们希望找到小的，更新时判断<code>good[j]==m</code>也是为了不多次更新。</li>
-<li>对第一种情况，我们知道当<code>m-1-suff[i]</code>位置为坏字符时，需要移动<code>m-i-1</code>位</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">get_good</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">int</span> bmGs[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j, suff[<span class="number">256</span>];</span><br><span class="line">    suffixes(x, m, suff);</span><br><span class="line">    <span class="comment">// 第三种情况</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; m; ++i)</span><br><span class="line">        good[i] = m;</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 第二种情况</span></span><br><span class="line">    <span class="keyword">for</span> (i = m - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i)</span><br><span class="line">        <span class="keyword">if</span> (suff[i] == i + <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">for</span> (; j &lt; m - <span class="number">1</span> - i; ++j)</span><br><span class="line">            <span class="keyword">if</span> (good[j] == m)</span><br><span class="line">                good[j] = m - <span class="number">1</span> - i;</span><br><span class="line">     <span class="comment">// 第一种情况</span></span><br><span class="line">     <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt;= m - <span class="number">2</span>; ++i)</span><br><span class="line">          good[m - <span class="number">1</span> - suff[i]] = m - <span class="number">1</span> - i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最后给出BM算法，<strong>对于出现无法匹配的时候，移动步数取好后缀和坏字符两种情况的最大值</strong>。完整代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BM</span><span class="params">(<span class="keyword">char</span> *P, <span class="keyword">int</span> m, <span class="keyword">char</span> *S, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j, good[m], bad[<span class="number">256</span>], k=<span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* Preprocessing */</span></span><br><span class="line">    get_bad(P, m, bad);</span><br><span class="line">    get_good(P, m, good);</span><br><span class="line">    i = j = m-<span class="number">1</span>;</span><br><span class="line">    <span class="comment">/* Searching */</span></span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= n - m) &#123;</span><br><span class="line">        <span class="keyword">while</span> (i!=<span class="number">0</span> &amp;&amp; P[i]==S[j]) &#123;  <span class="comment">// 从后向前匹配、直到找到不匹配或者完全匹配</span></span><br><span class="line">            --i;</span><br><span class="line">            --j;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 找到一个匹配</span></span><br><span class="line">        <span class="keyword">if</span> (i==<span class="number">0</span> &amp;&amp; P[i]==S[j]) &#123;</span><br><span class="line">            m++;</span><br><span class="line">            j += good[<span class="number">0</span>];  <span class="comment">// 找到匹配算是好后缀情况</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            j += good[i]&gt;bad[S[j]] ? good[i] : bad[S[j]];</span><br><span class="line">        &#125;</span><br><span class="line">        i = m-<span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/04/BM/" data-id="ckiri7oko0002qsphukuieqbg" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Decision-Tree" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/03/02/Decision-Tree/">Decision Tree</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/03/02/Decision-Tree/">
-            <time datetime="2017-03-02T01:39:28.000Z" itemprop="datePublished">2017-03-02</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="决策树模型"><a href="#决策树模型" class="headerlink" title="决策树模型"></a>决策树模型</h5><ul>
-<li>决策树是一种基本的分类与回归的方法</li>
-<li>决策树由节点和有向边组成</li>
-<li>节点分为内部节点和叶节点</li>
-<li><strong>决策树的学习其实就是特征选择的过程</strong></li>
-</ul>
-<h5 id="决策树学习"><a href="#决策树学习" class="headerlink" title="决策树学习"></a>决策树学习</h5><p><strong>决策树学习算法包含特征选择、决策树的生成和决策树的剪枝过程</strong></p>
-<p>给定数据集$D=\lbrace (x_1,y_1),…,(x_m,y_m) \rbrace$其中$m$为样本容量，$x_i=(x_i^{(1)},…,x_i^{(n)})$，$n$为特征个数；$y_i\in \lbrace 1,2,…,K \rbrace$为类标记。</p>
-<h6 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h6><p>统计学中，熵是随机变量不确定性的度量，即混乱程度。假设$X$是一个取有限个值的离散随机变量，其概率分布为$P(X=x_i)=p_i,i=1,..,N$，那么$X$的熵定义为<script type="math/tex">H(X)=-\sum_{i=1}^n p_i log p_i</script>条件熵$H(Y|X)$可以表示为已知随机变量$X$的条件下，随机变量$Y$的不确定性，也可以表示成<script type="math/tex">H(Y|X)=\sum_{i=1}^N p_iH(Y|X=x_i)</script>其中$p_i=P(X=x_i)$。<strong>当熵和条件熵中的概率由数据估计得到时，则分别称之为经验熵和条件经验熵</strong>，如果出现0概率，则令$0log0=0$。</p>
-<p><strong>信息增益表示在得知特征$X$的情况下而使得$Y$的不确定性减少的程度</strong>，形式化表述为：特征$A$对训练数据集$D$的信息增益$g(D,A)$，定义为<script type="math/tex">g(D,A)=H(D)-H(D|A)</script>这里的<strong>信息增益等价于训练数据集中类与特征的互信息</strong>。计算信息增益的算法如下：</p>
-<hr>
-<p>输入：数据集$D$和特征$A$</p>
-<hr>
-<p>1 计算数据集$D$的经验熵$H(D)=-\sum_{k=1}^K \frac{|C_k|}{|D|}log_2\frac{|C_k|}{|D|}$<br>2 计算特征$A$对数据集$D$的经验条件熵<script type="math/tex">H(D|A)=\sum_{i=1}^N \frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^N \frac{|D_i|}{|D|}\sum_{k=1}^K\frac{|D_{ik}|}{|D_i|}log_2\frac{|D_{ik}|}{|D_i|}</script><br>3 计算信息增益$g(D,A)=H(D)-H(D|A)$.</p>
-<hr>
-<p>输出信息增益</p>
-<hr>
-<h6 id="信息增益比"><a href="#信息增益比" class="headerlink" title="信息增益比"></a>信息增益比</h6><p><strong>以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题</strong>，使用信息增益比可以缓解这个问题。特征$A$对训练数据集$D$的信息增益比定义为其增益信息$g(D,A)$与训练数据集$D$关于特征$A$的值的熵$H_A(D)$之比，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-g_R(D,A)=\frac{g(D,A)}{H_A(D)}
-\end{aligned}</script><p>其中，$H_A(D)=-\sum_{i=1}^{A_n}\frac{|D_i|}{|D|}log_2\frac{|D_i|}{|D|}$，$A_n$是特征$A$取值的个数。</p>
-<h6 id="ID3"><a href="#ID3" class="headerlink" title="ID3"></a>ID3</h6><p>ID3算法采用<strong>自上而下递归式的算法构建决策树，它使用信息增益作为特征选择的标准</strong>。停止条件是节点所有特征的信息增益都很小（阈值$\epsilon$）或没有特征可以选择为止。</p>
-<hr>
-<p>输入：训练数据集$D$，特征集$A$，阈值$\epsilon$</p>
-<hr>
-<p>1 若$D$中所有实例属于同一类$C_k$，$T$为单节点树，$C_k$为该节点的类标记，返回$T$<br>2 若$A=\emptyset$则$T$为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>3 否则，分别计算$A$中各特征对$D$的信息增益，选择信息增益最大的特征$A_g$<br>4 如果$A_g&lt;\epsilon$，则置T为单节点树，将$D$中实例数最大的类$C_k$作为该节点的类标记，返回$T$<br>5 否则，对$A_g$的每一个可能值$a_i$，根据$A_g=a_i$将$D$分割成若干非空子集$D_i$，将$D_i$中实例数最大的类作为标记，构建子节点，由节点及其子节点构成树$T$，返回$T$<br>6 对每个子节点$i$，以$D_i$为训练集，以$A-A_g$为特征集，递归调用以上步骤</p>
-<hr>
-<p>输出：决策树$T$</p>
-<hr>
-<h6 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h6><p><strong>C4.5与ID3的差异在于C4.5使用信息增益比进行选择选择</strong></p>
-<h6 id="基尼指数"><a href="#基尼指数" class="headerlink" title="基尼指数"></a>基尼指数</h6><p><strong>基尼指数表示不确定程度，基尼指数越大，样本集的不确定程度就越大、纯度越低。</strong></p>
-<p>分类问题中，假设有$K$个类，样本点属于第$k$类的概率为$p_k$，则概率分布的基尼指数定义为<script type="math/tex">Gini(p)=1-\sum_{k=1}^K p_k^2</script>对于给定的样本集$D$，其基尼指数为<script type="math/tex">Gini(D)=1-\sum_{k=1}^K\left( \frac{|C_k|}{|D|} \right)^2</script>其中$C_k$表示第$k$类的样本子集。表示集合$D$的不确定性。</p>
-<p>假设样本集$D$根据特征$A$的不同取值被分成$A_n$个部分，则定义在特征$A$下集合$D$的基尼指数为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-Gini(D,A)=\sum_{i=1}^{A_n} \frac{|D_i|}{|D|}Gini(D_i)
-\end{aligned}</script><h6 id="CART"><a href="#CART" class="headerlink" title="CART"></a>CART</h6><p><strong>CART分类树</strong><br>使用基尼指数作为划分属性的标准，每次选择基尼指数最小的属性。</p>
-<p><strong>CART回归模型</strong><br>假设已将输入空间划分为$M$个单元$R_1,…,R_M$，并且在每个单元$R_m$上有一个固定的输出值$c_m$，回归树模型可以表示为<script type="math/tex">f(x)=\sum_{m=1}^Mc_mI(x\in R_m)</script>当输入空间划分确定时，可以用平方误差$\sum_{x_i}(y_i-f(x_i))^2$表示训练误差,<strong> $c_m$输出值为对应$R_m$上所有样本输出值的均值</strong>。</p>
-<p>使用启发式的方法划分输入空间，遍历输入变量和可能的切分变量找到最优的切分变量$j$和切分点$s$，即找到切分后部分的误差最小：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-&R_1(j,s)=\lbrace{x|x^{(j)}\le s\rbrace}  \\
-&R_2(j,s)=\lbrace x|x^{(j)}> s \rbrace  \\
-&\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]
-\end{aligned}</script><p>其中$c_1,c_2$是划分后部分中输出值的均值。最小二乘回归树算法描述如下：</p>
-<hr>
-<p>输入：训练集$D$</p>
-<hr>
-<ol>
-<li>选择最优切分变量$j$与最优切分点$s$，求解$\min_{j,s} \left[ \min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c_1)^2 + \min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c_2)^2  \right]$</li>
-<li>用选定的对$(j,s)$划分区域并决定相应输出值：$R_1,R_2,c_1,c_2$</li>
-<li>继续对两个子区域调用步骤1、2直至满足停止条件</li>
-<li>将输入空间划分为$M$个区域$R_1,…,R_M$，生成CART树$f(x)=\sum_{m=1}^Mc_mI(x\in R_m)$</li>
-</ol>
-<hr>
-<p>输出：$f(x)$</p>
-<hr>
-<h5 id="决策树的剪枝"><a href="#决策树的剪枝" class="headerlink" title="决策树的剪枝"></a>决策树的剪枝</h5><p>以上方法可能会产生过拟合现象，适当剪枝会使得决策树的泛化效果变得更好<br>剪枝分为预剪枝和后剪枝两种，预剪枝指的是在决策树生成的过程中进行剪枝，后剪枝则是在生成决策树之后再进行剪枝。</p>
-<h6 id="预剪枝"><a href="#预剪枝" class="headerlink" title="预剪枝"></a>预剪枝</h6><p>大致过程描述：对于一个节点，考虑其剪枝或者不剪枝的情况，看这两种情况下哪种正确率高（一个节点的类别由其包含同类样本数最多的决定），由此决定是否剪枝。</p>
-<p><strong>预剪枝基于贪心本质禁止某些节点展开，而这些节点第一次展开效果可能不好，但后续表现可能显著提高，所以会带来欠拟合的风险</strong>。</p>
-<h6 id="后剪枝"><a href="#后剪枝" class="headerlink" title="后剪枝"></a>后剪枝</h6><p>大致过程描述：自下而上，叶节点不考虑，考虑其父节点F是否需要剪枝，可以仅仅通过父节点包含的样本，在剪枝和不剪枝的情况下分别计算准确率，然后确定是否需要剪枝。</p>
-<p>下面是令一种后剪枝的方法（我不是很了解）：<br>通过<strong>极小化决策树整体的损失函数来实现</strong>。设树的叶节点个数为$|T|$，$t$是树$T$的叶节点，此叶节点上有$N_t$个样本，属于类$C_k$的样本有$N_{tk}$个，$H_t(T)$为叶节点$t$上的经验熵，$\alpha \ge 0$为参数，则决策树学习的损失函数可以定义为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
-\end{aligned}</script><p>其中经验熵为$H_t(T)=-\sum_k \frac{N_{tk}}{N_t}log_2  \frac{N_{tk}}{N_t}$。$C(T)$表示模型对训练数据的预测误差，|T|表示模型的复杂度。剪枝算法描述如下：</p>
-<hr>
-<p>输入：决策树$T$，参数$\alpha$</p>
-<hr>
-<p>1 计算每个节点的经验熵<br>2 递归地从树的节点向上回溯，如果保留子节点的损失函数更大，剪枝以父节点作为叶子<br>3 返回2直到不能继续为止</p>
-<hr>
-<p>输出：修建后的决策树$T_{\alpha}$</p>
-<hr>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/03/02/Decision-Tree/" data-id="ckiri7omr0024qspha3kxtmxz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/03/06/Cpp-Rule-Fragment2/" data-id="ckjflh7tg0038woph5uw223eo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2627,6 +2568,44 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Monotonous-Sequence/" class="title">Monotonous Sequence</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T08:12:40.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/01/02/Factorization-Machines/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Factorization-Machines/" class="title">Factorization Machines</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T07:49:44.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2020/09/01/Python-Functions/" class="thumbnail">
     
     
@@ -2681,44 +2660,6 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2728,7 +2669,7 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -2737,7 +2678,7 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2746,7 +2687,7 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
@@ -2787,7 +2728,7 @@ C_{\alpha}(T)=\sum_{t=1}^{|T|} N_tH_t(T)+\alpha |T|=C(T)+\alpha |T|
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2020 曹文强<br>
+            &copy; 2021 曹文强<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>

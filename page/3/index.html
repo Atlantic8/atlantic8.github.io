@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                132
+                134
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,430 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Maximum-Entropy-Model" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/08/27/Maximum-Entropy-Model/">Maximum Entropy Model</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/08/27/Maximum-Entropy-Model/">
+            <time datetime="2017-08-27T04:11:22.000Z" itemprop="datePublished">2017-08-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h6 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h6><p>最大熵模型也是<strong>判别模型</strong>，其基本思想是最大熵思想，即<strong>在给定关于概率分布不完全信息的情况下，仅有的无偏假设就是使得模型尽可能地均匀</strong>，通俗点说就是<strong>对一个随机事件的概率分布进行预测时，预测应当满足全部已知的约束，而对未知的情况不要做任何主观假设</strong>。在这种思想下，合适的模型就是在满足给定限制情况下最大化模型的熵。对于条件模型$p(y|x)$，其条件熵的定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+H(p)=-\sum_{(x,y)\in Z}p(x,y)\log p(y|x)
+\end{aligned}</script><p>其中，$Z$包含$x,y$的所有可能组合。</p>
+<p>训练样本由输入、标签表征。这里引入特征函数的概念，特征函数和以前看到的特征不大一样，它是对输入和输出同时抽取特征，表示为$f(x,y)$。特征函数可以定义为二值函数，如果$x,y$满足一定的事实，那么$f(x,y)$为1，否则为0。</p>
+<h6 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h6><p>假设训练数据集$T$有$n$条数据，特征个数为$m$个，第$i$个特征对应的特征函数为$f_i(x,y)$。令由训练数据得到的经验联合分布为$\hat{p}(x,y)$，那么特征$f_i$关于经验分布的期望值为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{E}(f_i)=\sum_{(x,y)\in T}\hat{p}(x,y)f_i(x,y)=\frac{1}{n}\sum_{(x,y)\in T}f_i(x,y)
+\end{aligned}</script><p>同样地，在模型分布上的特征函数均值可以表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E(f_i)&=\sum_{(x,y)\in Z}p(x,y)f_i(x,y)=\sum_{(x,y)\in Z}p(x)p(y|x)f_i(x,y) \\
+&\approx\sum_{x,y}\hat{p}(x)p(y|x)f_i(x,y)=\frac{1}{n}\sum_{x\in T}\sum_{y\in Y}p(y|x)f_i(x,y)
+\end{aligned}</script><p>其中，$Z$是$x,y$所有可能组合。（这里因为$x,y$所有可能组合会很多，计算上不可行）。$x$仅考虑训练集中的$x$，而$y$则是所有可能的取值，但是在实际中，$y$的可能取值是有限的、比较少的，所以这里的计算也是高效的。</p>
+<p>至此，得到第一种约束。如果模型可以从数据中获取足够多的信息，就可以认为<strong>经验值约等于期望值</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat{E}(f_i)\approx E(f_i)
+\end{aligned}</script><hr>
+<p>第二种约束为概率本身的限制，即：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y|x) &\ge 0 \quad for\;all\;x,y \\
+\sum_y p(y|x)&=1\quad for\;all\;x
+\end{aligned}</script><hr>
+<p>类似地，可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+H(p) = -\sum_{x,y}\hat{p}(x)p(y|x)\log p(y|x)
+\end{aligned}</script><h6 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h6><p>按照最优化问题的优化习惯，将最大化问题改写成最小化问题</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+arg\min_{p(y|x)}&-H(p) \\
+&s.t.\quad \hat{E}(f_i) = E(f_i) \quad for\;i\;in\,\lbrace 1,..,m \rbrace  \\
+&\sum_y p(y|x)=1\quad for\;all\;x
+\end{aligned}</script><h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>带约束的优化问题可以参考拉格朗日乘子法，引入参数$\lambda=(\lambda_1,…,\lambda_{m+1})$，令</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\Gamma(p,\lambda) = -H(p)+\sum_{i=1}^m\lambda_i\left(E(f_i)-\hat{E}(f_i)\right)+\lambda_{m+1}\left(\sum_{y\in Y}p(y|x)-1\right)
+\end{aligned}</script><p>考虑上式与原始优化问题之间联系，对于约束问题，如果有一个不满足条件，那么将对应的$\lambda$分量扩展到$\infty$，那么整个公式的值就变成了$+\infty$。所以可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\min_{p(y|x)}\Gamma(p,\lambda) = \min_{p(y|x)}\max_{\lambda}\Gamma(p,\lambda)
+\end{aligned}</script><p>因为函数$\Gamma(p,\lambda)$是$p(y|x)$的凸函数，所以根据拉格朗日对偶性有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ \min_{p(y|x)}\max_{\lambda}\Gamma(p,\lambda)=\max_{\lambda} \min_{p(y|x)}\Gamma(p,\lambda)
+\end{aligned}</script><hr>
+<p>首先看$\min_{p(y|x)}\Gamma(p,\lambda)$:<br>我们可以求$\Gamma(p,\lambda)$对$p(y|x)$的导数。逐项考虑，首先</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial{H(y|x)}}{\partial p(y|x)} = -\hat{p}(x)\cdot[\log p(y|x)+1]
+\end{aligned}</script><p>第二项</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\frac{\partial{\sum_{i=1}^m\lambda_i\left(E(f_i)-\hat{E}(f_i)\right)}}{\partial p(y|x)} \\
+&= \frac{\partial}{\partial p(y|x)}\sum_{i=1}^m\lambda_i \left( \sum_{(x,y)\in Z}\hat{p}(x)p(y|x)f_i(x,y) - \sum_{(x,y)\in T}\hat{p}(x,y)f_i(x,y) \right) \\
+&= \sum_{i=1}^m\lambda_i \hat{p}(x) f_i(x,y) 
+\end{aligned}</script><p>第三项比较简单，就不单独列出来了，所以$\Gamma(p,\lambda)$对$p(y|x)$的导数可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial \Gamma(p,\lambda)}{\partial p(y|x)} = -\hat{p}(x)\cdot[\log p(y|x)+1] + \sum_{i=1}^m\lambda_i \hat{p}(x) f_i(x,y) + \lambda_{m+1}
+\end{aligned}</script><p>令上式等于0可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p(y|x) =\exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \exp\left( \frac{\lambda_{m+1}}{\hat{p}(x)}-1 \right)
+\end{equation}</script><p>为了使$p(y|x)$的表达式只与特征函数有关，我们最好消去$\hat{p}(x)$。注意到$\sum_y p(y|x)=1$，将上式两边对$y$求和，可以得到</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\exp\left( \frac{\lambda_{m+1}}{\hat{p}(x)}-1 \right)=\frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><p>进一步可以得到</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><p>综上所述，最大熵模型也就是</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \frac{1}{\sum_y \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)}
+\end{equation}</script><hr>
+<p>第二步，求解$\lambda^{<em>}$:<br>令$\Psi_{p^{</em>}}= \min_{p(y|x)}\Gamma(p,\lambda)$，下一步就是</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\lambda^{*}=arg\max_{\lambda} \Psi_{p^{*}}
+\end{equation}</script><hr>
+<p>可以证明，最大熵模型是适定的（well-defined），其解存在且唯一。</p>
+<p><strong>参考文献</strong><br>[1]. Classical Probabilistic Models and Conditional Random Fields.pdf<br>[2]. 统计学习方法. 李航</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ckjflh7w9006qwophmgvroaep" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
+    <article id="post-WordRank" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/07/30/WordRank/">WordRank</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/07/30/WordRank/">
+            <time datetime="2017-07-30T06:35:42.000Z" itemprop="datePublished">2017-07-30</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/NLP/">NLP</a>, <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h5><p>单词向量化在近些年一直是被广泛研究的课题，虽然state-of-the-art方法（word2vec）提供了通过低维矩阵嵌入方法有效地计算词之间相似性的方法，但是他们的motivation通常是不明确的。他们通用的模式是维护单词-上下文共现矩阵，初始化向量化的单词向量$u_w$、上下文单词向量$v_c$，然后使用一个可以近似表示$X_{w,c}$（$w,c$的共现次数）的函数$f(u_w,v_c)$，通过优化这个函数不断地更新$u_w,v_c$的值。（注意<strong>上下文也是一个单词</strong>，这个单词在当前单词的上下文环境中）</p>
+<hr>
+<h5 id="wordrank"><a href="#wordrank" class="headerlink" title="wordrank"></a>wordrank</h5><p>wordrank把单词向量化定义成一个rank的问题，也就是：<strong>给定一个单词$w$，我们想要输出一个上下文列表$\lbrace c_1,c_2,…\rbrace$单词列表，并且要求与单词$w$共现的上下文单词出现在列表的前面</strong>。具体地，单词全集为$W$，上下文全集为$C$，$\Omega$是给定数据单词、上下文的共现矩阵，$\Omega_w$是与$w$共现的上下文集合，$\Omega_c$同理。</p>
+<p>定义单词$w$的词向量为$u_w\in U$，上下文$c$的向量为$v_c\in V$，<strong>词和上下文的相关性越大，他们的向量内积就越大</strong>。给定单词$w$，上下文$c$的rank可以定义为其他上下文向量与单词向量乘积比当前上下文向量与但词向量乘积大的个数，也就是有多少个上下文不必当前的”差”，即：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+rank(w,c)&=\sum_{c^{'}\in C-\lbrace c\rbrace} I(\langle u_w,v_c \rangle-\langle u_w,v_{c^{'}}\rangle) \\
+&=\sum_{c^{'}\in C-\lbrace c\rbrace}I(\langle u_w, v_c-v_{c^{'}}\rangle)
+\end{aligned}</script><p>其中函数$I(x)$是0、1损失函数，当$x\leq 0$时输出为1，否则为0。由于函数$I(x)$是不连续的函数，我们将其近似为连续函数$l(x)$，要求$l$是$I(x)$的凸上界，可以使用的候选有$l(x)=max(0,1-x)$或者$l(x)=log_2(1+2^{-x})$，所以可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+rank(w,c)\leq \overline{rank}(w,c)=\sum_{c^{'}\in C-\lbrace c\rbrace}l(\langle u_w, v_c-v_{c^{'}}\rangle)
+\end{equation}</script><p>我们希望rank模型将与当前单词有关的context的rank值变小，所以模型的目标函数可以是：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J(U,V)=\sum_{w\in W}\sum_{c\in \Omega_w}r_{w,c} \cdot \rho\left( \frac{\overline{rank}(w,c)+\beta}{\alpha} \right)
+\end{aligned}</script><p>其中$r_{w,c}$是用以量化$w,c$之间关联的权重，定义为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+r_{w,c}= \begin{cases}
+(X_{w,c}/x_{max})^{\epsilon} & X_{w,c}< x_{max} \\
+1 & otherwize
+\end{cases}
+\end{aligned}</script><p>其中，$x_{max},\epsilon$是超参数，可以看出共现次数越大，权重越大。$\rho(\cdot)$是一个<strong>单调递增的凹rank损失函数</strong>，量化rank的”好坏”，首先，递增是明显的，要求是凹函数是因为希望其一阶导数非递增，从而使得相关性低的context拥有较小的敏感度（增长得慢，attention减少，想想y=x-1和y=logx），使得模型的健壮性得到提高，是很关键的一步。可能的损失函数有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\rho(x)&=log_2(1+x) \\
+\rho(x)&=1-\frac{1}{log_2(2+x)} \\
+\rho(x)&=\frac{x^{1-t}-1}{1-t},\quad t\neq 1
+\end{aligned}</script><p>$\alpha,\beta$是超参数，控制模型“放弃rank高的上下文、注重rank低的上下文”的程度，<code>the rate at which the algorithm gives up is determined by the hyperparameters a and b</code>。</p>
+<hr>
+<h5 id="optimization"><a href="#optimization" class="headerlink" title="optimization"></a>optimization</h5><p>目标函数可以等价定义为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha} \right)
+\end{aligned}</script><p>这是一个包含对$\Omega$和$C$求和的公式，当语料库很大时，问题就会变得难以处理。随机梯度下降（SGD）可以解决$\Omega$这一层的问题，但是$C$这一层的却难以解决，<strong>除非函数$\rho(\cdot)$是一个线性函数</strong>。可惜的是，函数$\rho(\cdot)$的特性要求其不是线性函数。</p>
+<p>解决方法是对函数$\rho(\cdot)$进行一阶泰勒分解，由于其凹函数的性质，可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\rho(x) \le \rho(\xi)+\rho'(\xi)\cdot(x-\xi)
+\end{aligned}</script><p>对于所有的$x$和$\xi$都成立，并且当$x=\xi$时等号成立。<br>令$\Xi=\lbrace \xi_{w,c} \rbrace_{(w,c)\in\Omega}$，于是我们可以得到一个$J(U,V)$的上界</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\overline{J}(U,V,\Xi)&=\sum_{(w,c)\in\Omega}r_{w,c}\cdot \left\lbrace \rho(\xi_{w,c})+\rho'(\xi_{w,c})\cdot \left( \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha} - \xi_{w,c} \right) \right\rbrace \\
+&=\sum_{w,c,c^{'}} r_{w,c}\cdot \left( \frac{\rho(\xi_{w,c})+\rho'(\xi_{w,c})\cdot (\frac{\beta}{\alpha}-\xi_{w,c})} {|C|-1} + \frac{1}{\alpha}\rho'(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{'}}\rangle) \right)
+\end{aligned}</script><p>其中$(w,c,c^{‘}) \in \Omega\times (C-\lbrace c \rbrace)$，等号成立的条件是</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\xi_{w,c} = \frac{\sum_{c^{'}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{'}}\rangle)+\beta }{\alpha}
+\end{aligned}</script><p>最小化上面这个函数就等于最小化原目标函数的上界，也就是最小化目标函数了。并且$\overline{J}(U,V,\Xi)$很好地支持SGD（内层不需要求和）。</p>
+<hr>
+<h5 id="algorithm"><a href="#algorithm" class="headerlink" title="algorithm"></a>algorithm</h5><hr>
+<ul>
+<li>学习率$\eta$</li>
+<li>重复<ul>
+<li><strong>阶段 1</strong></li>
+<li>重复<ul>
+<li>从$\Omega$中均匀采样$(w,c)$</li>
+<li>从$C-\lbrace c\rbrace$中均匀采样$(c^{‘})$</li>
+<li>// update</li>
+<li>$u_w\gets u_w-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot (v_c-v_{c^{‘}})$</li>
+<li>$v_c\gets v_c-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot u_w$</li>
+<li>$v_{c^{‘}}\gets v_{c^{‘}}-\eta\cdot r_{w,c}\cdot \rho’(\xi_{w,c})\cdot l(\langle u_w, v_c-v_{c^{‘}}\rangle) \cdot u_w$</li>
+</ul>
+</li>
+<li>直到$U$和$V$都收敛</li>
+<li><strong>阶段2</strong></li>
+<li>对所有的$(w,c)\in \Omega$<ul>
+<li>$\xi_{w,c}=\left( \sum_{c^{‘}\in C-\lbrace c\rbrace} l(\langle u_w, v_c-v_{c^{‘}}\rangle)+\beta \right)/\alpha$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>直到所有的$U,V,\Xi$都收敛</li>
+</ul>
+<hr>
+<p>阶段1的时间复杂度为$O(|\Omega|)$，阶段2的时间复杂度为$O(|\Omega||C|)$，复杂度较高。考虑到阶段2其实包含矩阵乘法运算，可以考虑使用一些高效的矩阵乘法算法。训练完成后，$U,V$分别就是对应的词向量。</p>
+<p><strong>引用</strong><br>[1]. WordRank: Learning Word Embeddings via Robust Ranking</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ckjflh80100bvwophbh8hp1m3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Course-Schedule" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -311,7 +735,7 @@ output: 3
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ckiri7om50019qsphzciqg18l" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ckjflh7rc001gwophxza067dj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -481,7 +905,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ckiri7orh008sqsphouuoatvl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ckjflh7yr00a5wophnphfi37b" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -768,7 +1192,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ckiri7oqp007dqsph5pu2hldc" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ckjflh7wv007jwophtd3b6l7f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -924,7 +1348,7 @@ b_1 & b_2 & 0
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ckiri7omd001kqsphcqivgw81" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ckjflh7r50018wophqpyoge8n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1140,7 +1564,7 @@ h_{\theta}(x)&=\frac{1}{\sum_{i=1}^2e^{\theta_i^Tx}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ckiri7ork008wqsphgevqiz8t" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ckjflh7yr00a2wophnm3ztolm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1316,7 +1740,7 @@ E_t=-o_tlog\hat{o_t}</script><p>激活函数可以是<code>tanh</code>，也可�
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ckiri7oqz007xqsphvq2jo0ky" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ckjflh7y7009bwophvrxz18mu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1454,7 +1878,7 @@ Explanation: The maximum result is 5 ^ 25 = 28.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ckiri7opx0067qsph8bno102z" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ckjflh7we006wwophbyz0l788" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1673,318 +2097,7 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/02/Introduction-to-Recommender-System/" data-id="ckiri7oox004oqsph9c7ymufr" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Super-Washing-Machines" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/04/02/Super-Washing-Machines/">Super Washing Machines</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/04/02/Super-Washing-Machines/">
-            <time datetime="2017-04-02T02:08:53.000Z" itemprop="datePublished">2017-04-02</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>You have $n$ super washing machines on a line. Initially, each washing machine has some dresses or is empty.</p>
-<p>For each move, you could <strong>choose any $m (1 ≤ m ≤ n)$ washing machines, and pass one dress of each washing machine to one of its adjacent washing machines at the same time</strong> .</p>
-<p>Given an integer array representing the number of dresses in each washing machine from left to right on the line, you should find the minimum number of moves to make all the washing machines have the same number of dresses. If it is not possible to do it, return -1.</p>
-<pre><code>Example1
-
-Input: [1,0,5]
-Output: 3
-
-Explanation: 
-1st move:    1     0 &lt;-- 5    =&gt;    1     1     4
-2nd move:    1 &lt;-- 1 &lt;-- 4    =&gt;    2     1     3    
-3rd move:    2     1 &lt;-- 3    =&gt;    2     2     2   
-Example2
-
-Input: [0,3,0]
-Output: 2
-
-Explanation: 
-1st move:    0 &lt;-- 3     0    =&gt;    1     2     0    
-2nd move:    1     2 --&gt; 0    =&gt;    1     1     1     
-Example3
-
-Input: [0,2,0]
-Output: -1
-
-Explanation: 
-It&#39;s impossible to make all the three washing machines have the same number of dresses. 
-Note:
-The range of n is [1, 10000].
-The range of dresses number in a super washing machine is [0, 1e5].
-</code></pre><h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>首先，如果所有洗衣机的衣服总和不能被$n$整除，返回-1.<br>然后对于每个洗衣机，计算它的<code>gain/lose</code>数组，表示还需要移除多少件衣服使得自己达到平衡状态。</p>
-<p>举个栗子：<br>对于<code>[0,0,11,5]</code>，每个洗衣机应该有4件衣服，所以它的<code>gain/lose</code>数组为<code>[-4,-4,7,1]</code>。从第一个机器开始考虑，第一个要加入4件，得从第二个机器中过来，所以这个状态可以以4次移动的代价变成<code>[0,-8,7,1]</code>。同理第二个状态也可以以8次移动的代价变成状态三<code>[0,0,-1,1]</code>，最后以一次移动的代价变成<code>[0,0,0,0]</code>。</p>
-<p>因为每一次移动可以选取任意个元素，并朝左边或者右边移动一个元素，所以总共需要的移动次数就是<code>gain/lose</code>数组中出现的最大值。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMinMoves</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; machines)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = accumulate(machines.begin(), machines.end(), <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (sum % machines.size() != <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> ret=<span class="number">0</span>, tmp=<span class="number">0</span>, n=sum / machines.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num : machines) &#123;</span><br><span class="line">        tmp += num-n;</span><br><span class="line">        ret = max(max(ret, num-n), abs(tmp));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码中<code>num-n</code>没加绝对值，我的理解是对于初始<code>gain/lose</code>数组的负数，可以从两边同时添加衣服，如果是正数，那么那么每次只能移除一件衣服。而<code>tmp</code>加了绝对值，是因为<code>tmp</code>表示左边一个缺少/多的衣服数，这些衣服得从右边过来，并且一个一个达到当前位置，所以得加绝对值。</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/04/02/Super-Washing-Machines/" data-id="ckiri7os4009nqsph60f8a3rm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Contiguous-Array" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/04/01/Contiguous-Array/">Contiguous Array</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/04/01/Contiguous-Array/">
-            <time datetime="2017-04-01T06:09:56.000Z" itemprop="datePublished">2017-04-01</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h6 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h6><p>给定一个只包含0和1的整形数组，输出最长的连续子串的长度，要求子串中0和1的个数相同。</p>
-<pre><code>Input: [0,1]
-Output: 2
-Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
-
-Input: [0,1,0]
-Output: 2
-Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
-</code></pre><p>数组长度不会超过50000.</p>
-<h6 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h6><p>$O(n^2)$的思路容易想到，但是数组长度太长，会超时。</p>
-<p>方法如下：</p>
-<ul>
-<li>先将数组中的<code>0</code>变成<code>-1</code>，这样连续子序列的和为<code>0</code>的时候满足条件</li>
-<li>记录下<code>0-k</code>位置的和与<code>k</code>的对应关系，可以hash map的方法。和相同的只记录最左边的，毕竟长度要最长嘛</li>
-<li>如果后面遇到了记录过的和，位置相减就能得到满足条件的子序列长度</li>
-<li>时间复杂度为$O(n)$</li>
-</ul>
-<p>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(vector&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = nums.size(), ret=<span class="number">0</span>, sum=<span class="number">0</span>;</span><br><span class="line">    unordered_map&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; map;</span><br><span class="line">    map[<span class="number">0</span>] = -<span class="number">1</span>; <span class="comment">// 没有数和也为0，防止只有[0,1]时输出0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) <span class="keyword">if</span> (nums[i]==<span class="number">0</span>) nums[i] = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;n; i++) &#123;</span><br><span class="line">        sum += nums[i];</span><br><span class="line">        <span class="comment">// 以前遇到过sum值，现在位置-以前位置可以得到一个满足要求的序列长度</span></span><br><span class="line">        <span class="keyword">if</span> (map.find(sum) != map.end()) &#123;</span><br><span class="line">            ret = max(ret, i-map[sum]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 第一次遇到sum值，记录就行</span></span><br><span class="line">            map[sum] = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/04/01/Contiguous-Array/" data-id="ckiri7om30015qsph6r9qkv49" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/02/Introduction-to-Recommender-System/" data-id="ckjflh7vg005ewophkf6vqlsv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2077,6 +2190,44 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/OJ/">OJ</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Monotonous-Sequence/" class="title">Monotonous Sequence</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T08:12:40.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2021/01/02/Factorization-Machines/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/02/Factorization-Machines/" class="title">Factorization Machines</a></p>
+                            <p class="item-date"><time datetime="2021-01-02T07:49:44.000Z" itemprop="datePublished">2021-01-02</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2020/09/01/Python-Functions/" class="thumbnail">
     
     
@@ -2131,44 +2282,6 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Similarity-and-Relativity-Metrics/" class="title">Similarity and Relativity Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:04:31.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/Entropy-and-Related-Metrics/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Math/">Math</a></p>
-                            <p class="item-title"><a href="/2020/09/01/Entropy-and-Related-Metrics/" class="title">Entropy and Related Metrics</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:01:41.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2178,7 +2291,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">50</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">56</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -2187,7 +2300,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2196,7 +2309,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/music-information-retrieval/" style="font-size: 10px;">music information retrieval</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/search/" style="font-size: 10px;">search</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
@@ -2237,7 +2350,7 @@ Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal numb
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            &copy; 2020 曹文强<br>
+            &copy; 2021 曹文强<br>
             Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
         </div>
     </div>
