@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                134
+                135
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,207 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Expection-Maximization" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2016/12/09/Expection-Maximization/">Expection Maximization</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2016/12/09/Expection-Maximization/">
+            <time datetime="2016-12-09T14:58:01.000Z" itemprop="datePublished">2016-12-09</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h5 id="EM算法"><a href="#EM算法" class="headerlink" title="EM算法"></a>EM算法</h5><h6 id="极大似然估计"><a href="#极大似然估计" class="headerlink" title="极大似然估计"></a>极大似然估计</h6><p>从极大似然法的角度引入EM算法，先考虑这样的一个问题。</p>
+<p>给定训练数据，假设训练数据满足高斯分布$f(x|\mu,\sigma^2)$，求这个分布的参数.</p>
+<p>这便是典型的极大似然估计问题，对数似然函数为<script type="math/tex">l(\mu,\sigma^2|X)=\sum_iln(f(x_i|\mu,\sigma^2))</script>上面的式子分别对$\mu$和$\sigma$求偏导，并设置其偏导数为0，那么$\mu$和$\sigma$的解可以直接计算。</p>
+<h6 id="包含隐含变量的极大似然估计"><a href="#包含隐含变量的极大似然估计" class="headerlink" title="包含隐含变量的极大似然估计"></a>包含隐含变量的极大似然估计</h6><p>假设还有一个条件：数据X有两个类别，$\lambda_1,\lambda_2$分别表示$f(x|\mu_1,\sigma_1^2)$和$f(x|\mu_2,\sigma_2^2)$在总体中的比率。因此总体分布就可以是$g(x|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2)$，即两个分布的混合。所以有<script type="math/tex">g(x|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2)=\lambda_1f(x|\mu_1,\sigma_1^2)+\lambda_2f(x|\mu_2,\sigma_2^2) \quad s.t.: \quad \lambda_1+\lambda_2=1</script>极大似然估计的求解方法如下，似然公式为<script type="math/tex">l()=log(P(X|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2))=log\left(\sum_ig(x_i|\lambda_1,\lambda_2,\mu_1,\mu_2,\sigma_1^2,\sigma_2^2) \right)</script>上面式子是先求和在取对数，求偏导的方法就不行了！</p>
+<h6 id="Jensen不等式"><a href="#Jensen不等式" class="headerlink" title="Jensen不等式"></a>Jensen不等式</h6><p>如果一个函数满足：对于任意的$x$都有$f^{‘’}(x) \ge 0$，那么$f(x)$是凸函数(如果输入$x$是向量，那么对应于其hessian矩阵(半)正定)，如果等号可以去掉即可称之为<strong>严格凸函数</strong>。<br>Jensen不等式的表述如下：假设$f$是凸函数，X是一个随机变量，那么有：<script type="math/tex">E[f(X)] \ge f(E[X])</script>对立面的表述是，如果函数$f$是凹(concave)函数($f^{‘’}(x) \le 0$)，那么有<script type="math/tex">E[f(X)] \le f(E[X])</script>当不等式中的等号成立时，$f(X)$是常数函数。</p>
+<h6 id="期望最大化"><a href="#期望最大化" class="headerlink" title="期望最大化"></a>期望最大化</h6><p>现在抽象化问题，已知模型为$p(x|\theta)$，$X=(x_1,x_2,…,x_n)$，求$\theta$。这里需要引入隐含变量$Z=(z_1,z_2,…,z_m)$，所以有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+P(X|\theta)=\sum_zP(x_i|z,\theta) \cdot P(z|\theta)
+\end{aligned}</script><p>定义似然函数为<script type="math/tex">l(\theta)=log(P(X|\theta))=log\sum_z(P(x_i|z,\theta) \cdot P(z|\theta))</script> EM算法也是通过迭代方法求得$l(\theta)$的极值，假设第$n$轮迭代计算出的$\theta$为$\theta_n$，只要下一轮的$\theta$优于$\theta_n$即可，推导如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\theta)-l(\theta_n) &= log(P(X|\theta))-log(P(X|\theta_n)) \\
+&= log(\sum_zP(x_i|z,\theta) \cdot P(z|\theta))-log(P(X|\theta_n)) \\
+&= log(\sum_z P(z|X,\theta_n)\cdot \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n)})-log(P(X|\theta_n)) \\
+&\ge \sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n)} \right) - \sum_z P(z|X,\theta_n) \cdot log(P(X|\theta_n)) \\
+&= \sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n) \cdot P(X|\theta_n)} \right) \\
+\end{aligned}</script><p>进而有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(\theta) &\ge l(\theta_n)+\sum_z P(z|X,\theta_n) \cdot log\left( \frac{P(x_i|z,\theta) \cdot P(z|\theta)}{P(z|X,\theta_n) \cdot P(X|\theta_n)} \right) \\
+Set : l(\theta) &\ge M(\theta_n,\theta) \\
+PS : l(\theta_n)&=M(\theta_n,\theta_n)
+\end{aligned}</script><p>所以，我们只要</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\theta_{n+1} &= \mathop{arg\;max}_{\theta} M(\theta_n,\theta) \\
+&= \mathop{arg\;max}_{\theta} \sum_z P(z|X,\theta_n) \cdot log(P(X|z,\theta) \cdot P(z|\theta)) \\
+&= \mathop{arg\;max}_{\theta} \sum_z P(z|X,\theta_n) \cdot log(P(X,z|\theta)) \\
+&= \mathop{arg\;max}_{\theta} E_{Z|X,\theta_n}[log(P(X,z|\theta)] \\
+Set: F(\theta)&=E_{Z|X,\theta_n}[log(P(X,z|\theta)]
+\end{aligned}</script><p>所以，EM算法的步骤如下：</p>
+<hr>
+<p>随机初始化$\theta_0$<br>迭代直到收敛：<br>E步：求条件期望$F(\theta,\theta_n)$<br>M步：求$F(\theta,\theta_n)$的极值$\theta_{n+1}$</p>
+<hr>
+<h5 id="高斯混合模型"><a href="#高斯混合模型" class="headerlink" title="高斯混合模型"></a>高斯混合模型</h5><p>高斯混合模型是EM算法在高斯分布上的应用。多元高斯分布函数的定义如下：<script type="math/tex">p(x|\mu,\Sigma)=\frac{1}{(2\pi)^{n/2}|\Sigma|^{1/2}} e^{-\frac{(x-\mu)^T \Sigma^{-1} (x-\mu) }{2}}</script> 其中，$\mu,\Sigma$分别是均值和协方差矩阵。混合高斯模型的定义为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p_M(x)&=\sum_{i=1}^k \alpha_i \cdot p(x|\mu_i,\Sigma_i) \\
+s.t.: \sum_{i=1}^k \alpha_i &= 1
+\end{aligned}</script><p>为了方便性，定义$j$个样本由第$i$个高斯分布产生的概率：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p_M(z_j=i|x_j)&=\gamma_{ji} \\
+&= \frac{P(z_j=i) \cdot p_M(x_j|z_j=i)}{p_M(x_j)} \\
+&= \frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdotp(x_j|\mu_l,\Sigma_l)}
+\end{aligned}</script><p>于是，给定样本集$D={x_1,…,x_m}$，用极大似然估计法，最大化似然对数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+l(D)=ln\left( \prod_{j=1}^m p_M(x_j) \right)=\sum_{j=1}^m ln\left( \sum_{i=1}^k \alpha_i \cdot p(x_j|\mu_i,\Sigma_i) \right)
+\end{aligned}</script><p>上式中，分别由$l(D)$对$\mu_i,\Sigma_i,\alpha_i$求偏导，由于$p_M(z_j=i|x_j)=\gamma_{ji}$，所以令偏导数=0的结果如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mu_i &= \frac{\sum_{j=1}^m \gamma_{ji} \cdot x_j}{\sum_{j=1}^m \gamma_{ji}} \\
+\Sigma_i &= \frac{\sum_{j=1}^m \gamma_{ji}(x_j-\mu_i)(x_j-\mu_i)^T}{\sum_{j=1}^m \gamma_{ji}} \\
+\end{aligned}</script><p>对于混合系数$\alpha_i$，除了考虑$l(D)$外，他还有一个限制$\sum_{i=1}^k \alpha_i=1$，所以这里可以使用拉格朗日乘子法：<script type="math/tex">l(D)+\lambda \left( \sum_{i=1}^k \alpha_i-1 \right)</script>上式对$\alpha_i$求导并设结果为0有(注意联系$\gamma_{ji}的定义式$)</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\sum_{j=1}^m \frac{p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)} &= -\lambda \\
+multiply\; \alpha_i,\; and\;get\; sum\; with\; respect\; to\; i \\
+\sum_{i=1}^k \sum_{j=1}^m \frac{\alpha_i \cdot p(x_j|\mu_i,\Sigma_i)}{\sum_{l=1}^k \alpha_l \cdot p(x_j|\mu_l,\Sigma_l)} &= \sum_{i=1}^k -\lambda \cdot \alpha_i \\
+hence: \lambda &= -m \\
+\alpha_i &= \frac{1}{m} \sum_{j=1}^m \gamma_{ji}
+\end{aligned}</script><p>所以，混合高斯的EM方法就是：先根据当前参数计算每个样本属于每个高斯成分的后验概率$\gamma_{ji}$（E步）；然后根据上面的规则更新模型参数${(\mu_i,\Sigma_i,\alpha_i)|1\le i \le k}$.</p>
+<p>最后给出<b>高斯混合聚类算法</b>表述：</p>
+<hr>
+<p>输入：样本集$D={x_1,…,x_m}$，高斯混合成分个数$k$;</p>
+<hr>
+<p>1  初始化高斯混合分布的模型参数${(\mu_i,\Sigma_i,\alpha_i)|1\le i \le k}$.<br>2  迭代，直到满足停止条件<br>3  $\quad  for\; j=1,…m \quad do$<br>4  $\quad \quad$计算$p_M(z_j=i|x_j)=\gamma_{ji},(1 \le i \le k)$<br>5  $\quad end\; for$<br>6  $\quad  for\; i=1,…k \quad do$<br>7  $\quad \quad$更新模型参数$(\mu_i,\Sigma_i,\alpha_i)$<br>8  $C_i=\emptyset,(1\le i \le k)$<br>9  $for\; j=1,…m \quad do$<br>10 $\quad$根据最大后验概率规则确定每个$x_j$的簇$\lambda_j$<br>11 $\quad C_{\lambda_j}=C_{\lambda_j}\cup \{x_j\}$<br>12 $end\; for$</p>
+<hr>
+<p>输出：簇划分结果$C={C_1,..,C_k}$</p>
+<hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2016/12/09/Expection-Maximization/" data-id="ckkkyv88k00376wpheqe9oukt" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-DDoS的简单实现" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -310,7 +511,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="ckjflh7ti0039woph5oo6rmak" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/06/DDoS的简单实现/" data-id="ckkkyv87f00276wphzzr4gp3w" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -446,7 +647,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="ckjflh7uy004hwophs424wnl8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Floyd-Cycle-Detection/" data-id="ckkkyv88v003h6wph643j5h6o" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -589,7 +790,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="ckjflh7vb0052wophe7vynrbv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/12/01/Happy-Number/" data-id="ckkkyv89l00426wph4gktqs0m" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -744,7 +945,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="ckjflh7zb00auwoph3vu3r96x" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/30/Unique-Binary-Search-Trees/" data-id="ckkkyv8eo00az6wph6826bf7u" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -901,7 +1102,7 @@ send(pkt)
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="ckjflh7wo007dwoph6qodp628" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/27/Minimum-Spanning-Tree/" data-id="ckkkyv8br006r6wphgcmhv5nf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1068,7 +1269,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ckjflh7z400alwoph96susdm4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/25/Tile-Cover-Problem/" data-id="ckkkyv8e400a46wphqy37oh2g" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1204,7 +1405,7 @@ i-1
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ckjflh7ur0048wophryto7hfk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/24/Flip-Game/" data-id="ckkkyv88s003e6wphiv2xlckq" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1367,7 +1568,7 @@ X_{ZCA}=UX_{PCA}</script><p>二者差异如下：</p>
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ckjflh7xv008rwophfcehfpew" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/21/Principal-Component-Analysis/" data-id="ckkkyv8cn00876wph4f7ferf8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1545,145 +1746,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ckjflh7x7007uwophb6col8xu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Binary-Search-Tree-Iterator" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2016/11/16/Binary-Search-Tree-Iterator/">Binary Search Tree Iterator</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2016/11/16/Binary-Search-Tree-Iterator/">
-            <time datetime="2016-11-16T14:34:46.000Z" itemprop="datePublished">2016-11-16</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/OJ/">OJ</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Binary-Tree/">Binary Tree</a>, <a class="tag-link" href="/tags/LeetCode/">LeetCode</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h5 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h5><p>Implement an iterator over a binary search tree (BST). Your iterator will be initialized with the root node of a BST.</p>
-<p>Calling <b>next()</b> will return the next smallest number in the BST.</p>
-<p>Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.</p>
-<h5 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h5><p>思路是使用栈。</p>
-<ol>
-<li>给定根节点root，从root开始不断向左，将遇到的每个节点入栈</li>
-<li>使用next函数时，栈顶top节点出栈，将top节点设置为root，执行步骤1</li>
-<li>hasNext函数：查看栈是否为空即可</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BSTIterator</span> </span>&#123;</span><br><span class="line">    stack&lt;TreeNode *&gt; myStack;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    BSTIterator(TreeNode *root) &#123;</span><br><span class="line">        pushAll(root);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> whether we have a next smallest number */</span></span><br><span class="line">    <span class="function">bool <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !myStack.empty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** <span class="doctag">@return</span> the next smallest number */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        TreeNode *tmpNode = myStack.top();</span><br><span class="line">        myStack.pop();</span><br><span class="line">        pushAll(tmpNode-&gt;right);</span><br><span class="line">        <span class="keyword">return</span> tmpNode-&gt;val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 从root开始不断向左，将遇到的每个节点入栈</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pushAll</span><span class="params">(TreeNode *node)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (; node != NULL; myStack.push(node), node = node-&gt;left);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2016/11/16/Binary-Search-Tree-Iterator/" data-id="ckjflh7qp000nwophkm0dd2s1" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2016/11/17/Norm-Rule-of-Machine-Learning/" data-id="ckkkyv8c2007c6wphodd9nteo" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1776,6 +1839,25 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/31/DeepFM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/31/DeepFM/" class="title">DeepFM</a></p>
+                            <p class="item-date"><time datetime="2021-01-31T09:35:23.000Z" itemprop="datePublished">2021-01-31</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
     
     
@@ -1849,25 +1931,6 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/BM25/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/09/01/BM25/" class="title">BM25</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:06:49.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -1877,7 +1940,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -1886,7 +1949,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -1895,7 +1958,7 @@ z^i+\frac{\lambda}{L}    & {\frac{\lambda}{L}+z^i < 0}
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 16.67px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 11.11px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

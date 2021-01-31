@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                134
+                135
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,254 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Conditional-Random-Field" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2017/08/27/Conditional-Random-Field/">Conditional Random Field</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2017/08/27/Conditional-Random-Field/">
+            <time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <h4 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h4><p>同朴素贝叶斯一样，HMM是生成式模型。它可以做线性序列预测分析，为了计算复杂度上的可行性，其<strong>假设观测变量仅依赖于隐含变量</strong>。然而，实际中<strong>观测变量之间也存在不可忽略的依赖关系</strong>，这导致HMM的假设会严重影响模型的精确性。</p>
+<p>CRF现在是自然语言处理领域中多个任务的state-of-art方法，包括分词、词性标注，浅解析（shallow parsing）等。并且在命名实体识别、基因预测、图像标注、物体识别等领域有着重要的应用。</p>
+<p>CRF是<strong>判别</strong>式模型。</p>
+<hr>
+<h5 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h5><p>一般地，在概率图模型中，节点表示随机变量，边表示依赖关系。概率图模型的表示的前提是对图的划分，也就是因子分解，可以按有向图和无向图分别讨论。</p>
+<h6 id="马尔可夫性"><a href="#马尔可夫性" class="headerlink" title="马尔可夫性"></a>马尔可夫性</h6><p>给定一个随机变量$y$及其联合概率分布$p(y)$和它的无向图表示$G$，下面给出关于马尔可夫性的三个等价定义。</p>
+<ul>
+<li>成对马尔可夫性：设$u,v$是无向图中没有连接的两个点，$o$是其他节点，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
+<li>局部马尔可夫性：设$u$是无向图中任意一个节点，$w$是与$u$有连接的节点，$o$是其他节点，则有$p(v,o|w)=p(v|w)p(o|w)$</li>
+<li>全局马尔可夫性：设$u,v$是被节点集$o$分隔开的任意节点集合，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
+</ul>
+<p>总结一下意思就是：<strong>无连接的变量在以中继变量为条件的情况下相互独立</strong>。</p>
+<h6 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h6><p>定义在有向图上的条件概率模型的联合分布为<strong>所有节点条件概率的乘积</strong>，比如贝叶斯网络，马尔可夫链等。</p>
+<hr>
+<h6 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h6><p>满足马尔可夫性的联合概率分布被称为概率无向图模型，也叫做<strong>马尔可夫随机场</strong>。定义在无向图上的条件概率模型的联合分布为<strong>最大团上非负函数的乘积</strong>（这也称为概率无向图模型的因子分解）。这里最大团（极大团）指的是不能再添加节点的团（团指的是两两相交的节点集）。形式化定义单个节点$v$的概率为$v$在所有最大团上的乘积，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(v)=\frac{1}{Z}\prod_{c\in C}\Psi_c(v_c)
+\end{aligned}</script><p>其中$\Psi_c(v_c) \ge 0$称为节点$v$在团$c$上的势函数。$Z$是归一化因子满足$Z=\sum_vp(v)$（其实最大熵模型也可以看成是势函数的乘积）。</p>
+<hr>
+<h4 id="CRF的表示"><a href="#CRF的表示" class="headerlink" title="CRF的表示"></a>CRF的表示</h4><p>CRF是定义在无向图上的判别式模型，是给定随机变量$x$的条件下，随机变量$y$的马尔可夫随机场。按照无向图上的定义，可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y|x)&=\frac{p(x,y)}{p(x)}=\frac{p(x,y)}{\sum_{y'}p(x,y')} \\
+&=\frac{\frac{1}{Z}\prod_{c\in C}\Psi_c(x_c,y_c)}{\frac{1}{Z}\sum_{y'}\prod_{c\in C}\Psi_c(x_c,y'_c)} \\
+&=\frac{1}{Z(x)}\prod_{c\in C}\Psi_c(x_c,y_c)
+\end{aligned}</script><p>这就是CRF的基本形式。下面分别介绍线性链CRF和任意结构的CRF。</p>
+<h5 id="线性链CRF"><a href="#线性链CRF" class="headerlink" title="线性链CRF"></a>线性链CRF</h5><p>CRF的一种特殊形式，也是比较常用的形式-线性链式。在这种情况下，相邻点变成了最大团，即满足马尔可夫性</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y_i|x,y_1,..,y_{i-1},y_{i+1},...,y_{n+1})=p(y_i|x,y_{i-1},y_{i+1})
+\end{aligned}</script><p>假设$x=(x_1,…x_{n+1})$，$y=(y_1,…y_{n+1})$（都是向量），链的长度为$n+1$，所以最大团的数量为$n$，上式就可以写成：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y|x)=\frac{1}{Z(x)}\prod_{j=1}^n\Psi_j(x,y)
+\end{aligned}</script><p>给定势函数$\Psi_j(x,y)$的形式为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\Psi_j(x,y)=\exp\left(\sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)\right)
+\end{aligned}</script><p>其中，$j$表示序列位置（与$n$相关）。所以线性链的CRF可以表示为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p_{\lambda}(y|x)&=\frac{1}{Z_{\lambda}(x)}\cdot \exp\left( \sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) \right) \\
+&=\frac{1}{Z_{\lambda}(x)}\prod_{j=1}^n \exp\left( \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) \right)
+\end{aligned}</script><p>其中，$Z_{\lambda}(x)$就是在$y$上对$p_{\lambda}(y|x)$求和的结果，这结构与最大熵的形式类似。</p>
+<hr>
+<p>与HMM的模式类似，应用模型之前还需要解决一些问题，分别是</p>
+<ol>
+<li>给定序列集合$X$和对应的标注数据$Y$，如何训练CRF模型参数使得$p(Y|X,\mathcal{M})$最大</li>
+<li>给定模型$\mathcal{M}$和输入序列$X$，如何求输出序列$Y$</li>
+</ol>
+<p>这里就不考虑求$p(X|\mathcal{M})$了，因为CRF是<strong>判别式</strong>模型。</p>
+<hr>
+<h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>目标是估计参数$\lambda$。给定数据集$T$，参数估计常用的方法就是MLE了，我们再取一个log，考虑regularization，推导如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal{L}(T)&=\sum_{(x,y)\in T}\log p(y|x) - \frac{1}{2\sigma^2}||\lambda||_2^2 \\
+&=\sum_{(x,y)\in T} \log\left( \frac{\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)\right)}{\sum_{y'}\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right) } \right) - \frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2 \\
+&=\sum_{(x,y)\in T}\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) - \sum_{(x,y)\in T}\log Z_{\lambda}(x) - \frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2
+\end{aligned}</script><p>这里$\sigma^2$是控制regularization权重的超参数。上式可分为3部分，分别对$\lambda_k$求导</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial}{\partial\lambda_k}\sum_{(x,y)\in T}\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)&=\sum_{(x,y)\in T}\sum_{j=1}^n f_k(x,y_{j-1},y_j,j) \\
+&=N\cdot\hat{E}(f_k)
+\end{aligned}</script><p>其结果刚好是训练数据集上特征$f_i$的期望值的$N$（训练集数据个数*(n+1)）倍。</p>
+<hr>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\frac{\partial}{\partial\lambda_k}\sum_{(x,y)\in T}\log Z_{\lambda}(x)=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)}\frac{\partial Z_{\lambda}(x)}{\partial\lambda_k} \\
+&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)} \frac{\partial}{\partial\lambda_k}\sum_{y'}\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right) \\
+&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)} \sum_{y'}\left[\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right)\cdot \sum_{j=1}^n f_k(x,y'_{j-1},y'_j,j)\right] \\
+&=\sum_{(x,y)\in T}\sum_{y'}p_{\lambda}(y'|x)\sum_{j=1}^n f_k(x,y'_{j-1},y'_j,j) \\
+&=N\cdot E(f_k)
+\end{aligned}</script><p>上面倒数第二行第一个求和符号的范围可以退化成$x\in X$，其结果刚好是模型分布上特征$f_i$的期望值的$N$（训练集数据个数*(n+1)）倍。</p>
+<hr>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial}{\partial\lambda_k}\frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2=\frac{\lambda_k}{\sigma^2}
+\end{aligned}</script><hr>
+<p>综上，我们可以得到</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\frac{\partial \mathcal{L}(T)}{\partial \lambda_k}=N\cdot(\hat{E}(f_k)-E(f_k))-\frac{\lambda_k}{\sigma^2}
+\end{aligned}</script><p>继而，令上式等于0，就可以求出$\lambda_k$的值。这里，$\hat{E}(f_k)$可以通过简单的统计特征$f_k$在数据集中的出现的次数实现。而想要直接计算$E(f_k)$就不容易了，因为CRF这里处理的是序列数据，序列组合导致可能性指数上升。</p>
+<hr>
+<p>解决方法是利用HMM也用到的<strong>前后向算法</strong>的修改版。<br>定义函数$T_j(s)$为状态$s$在输入位置$j$时，位置$j+1$的可能状态集合。定义函数$T_j^{-1}(s)$为$T_j(s)$的反函数，即输出状态$s$的前置集合。定义序列初始状态为$\vdash$，终止状态为$\dashv$。在此基础上定义<strong>前向、后向函数</strong>：</p>
+<ul>
+<li>前向函数：$\alpha_j(s|x)=\sum_{s’\in T_j^{-1}(s)}\alpha_{j-1}(s’|x)\cdot \Psi_j(s’,s,x)$，初始化$\alpha_0(\vdash|x)=1$</li>
+<li>后向函数：$\beta_j(s|x)=\sum_{s’\in T_j(s)}\beta_{j+1}(s’|x)\cdot \Psi_j(s,s’,x)$，初始化$\beta_{|x|+1}(\dashv|x)=1$</li>
+</ul>
+<p>其中，与上文的势函数对应，$\Psi_j(s’,s,x)=\exp(\sum_{i=1}^m\lambda_if_j(y_{i-1}=s’,y_i=s,x,j))$。根据前向、后向函数的定义，可以有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+p(y_j=s|x)= \frac{\alpha_j(s|x)\beta_j(s|x)}{Z_{\lambda}(x)}
+\end{aligned}</script><p>因此，$E(f_k)$的计算就变得可行了</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E(f_k)&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)}\sum_{j=1}^n\sum_{s\in S}\sum_{s'\in T_j(s)} f_j(s,s',x,j)\alpha_j(s|x)\Psi_j(s,s',x)\beta_{j+1}(s'|x) \\
+Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
+\end{aligned}</script><p>其中$S$是状态集合。这相当于计算了所有可能状态序列的可能，$\alpha, \beta$的值只需要计算一次，存储起来就好。前后向算法的时间复杂度为$O(|S|^2n)$。</p>
+<p>至此，$\lambda$的更新变得可行，模型训练ok。</p>
+<hr>
+<h6 id="序列标注"><a href="#序列标注" class="headerlink" title="序列标注"></a>序列标注</h6><p>序列标注即要在给定模型参数情况下找到输入序列对应的概率最大的标注序列，可以采用维特比算法的思想。定义: <strong>$\delta_j(s|x)$表示序列到位置$j$时，状态为$s$的最大概率</strong>，即</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\delta_j(s|x)=\max_{y_1,..,y_{j-1}}p(y_1,...,y_{j-1},y_j=s|x)=\max_{s'\in S}\delta_{j-1}(s')\cdot \Psi_j(s',s,x)
+\end{aligned}</script><p>还需要<strong>数组$\phi_j(s)$记录下$j$位置状态为$s$时$j-1$位置的状态是什么</strong>。<br>算法的步骤如下：</p>
+<hr>
+<ol>
+<li>从开始状态初始$\vdash$化，对所有的状态$s\in S$，令<br> $\delta_1(s|x)=\Psi_1(\vdash,s,x)$.<br> $\phi_1(s)=\vdash$</li>
+<li>递归计算，对每一个$s\in S, 1\le j\le n$<br> $\delta_j(s|x)=\max_{s’\in S}\delta_{j-1}(s’)\cdot \Psi_j(s’,s,x)$<br> $\phi_j(s)=arg\max_{s’\in S}\delta_{j-1}(s’)\cdot \Psi_j(s’,s,x)$</li>
+<li>结束迭代<br> $p_{max}=\max_{s’\in S}\delta_{n}(s’)$<br> $y_n=arg\max_{s’\in S}\delta_n(s’|x)$</li>
+<li>回溯<br> 根据$\phi$数组和$y_n$求出整个$y$序列。</li>
+</ol>
+<hr>
+<h5 id="任意结构CRF"><a href="#任意结构CRF" class="headerlink" title="任意结构CRF"></a>任意结构CRF</h5><blockquote>
+<p>TODO</p>
+</blockquote>
+<p><strong>参考文献</strong><br>[1]. Classical Probabilistic Models and Conditional Random Fields.pdf</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="ckkkyv85w000z6wphziq3krs4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-Maximum-Entropy-Model" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -382,7 +630,7 @@ p_{\lambda}^{*}(y|x) = \exp\left( \sum_{i=1}^m \lambda_if_i(x,y) \right)\cdot \f
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ckjflh7w9006qwophmgvroaep" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/08/27/Maximum-Entropy-Model/" data-id="ckkkyv8b900606wphnnx44eyz" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -589,7 +837,7 @@ J(U,C)=\sum_{(w,c)\in \Omega}r_{w,c}\cdot\rho\left( \frac{\sum_{c^{'}\in C-\lbra
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ckjflh80100bvwophbh8hp1m3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/07/30/WordRank/" data-id="ckkkyv8ew00bc6wph359oftyl" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -735,7 +983,7 @@ output: 3
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ckjflh7rc001gwophxza067dj" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/28/Course-Schedule/" data-id="ckkkyv86v001q6wph55425v5i" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -905,7 +1153,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ckjflh7yr00a5wophnphfi37b" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/17/Sliding-Window-Median/" data-id="ckkkyv8de00996wphszflji36" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1192,7 +1440,7 @@ Window position                Median
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ckjflh7wv007jwophtd3b6l7f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/06/12/MultiThreads-in-Cpp/" data-id="ckkkyv8bw00716wphrfk4apet" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1348,7 +1596,7 @@ b_1 & b_2 & 0
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ckjflh7r50018wophqpyoge8n" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/18/Convex-Hull/" data-id="ckkkyv86b001c6wphzm13qsmi" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1564,7 +1812,7 @@ h_{\theta}(x)&=\frac{1}{\sum_{i=1}^2e^{\theta_i^Tx}}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ckjflh7yr00a2wophnm3ztolm" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/10/Softmax/" data-id="ckkkyv8do009j6wpheqsqwm3f" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1740,7 +1988,7 @@ E_t=-o_tlog\hat{o_t}</script><p>激活函数可以是<code>tanh</code>，也可�
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ckjflh7y7009bwophvrxz18mu" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/05/Recurrent-Neural-Networks/" data-id="ckkkyv8d5008v6wph2y3clyvx" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1878,226 +2126,7 @@ Explanation: The maximum result is 5 ^ 25 = 28.
 
 </div>
 
-    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ckjflh7we006wwophbyz0l788" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Introduction-to-Recommender-System" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/05/02/Introduction-to-Recommender-System/">Introduction to Recommender System</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/05/02/Introduction-to-Recommender-System/">
-            <time datetime="2017-05-02T12:00:30.000Z" itemprop="datePublished">2017-05-02</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/recommender-system/">recommender system</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <p>推荐系统在电子商务以及基于social的社会化网站上取得了巨大的成功，web2.0下，海量的用户数据使我们能够更加智能地发现用户的口味和需求。</p>
-<p>推荐系统接受的输入包括：</p>
-<ul>
-<li>要推荐物品、内容的元数据，比如关键字</li>
-<li>系统用户的基本信息，比如姓名、年龄等</li>
-<li>用户对物品信息的偏好，评分、查看记录、购买记录等<ul>
-<li>显示的用户反馈：评分、评价</li>
-<li>隐式的用户反馈：购买记录，查看记录</li>
-</ul>
-</li>
-</ul>
-<h4 id="推荐系统分类"><a href="#推荐系统分类" class="headerlink" title="推荐系统分类"></a>推荐系统分类</h4><h5 id="根据不同用户的推荐"><a href="#根据不同用户的推荐" class="headerlink" title="根据不同用户的推荐"></a>根据不同用户的推荐</h5><h6 id="大众行为推荐"><a href="#大众行为推荐" class="headerlink" title="大众行为推荐"></a><strong>大众行为推荐</strong></h6><ul>
-<li>给每个用户推荐一致的信息</li>
-</ul>
-<h6 id="个性化推荐"><a href="#个性化推荐" class="headerlink" title="个性化推荐"></a><strong>个性化推荐</strong></h6><ul>
-<li>根据用户的口味、偏好进行推荐</li>
-</ul>
-<h5 id="根据数据源"><a href="#根据数据源" class="headerlink" title="根据数据源"></a>根据数据源</h5><h6 id="基于人口统计学的推荐"><a href="#基于人口统计学的推荐" class="headerlink" title="基于人口统计学的推荐"></a><strong>基于人口统计学的推荐</strong></h6><ul>
-<li>通过用户的基本信息发现用户的相关程度</li>
-<li>推荐相似用户的喜好物品、内容</li>
-<li>优点：<ul>
-<li>没有冷启动问题</li>
-<li>不依赖物品本身数据，是领域独立的</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>方法过于粗糙，尤其对于对品味要求高的领域（音乐、图书等）</li>
-<li>个人隐私信息的获取不容易</li>
-</ul>
-</li>
-</ul>
-<h6 id="根据推荐物品或内容的元数据"><a href="#根据推荐物品或内容的元数据" class="headerlink" title="根据推荐物品或内容的元数据"></a><strong>根据推荐物品或内容的元数据</strong></h6><ul>
-<li>根据推荐物品或内容的元数据发现物品或内容的相关性</li>
-<li>根据用户的历史喜好记录推荐类似的物品</li>
-<li>优点<ul>
-<li>较好的对用户口味进行建模</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>推荐的质量依赖于物品模型的完整性、全面程度（tag是一种简单有效的方法）</li>
-<li>物品相似度仅考虑物品本身的特征，没有考虑人对物品的态度偏好</li>
-<li>需要历史偏好，所以有冷启动问题</li>
-</ul>
-</li>
-</ul>
-<h6 id="基于协同过滤的推荐"><a href="#基于协同过滤的推荐" class="headerlink" title="基于协同过滤的推荐"></a><strong>基于协同过滤的推荐</strong></h6><ul>
-<li>根据用户对物品、内容的偏好，发现物品、内容本身的相关性，或者发现用户的相关性</li>
-<li>一般使用k近邻的思想</li>
-<li>喜欢类似物品的用户可能有相似的口味偏好</li>
-<li>优点<ul>
-<li>不需要对物品、用户进行严格建模，不要求机器理解物品属性，领域无关</li>
-<li>计算出的推荐是开放的，可以共用他人经验，支持用户发现潜在的偏好</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>对新物品、新用户有冷启动问题</li>
-<li>推荐效果依赖于用户历史偏好数据的多少和准确性</li>
-<li>稀疏矩阵的问题</li>
-<li>特殊品味用户的问题</li>
-<li>由于以历史数据为基础，获得用户模型后，很难修改或者根据用户的使用演变，灵活性较差</li>
-</ul>
-</li>
-</ul>
-<p>1） <strong>基于用户的协同过滤机制</strong>和基于人口统计学的推荐都是基于邻居的相似度计算推荐，前者是基于用户偏好数据计算用户相似度。</p>
-<p>2） <strong>基于项目的协同过滤机制</strong>根据用户对物品的偏好信息，计算物品的相似度，然后根据用户历史信息推荐相似物品。</p>
-<p>3） <strong>基于模型的协同过滤机制</strong>基于用户历史偏好信息，训练模型，然后根据实时的用户喜好信息进行预测，计算推荐。</p>
-<h5 id="基于推荐模型的建立方式"><a href="#基于推荐模型的建立方式" class="headerlink" title="基于推荐模型的建立方式"></a>基于推荐模型的建立方式</h5><h6 id="基于物品和用户本身的推荐"><a href="#基于物品和用户本身的推荐" class="headerlink" title="基于物品和用户本身的推荐"></a><strong>基于物品和用户本身的推荐</strong></h6><ul>
-<li>将每个用户、物品都当成独立的实体</li>
-<li>预测每个用户对每个物品的喜好程度（稀疏的二维矩阵）</li>
-<li>对用户和物品进行聚类可以减小计算量</li>
-</ul>
-<h6 id="基于关联规则的推荐"><a href="#基于关联规则的推荐" class="headerlink" title="基于关联规则的推荐"></a><strong>基于关联规则的推荐</strong></h6><ul>
-<li>挖掘数据的依赖关系，共现关系</li>
-<li>统计信息</li>
-</ul>
-<h6 id="基于模型的推荐"><a href="#基于模型的推荐" class="headerlink" title="基于模型的推荐"></a><strong>基于模型的推荐</strong></h6><ul>
-<li>用已有用户喜好数据训练用户的喜好模型</li>
-</ul>
-<h5 id="SVD在推荐系统中的应用"><a href="#SVD在推荐系统中的应用" class="headerlink" title="SVD在推荐系统中的应用"></a>SVD在推荐系统中的应用</h5><p>SVD的公式如下</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
-\end{aligned}</script><p>其中，$\Sigma$是对角矩阵，对角元素为从大到小排好序的$AA^T$特征值的平方根(也就是奇异值)。<strong>$U$的每一列称作左奇异向量，$V$的每一列（即$V$的转置$V^T$的每一行）称作右奇异向量，满足$U^TU=I, V^TV=I$。</strong>计算SVD实际上就是计算$A^TA$或者$AA^T$的特征值和特征向量，然后将它们组合成上边表达式形式。$AA^T$的特征向量按照特征值的大小按<strong>列</strong>排列便组成了$U$矩阵，同样$A^TA$的特征向量按照其特征值的大小按<strong>列</strong>排列便组成了$V$矩阵。</p>
-<p>在协同过滤算法中，$A$是用户行为矩阵，$m$表示用户个数，$n$表示商品数。计算用户或商品相似度时，需要大量的操作，单个向量长度也比较长。考虑采用SVD对原始数据进行简化。如果用于基于物品的协同过滤推荐，那么就直接使用$V$矩阵代替$A$矩阵（$V$的每行代表一个物品）；如果是基于用户的协同过滤推荐，就直接用$U$矩阵代替$A$矩阵（每行代表一个用户）。这时，在计算上述的两个向量之间的距离的时候，向量的长度不再是对这两个物品都有过反馈的用户的个数，而是简化后数据的维度，即$S$矩阵中我们保留前$k$个奇异值，那么这个$k$就是现在向量的长度（取前k个元素[0:k-1]）。</p>
-<h4 id="混合推荐机制"><a href="#混合推荐机制" class="headerlink" title="混合推荐机制"></a>混合推荐机制</h4><ul>
-<li>加权混合</li>
-<li>切换混合：适合的机制用在适合的场景</li>
-<li>分区推荐：amazon，不同推荐结果展示于不同位置</li>
-<li>分层推荐：多种推荐机制，将一个推荐机制的结果作为另一个推荐机制的输入</li>
-</ul>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/05/02/Introduction-to-Recommender-System/" data-id="ckjflh7vg005ewophkf6vqlsv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2017/05/02/Maximum-XOR-of-Two-Numbers-in-an-Array/" data-id="ckkkyv8bi006d6wph23sl8mpd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2190,6 +2219,25 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/31/DeepFM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/31/DeepFM/" class="title">DeepFM</a></p>
+                            <p class="item-date"><time datetime="2021-01-31T09:35:23.000Z" itemprop="datePublished">2021-01-31</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
     
     
@@ -2263,25 +2311,6 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/BM25/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/09/01/BM25/" class="title">BM25</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:06:49.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2291,7 +2320,7 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -2300,7 +2329,7 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2309,7 +2338,7 @@ A_{m\times n} = U_{m\times m} \Sigma_{m\times n} V^T_{n\times n}
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 16.67px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 11.11px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 

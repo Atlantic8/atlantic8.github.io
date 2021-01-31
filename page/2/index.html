@@ -178,7 +178,7 @@ var _hmt = _hmt || [];
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                134
+                135
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -241,6 +241,295 @@ var _hmt = _hmt || [];
 
             
             <section id="main">
+    <article id="post-Graph-Embedding" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2020/09/01/Graph-Embedding/">Graph Embedding</a>
+        </h1>
+    
+
+                
+                    <div class="article-meta">
+                        
+    <div class="article-date">
+        <i class="fas fa-calendar-alt"></i>
+        <a href="/2020/09/01/Graph-Embedding/">
+            <time datetime="2020-09-01T14:49:52.000Z" itemprop="datePublished">2020-09-01</time>
+        </a>
+    </div>
+
+
+                        
+    <div class="article-category">
+    	<i class="fas fa-folder"></i>
+        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/deep-learning/">deep learning</a>
+    </div>
+
+                    </div>
+                
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>图嵌入，即用一个低维，稠密的向量去表示图中的点，该向量表示能反映图中的结构。但是在介绍图嵌入之前，可以大概描述一下词嵌入。</p>
+<p>bert时代之前，word2vec是很有名的词嵌入技术，训练快，效果提升也比不用词向量明显。本质上就是由输入序列得到每个word的embedding，其目标函数为</p>
+<script type="math/tex; mode=display">
+\sum_i\log p(w_i|w_{context(i)})</script><p>即希望：给定上下文，当前词的概率更大。（skip-gram的意思也一致）</p>
+<p>基本的图嵌入算法也借鉴了这个思想，问题就是图如何转化为序列</p>
+<h4 id="DeepWalk"><a href="#DeepWalk" class="headerlink" title="DeepWalk"></a>DeepWalk</h4><blockquote>
+<p>DeepWalk: Online Learning of Social Representations. 2014</p>
+</blockquote>
+<p>DeepWalk通过<strong>截断随机游走</strong>(truncated random walk)学习网络的嵌入表示，就是等于对图进行采样，得到多个<strong>节点序列</strong>，跳转概率可以由节点之间的权重决定。然后对节点序列学习节点的embedding表示</p>
+<p><strong>random walk实际上是一种可回头的DFS</strong></p>
+<h4 id="LINE"><a href="#LINE" class="headerlink" title="LINE"></a>LINE</h4><blockquote>
+<p>Large scale information network embedding. 2015</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-1.PNG" alt="一阶二阶相似度"></p>
+<p>高维空间中相近的点在低维空间中也是相近的，相近的定义如下</p>
+<h6 id="一阶相近"><a href="#一阶相近" class="headerlink" title="一阶相近"></a>一阶相近</h6><ul>
+<li>高维空间中：节点$i,j$之间的权重有经验分布：$\hat{p}_1(i,j)=\frac{w_{i,j}}{\sum_{(i,j)\in E}}$</li>
+<li>低维空间中：则可以理解为embedding$\mu_i,\mu_j$的sigmoid函数（$p_1(i,j)=\frac{1}{1+\exp{(-u_i^Tu_j)}}$）</li>
+<li>目标为最小化两个分布的距离，距离用KL散度，$O_1=-\sum_{(i,j)\in E}w_{i,j}\log p_1(i,j)$</li>
+</ul>
+<h6 id="二阶相近，用于有向图"><a href="#二阶相近，用于有向图" class="headerlink" title="二阶相近，用于有向图"></a>二阶相近，用于有向图</h6><ul>
+<li>高维：node之间有多少公共一度节点(比如5和6之间有4个公共一度节点，也就是有多少相同的邻居)，经验分布为$\hat{p}_2(i,j)=\frac{w_{i,j}}{d_i}$，$d_i$是节点的出边的权值和</li>
+<li>低维：条件概率$p_2(j|i)$可以表示为softmax形式</li>
+<li>目标为最小化两个分布的距离，距离用KL散度，$O_2=-\sum_{(i,j)\in E}w_{i,j}\log p_2(j|i)$</li>
+</ul>
+<p>每个顶点维护两个embedding向量，一个是该顶点本身的表示向量，一个是该点作为其他顶点的上下文顶点时的表示向量</p>
+<h4 id="Node2vec"><a href="#Node2vec" class="headerlink" title="Node2vec"></a>Node2vec</h4><blockquote>
+<p>node2vec: Scalable Feature Learning for Networks. 2016</p>
+</blockquote>
+<p>Node2vec基于二阶随机游走，通过参数$p,q$来控制游走策略，平衡BFS和DFS（<strong>DFS倾向于获取结构相似性，BFS倾向于获取内容相似性，即局部相似性</strong>）。通过改变采样结果来优化效果</p>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-2.PNG" alt="image"></p>
+<p>定义当前节点为$v$，上一节点为$t$，随机游走到下一个节点$x$的概率为</p>
+<script type="math/tex; mode=display">
+\pi(x|v)=\frac{\alpha(t,x)}{\sum_{(y,v)\in E}\alpha(t,y)}</script><p>其中，$\alpha$是控制函数，其定义为</p>
+<script type="math/tex; mode=display">
+\alpha(t,x)=\left\{
+\begin{aligned}
+\frac{1}{p}, &  &  d_{tx}=0 \\
+1, &  &  d_{tx}=1 \\
+\frac{1}{q}, &  &  d_{tx}=2
+\end{aligned}
+\right.</script><p>其中，$d_{tx}$是节点$t,x$之间的最短路径长度，因为最大就为2，所以有二阶的概念。$q$为<strong>前进参数</strong>（决定搜索远离$t$的节点的概率），$p$为<strong>回溯参数</strong>（决定了有多少概率下一个节点还是$t$）</p>
+<p>如果图的边存在初始权重，则计算下一节点为$x$的概率时需要考虑权重，也就是归一化的时候乘上权重。</p>
+<p>BTY：当$p=1,q=1$时，Node2vec等价于random walk</p>
+<h4 id="SDNE"><a href="#SDNE" class="headerlink" title="SDNE"></a>SDNE</h4><blockquote>
+<p>Structural Deep Network Embedding. 2016</p>
+</blockquote>
+<p>SDNE使用深度学习模型学习网络嵌入，<strong>使用自编码器的思想尝试对图的邻接矩阵进行嵌入表示，并且加入节点相似的考虑，属于半监督方法</strong>。其损失函数与LINE类似，可以分为一阶相似损失和二阶相似损失，其中</p>
+<ul>
+<li>一阶损失：<strong>邻居节点之间的表示向量应该接近</strong><ul>
+<li>$\mathcal{L}_1=\sum_{i,j} s_{i,j}||u_i-u_j||_2^2$，其中$s_{i,j}$表示两个节点的权值，$u$是节点的embedding</li>
+<li>这一部分是<strong>监督模式</strong></li>
+</ul>
+</li>
+<li>二阶损失：<strong>具有相似邻居的节点之间的表示向量应该相似</strong><ul>
+<li>$\mathcal{L}_2=\sum_{i} ||(\hat{x}_i-x_i)\odot b_i||_2^2$</li>
+<li>这个便是自编码器的<strong>重建误差</strong>，$x_i$是原始的邻接向量，$\hat{x}_i$是重建的邻接向量</li>
+<li>这里的$b_i$主要用来<strong>惩罚</strong>$x_i=0$的情况，因为邻接向量一般比较<strong>稀疏</strong>，解码器输出全0向量也是不错的解；另外不邻接也不代表没关系</li>
+<li>这一部分是<strong>无监督模式</strong></li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-3.PNG" alt="image"></p>
+<p>整体的损失函数如下：</p>
+<script type="math/tex; mode=display">
+\mathcal{L}=\alpha\mathcal{L}_1+\mathcal{L}_2+\mathcal{L}_{reg}</script><p>最后一项是正则项，主要对网络中的参数进行惩罚</p>
+<h4 id="Struc2vec"><a href="#Struc2vec" class="headerlink" title="Struc2vec"></a>Struc2vec</h4><blockquote>
+<p>struc2vec:Learning Node  Representations from Structural  Identity. 2017</p>
+</blockquote>
+<p>Struc2vec认为embedding不应该任何相邻性，而只考虑空间结构相似性。也就是要从：<strong>相似的节点往往有比较相似的空间结构</strong></p>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-4.PNG" alt="image"></p>
+<p>论文表示空间结构相似的方法是：如果两个节点的所有邻接节点构成的序列相似，那么这两个节点相似.</p>
+<p>定义$R_k(u)$为与节点$\mu$距离为$k$的节点集合，$s(K)$表示节点集合$K$的<strong>有序度序列</strong>，函数$g$可以表示两个序列的相似度函数(这里可以使用DTW算法)，令</p>
+<script type="math/tex; mode=display">
+f_k(u,v)=f_{k-1}(u,v)+g\left(s\left(R_k(u)\right),s(R_k(v))\right)</script><p>表示节点$u,v$之间的结构不相似性。我们按照不同的$k$分层，同层之间的节点权重为</p>
+<script type="math/tex; mode=display">
+w_k(u,v)=e^{-f_k(u,v)}</script><p>不同层的话，需要先层级转换，有上一层、下一层两种选择，对应权重为</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{aligned}
+w(u_k,u_{k+1})&=\log{\Gamma_k(u)+e}, &  & \Gamma(u)=\sum_v1(w_k(u,v)>\overline{w_k})  \\
+w(u_k,u_{k-1})&=1
+\end{aligned}
+\right.</script><p>其中，$\overline{w_k}$是第$k$层的平均权值，$\Gamma_k(u)$表示第$k$层与$u$相连的边的边权大于平均边权的边的数量。是每一步会以一个概率$p$留在当前层，$1-p$跳出本层，如果留在本层，则下一个节点的概率是</p>
+<script type="math/tex; mode=display">
+p_k(v|u)=\frac{w_k(u,v)}{Z_k(u)}</script><p>如果跳出本层，则有</p>
+<script type="math/tex; mode=display">
+\left\{
+\begin{aligned}
+p(u_{k+1}|u_k)&=\frac{w(u_k,u_{k+1})}{w(u_k,u_{k+1})+w(u_k,u_{k-1})} \\
+p(u_{k-1}|u_k)&=1-p(u_{k+1}|u_k)
+\end{aligned}
+\right.</script><hr>
+<p>综上所述，基本流程如下：</p>
+<ul>
+<li>根据上面的权重公式计算：<ul>
+<li>同一层中的节点权重($w_k(u,v)$)</li>
+<li>不同层次的同一顶点权重($w(u_k,u_{k\pm1})$)</li>
+</ul>
+</li>
+<li>获取顶点序列<ul>
+<li>在当前层游走($p_k(u,v)$)</li>
+<li>切换到上下层的层游走($p(u_k,u_{k\pm 1})$)</li>
+</ul>
+</li>
+<li>Skip-Gram来生成representation，然后训练embedding表示</li>
+</ul>
+<p>Struc2vec有成功的工业应用案例，蚂蚁金服风控模型应用了Struc2vec后，较之前的node2vec有了质的提升</p>
+<h4 id="GraphSAGE"><a href="#GraphSAGE" class="headerlink" title="GraphSAGE"></a>GraphSAGE</h4><blockquote>
+<p>Inductive representation learning on large graph. 2017</p>
+</blockquote>
+<p>上面的方法都是<strong>直推式</strong>的学习方法，可以从graph中学习到一个矩阵表示，当<strong>图结构变化时是需要重新学习</strong>的。而GraphSAGE是一种归纳式学习方法，可以用邻居节点直接学习出新增节点的embedding</p>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-5.PNG" alt="GraphSAGE的算法流程"></p>
+<p>对每一层，主要有以下几个步骤</p>
+<ol>
+<li>采样当前节点的邻居顶点</li>
+<li>用聚合函数将上一层邻居的表示聚合起来<ul>
+<li>聚合函数应该对输入顺序不敏感，且有较好的表达能力，候选有</li>
+<li>mean aggregator</li>
+<li>pooling aggregator</li>
+<li>LSTM aggregator</li>
+</ul>
+</li>
+<li>将上一层邻居的聚合表示和上一层当前节点的表示拼接起来，做一个线性映射</li>
+</ol>
+<h6 id="参数学习"><a href="#参数学习" class="headerlink" title="参数学习"></a>参数学习</h6><ul>
+<li>有监督：比如节点分类，可以根据任务目标直接设置</li>
+<li>无监督：临近的顶点具有相似的向量表示，分离的顶点的表示尽可能区分</li>
+</ul>
+<h4 id="GraphGAN"><a href="#GraphGAN" class="headerlink" title="GraphGAN"></a>GraphGAN</h4><blockquote>
+<p>GraphGAN: Graph Representation Learning with Generative Adversarial Nets. 2018</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/Atlantic8/picture/master/graph-embedding-6.PNG" alt="image"></p>
+<p>主要思想：</p>
+<h6 id="Discriminator-D-v-v-c-theta-D"><a href="#Discriminator-D-v-v-c-theta-D" class="headerlink" title="Discriminator$D(v,v_c;\theta_D)$"></a>Discriminator$D(v,v_c;\theta_D)$</h6><p>D判断一条边是否为原始图中的边，即给定节点，判断是否存在边$p(e_{i,j}|v_i,v_j)$</p>
+<p>给定两个节点的表示，D判定两个节点有边的概率是</p>
+<script type="math/tex; mode=display">
+p(e_{i,j}|v_i,v_j)=\sigma(d_i^Td_j)</script><p>这里$d_i,d_j$是D中的节点embedding，<strong>所有节点构成的embedding集合就可以看成是D的参数$\theta_D$</strong></p>
+<h6 id="Generator-G-v-v-c-theta-G"><a href="#Generator-G-v-v-c-theta-G" class="headerlink" title="Generator$G(v|v_c;\theta_G)$"></a>Generator$G(v|v_c;\theta_G)$</h6><p>G生成图中一条不存在的边，也就是要根据给定节点做一个连接，也就是要学习$p(v|v_c)$.（毕竟我们的主要目的就是学习到采样算法）。容易想到用softmax来表示，</p>
+<script type="math/tex; mode=display">
+G(v|v_c)=\frac{\exp(g_v^Tg_{v_c})}{\sum_{v'\ne v_c}\exp(g_{v'}^Tg_{v_c})}</script><p>这里$g_v,g_{v_c}$是G中的节点embedding，所有节点构成的embedding集合就可以看成是G的参数$\theta_G$。<strong>G和D中不共用节点表达，所以最后的训练结果不能当作节点embedding</strong>。但是存在两个问题</p>
+<ul>
+<li>计算量大</li>
+<li>没有考虑网络的拓扑结构</li>
+</ul>
+<h6 id="Graph-Softmax"><a href="#Graph-Softmax" class="headerlink" title="Graph Softmax"></a>Graph Softmax</h6><p>文章提出了Graph Softmax的概念，解决上述两个问题</p>
+<ul>
+<li>以$v_c$为根，BFS构建树，树中$v_c$到任意节点可达且路径唯一，通过定义父子节点的关联概率（softmax，这里因为是父子节点，所以维度小很多了）和路径概率连乘，我们可以求得$v_c$到任意节点的概率</li>
+</ul>
+<hr>
+<p>模型训练的时候就是训练D和G的参数，然后利用G进行路径采样，按照skip-gram的方式训练embedding，G的采样可以是：</p>
+<ul>
+<li>根据Graph Softmax的结果直接进行采样</li>
+<li>文章还提供了一种方法，不介绍了</li>
+</ul>
+<p>效果：链接预测任务在效果上并没有提升太多，比DeepWalk好，跟node2vec差不多。但是也就是套上了GAN吧</p>
+<hr>
+<p><strong>引用</strong></p>
+<p>[1]. Graph Neural Network Review. 2018 </p>
+<p>[2]. All the paper mentioned above.</p>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="atlantic8.github.io/2020/09/01/Graph-Embedding/" data-id="ckkkyv89j003z6wphoep9ksd4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+
+        </footer>
+    </div>
+    
+</article>
+
+
+
     <article id="post-NLP-Pre-train-Models-after-Bert" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -468,7 +757,7 @@ p_{\theta}(z^{(1)}_t(x)=x_i)=p_{\theta}(z^{(2)}_t(x)=x_j)</script><p>即，<stro
 
 </div>
 
-    <a data-url="atlantic8.github.io/2020/08/30/NLP-Pre-train-Models-after-Bert/" data-id="ckjflh7xf0087wophfdzyh9pd" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2020/08/30/NLP-Pre-train-Models-after-Bert/" data-id="ckkkyv8c4007f6wphm0gk0l61" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -653,7 +942,7 @@ L_{split}=\frac{1}{2}[\frac{(\sum_{i\in I_L}g_i)^2}{\sum_{i\in I_L}h_i+\gamma}+\
 
 </div>
 
-    <a data-url="atlantic8.github.io/2020/08/30/XGboost/" data-id="ckjflh7zr00bjwophkde75b7i" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2020/08/30/XGboost/" data-id="ckkkyv8eu00b96wphlrtrftld" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -828,7 +1117,7 @@ L_{split}=\frac{1}{2}[\frac{(\sum_{i\in I_L}g_i)^2}{\sum_{i\in I_L}h_i+\gamma}+\
 
 </div>
 
-    <a data-url="atlantic8.github.io/2020/08/30/Bert/" data-id="ckjflh7qa0006wophfdmj6l5e" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2020/08/30/Bert/" data-id="ckkkyv84r000b6wph5oefl4zw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1015,7 +1304,7 @@ P(t_{0:L})=p(t_0)\prod_{i=1}^Lp(t_i|t_{0:t-1})</script><p>对于条件概率$p(t
 
 </div>
 
-    <a data-url="atlantic8.github.io/2020/08/30/Transformer/" data-id="ckjflh7zl00b9woph0bh376u4" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2020/08/30/Transformer/" data-id="ckkkyv8ec00ai6wphnct1r5hw" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1246,7 +1535,7 @@ P(t_{0:L})=p(t_0)\prod_{i=1}^Lp(t_i|t_{0:t-1})</script><p>对于条件概率$p(t
 
 </div>
 
-    <a data-url="atlantic8.github.io/2020/08/30/First-Order-Optimization/" data-id="ckjflh7ut004awoph26gbatyv" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2020/08/30/First-Order-Optimization/" data-id="ckkkyv892003l6wphsvy8945i" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1396,7 +1685,7 @@ P(t_{0:L})=p(t_0)\prod_{i=1}^Lp(t_i|t_{0:t-1})</script><p>对于条件概率$p(t
 
 </div>
 
-    <a data-url="atlantic8.github.io/2019/09/21/CherryPy-Torturial/" data-id="ckjflh7qv000vwoph78vnhykk" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2019/09/21/CherryPy-Torturial/" data-id="ckkkyv86000126wphrfeq9ig3" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1539,7 +1828,7 @@ P(t_{0:L})=p(t_0)\prod_{i=1}^Lp(t_i|t_{0:t-1})</script><p>对于条件概率$p(t
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="ckjflh7v8004ywophl36am8aa" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/Hough-Transform/" data-id="ckkkyv89r004c6wph98n4dlxi" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1700,7 +1989,7 @@ P(t_{0:L})=p(t_0)\prod_{i=1}^Lp(t_i|t_{0:t-1})</script><p>对于条件概率$p(t
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="ckjflh7uv004ewophsy890hfp" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/GRU-and-LSTM/" data-id="ckkkyv89c003v6wphv9o4ftbf" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -1938,255 +2227,7 @@ f(k)=\sum_{t=0}^{N-1}x(t)e^{-j(2\pi tk/N)},\quad k\in \{0,...,N-1\}
 
 </div>
 
-    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="ckjflh80300bzwoph84i2dfif" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
-<script>
-    (function ($) {
-        // Prevent duplicate binding
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fab fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fab fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fab fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fab fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-</script>
-
-            
-    
-
-        </footer>
-    </div>
-    
-</article>
-
-
-
-    <article id="post-Conditional-Random-Field" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2017/08/27/Conditional-Random-Field/">Conditional Random Field</a>
-        </h1>
-    
-
-                
-                    <div class="article-meta">
-                        
-    <div class="article-date">
-        <i class="fas fa-calendar-alt"></i>
-        <a href="/2017/08/27/Conditional-Random-Field/">
-            <time datetime="2017-08-27T06:19:20.000Z" itemprop="datePublished">2017-08-27</time>
-        </a>
-    </div>
-
-
-                        
-    <div class="article-category">
-    	<i class="fas fa-folder"></i>
-        <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
-    </div>
-
-                        
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/machine-learning/">machine learning</a>
-    </div>
-
-                    </div>
-                
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-            
-            <h4 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h4><p>同朴素贝叶斯一样，HMM是生成式模型。它可以做线性序列预测分析，为了计算复杂度上的可行性，其<strong>假设观测变量仅依赖于隐含变量</strong>。然而，实际中<strong>观测变量之间也存在不可忽略的依赖关系</strong>，这导致HMM的假设会严重影响模型的精确性。</p>
-<p>CRF现在是自然语言处理领域中多个任务的state-of-art方法，包括分词、词性标注，浅解析（shallow parsing）等。并且在命名实体识别、基因预测、图像标注、物体识别等领域有着重要的应用。</p>
-<p>CRF是<strong>判别</strong>式模型。</p>
-<hr>
-<h5 id="概率图模型"><a href="#概率图模型" class="headerlink" title="概率图模型"></a>概率图模型</h5><p>一般地，在概率图模型中，节点表示随机变量，边表示依赖关系。概率图模型的表示的前提是对图的划分，也就是因子分解，可以按有向图和无向图分别讨论。</p>
-<h6 id="马尔可夫性"><a href="#马尔可夫性" class="headerlink" title="马尔可夫性"></a>马尔可夫性</h6><p>给定一个随机变量$y$及其联合概率分布$p(y)$和它的无向图表示$G$，下面给出关于马尔可夫性的三个等价定义。</p>
-<ul>
-<li>成对马尔可夫性：设$u,v$是无向图中没有连接的两个点，$o$是其他节点，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
-<li>局部马尔可夫性：设$u$是无向图中任意一个节点，$w$是与$u$有连接的节点，$o$是其他节点，则有$p(v,o|w)=p(v|w)p(o|w)$</li>
-<li>全局马尔可夫性：设$u,v$是被节点集$o$分隔开的任意节点集合，则有$p(u,v|o)=p(u|o)p(v|o)$</li>
-</ul>
-<p>总结一下意思就是：<strong>无连接的变量在以中继变量为条件的情况下相互独立</strong>。</p>
-<h6 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h6><p>定义在有向图上的条件概率模型的联合分布为<strong>所有节点条件概率的乘积</strong>，比如贝叶斯网络，马尔可夫链等。</p>
-<hr>
-<h6 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h6><p>满足马尔可夫性的联合概率分布被称为概率无向图模型，也叫做<strong>马尔可夫随机场</strong>。定义在无向图上的条件概率模型的联合分布为<strong>最大团上非负函数的乘积</strong>（这也称为概率无向图模型的因子分解）。这里最大团（极大团）指的是不能再添加节点的团（团指的是两两相交的节点集）。形式化定义单个节点$v$的概率为$v$在所有最大团上的乘积，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(v)=\frac{1}{Z}\prod_{c\in C}\Psi_c(v_c)
-\end{aligned}</script><p>其中$\Psi_c(v_c) \ge 0$称为节点$v$在团$c$上的势函数。$Z$是归一化因子满足$Z=\sum_vp(v)$（其实最大熵模型也可以看成是势函数的乘积）。</p>
-<hr>
-<h4 id="CRF的表示"><a href="#CRF的表示" class="headerlink" title="CRF的表示"></a>CRF的表示</h4><p>CRF是定义在无向图上的判别式模型，是给定随机变量$x$的条件下，随机变量$y$的马尔可夫随机场。按照无向图上的定义，可以有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(y|x)&=\frac{p(x,y)}{p(x)}=\frac{p(x,y)}{\sum_{y'}p(x,y')} \\
-&=\frac{\frac{1}{Z}\prod_{c\in C}\Psi_c(x_c,y_c)}{\frac{1}{Z}\sum_{y'}\prod_{c\in C}\Psi_c(x_c,y'_c)} \\
-&=\frac{1}{Z(x)}\prod_{c\in C}\Psi_c(x_c,y_c)
-\end{aligned}</script><p>这就是CRF的基本形式。下面分别介绍线性链CRF和任意结构的CRF。</p>
-<h5 id="线性链CRF"><a href="#线性链CRF" class="headerlink" title="线性链CRF"></a>线性链CRF</h5><p>CRF的一种特殊形式，也是比较常用的形式-线性链式。在这种情况下，相邻点变成了最大团，即满足马尔可夫性</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(y_i|x,y_1,..,y_{i-1},y_{i+1},...,y_{n+1})=p(y_i|x,y_{i-1},y_{i+1})
-\end{aligned}</script><p>假设$x=(x_1,…x_{n+1})$，$y=(y_1,…y_{n+1})$（都是向量），链的长度为$n+1$，所以最大团的数量为$n$，上式就可以写成：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(y|x)=\frac{1}{Z(x)}\prod_{j=1}^n\Psi_j(x,y)
-\end{aligned}</script><p>给定势函数$\Psi_j(x,y)$的形式为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\Psi_j(x,y)=\exp\left(\sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)\right)
-\end{aligned}</script><p>其中，$j$表示序列位置（与$n$相关）。所以线性链的CRF可以表示为</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p_{\lambda}(y|x)&=\frac{1}{Z_{\lambda}(x)}\cdot \exp\left( \sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) \right) \\
-&=\frac{1}{Z_{\lambda}(x)}\prod_{j=1}^n \exp\left( \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) \right)
-\end{aligned}</script><p>其中，$Z_{\lambda}(x)$就是在$y$上对$p_{\lambda}(y|x)$求和的结果，这结构与最大熵的形式类似。</p>
-<hr>
-<p>与HMM的模式类似，应用模型之前还需要解决一些问题，分别是</p>
-<ol>
-<li>给定序列集合$X$和对应的标注数据$Y$，如何训练CRF模型参数使得$p(Y|X,\mathcal{M})$最大</li>
-<li>给定模型$\mathcal{M}$和输入序列$X$，如何求输出序列$Y$</li>
-</ol>
-<p>这里就不考虑求$p(X|\mathcal{M})$了，因为CRF是<strong>判别式</strong>模型。</p>
-<hr>
-<h6 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h6><p>目标是估计参数$\lambda$。给定数据集$T$，参数估计常用的方法就是MLE了，我们再取一个log，考虑regularization，推导如下：</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\mathcal{L}(T)&=\sum_{(x,y)\in T}\log p(y|x) - \frac{1}{2\sigma^2}||\lambda||_2^2 \\
-&=\sum_{(x,y)\in T} \log\left( \frac{\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)\right)}{\sum_{y'}\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right) } \right) - \frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2 \\
-&=\sum_{(x,y)\in T}\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j) - \sum_{(x,y)\in T}\log Z_{\lambda}(x) - \frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2
-\end{aligned}</script><p>这里$\sigma^2$是控制regularization权重的超参数。上式可分为3部分，分别对$\lambda_k$求导</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\frac{\partial}{\partial\lambda_k}\sum_{(x,y)\in T}\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y_{j-1},y_j,j)&=\sum_{(x,y)\in T}\sum_{j=1}^n f_k(x,y_{j-1},y_j,j) \\
-&=N\cdot\hat{E}(f_k)
-\end{aligned}</script><p>其结果刚好是训练数据集上特征$f_i$的期望值的$N$（训练集数据个数*(n+1)）倍。</p>
-<hr>
-<script type="math/tex; mode=display">
-\begin{aligned}
-&\frac{\partial}{\partial\lambda_k}\sum_{(x,y)\in T}\log Z_{\lambda}(x)=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)}\frac{\partial Z_{\lambda}(x)}{\partial\lambda_k} \\
-&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)} \frac{\partial}{\partial\lambda_k}\sum_{y'}\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right) \\
-&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)} \sum_{y'}\left[\exp\left(\sum_{j=1}^n \sum_{i=1}^m\lambda_if_i(x,y'_{j-1},y'_j,j)\right)\cdot \sum_{j=1}^n f_k(x,y'_{j-1},y'_j,j)\right] \\
-&=\sum_{(x,y)\in T}\sum_{y'}p_{\lambda}(y'|x)\sum_{j=1}^n f_k(x,y'_{j-1},y'_j,j) \\
-&=N\cdot E(f_k)
-\end{aligned}</script><p>上面倒数第二行第一个求和符号的范围可以退化成$x\in X$，其结果刚好是模型分布上特征$f_i$的期望值的$N$（训练集数据个数*(n+1)）倍。</p>
-<hr>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\frac{\partial}{\partial\lambda_k}\frac{1}{2\sigma^2}\sum_{i=1}^m\lambda_i^2=\frac{\lambda_k}{\sigma^2}
-\end{aligned}</script><hr>
-<p>综上，我们可以得到</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\frac{\partial \mathcal{L}(T)}{\partial \lambda_k}=N\cdot(\hat{E}(f_k)-E(f_k))-\frac{\lambda_k}{\sigma^2}
-\end{aligned}</script><p>继而，令上式等于0，就可以求出$\lambda_k$的值。这里，$\hat{E}(f_k)$可以通过简单的统计特征$f_k$在数据集中的出现的次数实现。而想要直接计算$E(f_k)$就不容易了，因为CRF这里处理的是序列数据，序列组合导致可能性指数上升。</p>
-<hr>
-<p>解决方法是利用HMM也用到的<strong>前后向算法</strong>的修改版。<br>定义函数$T_j(s)$为状态$s$在输入位置$j$时，位置$j+1$的可能状态集合。定义函数$T_j^{-1}(s)$为$T_j(s)$的反函数，即输出状态$s$的前置集合。定义序列初始状态为$\vdash$，终止状态为$\dashv$。在此基础上定义<strong>前向、后向函数</strong>：</p>
-<ul>
-<li>前向函数：$\alpha_j(s|x)=\sum_{s’\in T_j^{-1}(s)}\alpha_{j-1}(s’|x)\cdot \Psi_j(s’,s,x)$，初始化$\alpha_0(\vdash|x)=1$</li>
-<li>后向函数：$\beta_j(s|x)=\sum_{s’\in T_j(s)}\beta_{j+1}(s’|x)\cdot \Psi_j(s,s’,x)$，初始化$\beta_{|x|+1}(\dashv|x)=1$</li>
-</ul>
-<p>其中，与上文的势函数对应，$\Psi_j(s’,s,x)=\exp(\sum_{i=1}^m\lambda_if_j(y_{i-1}=s’,y_i=s,x,j))$。根据前向、后向函数的定义，可以有</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-p(y_j=s|x)= \frac{\alpha_j(s|x)\beta_j(s|x)}{Z_{\lambda}(x)}
-\end{aligned}</script><p>因此，$E(f_k)$的计算就变得可行了</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-E(f_k)&=\sum_{(x,y)\in T}\frac{1}{Z_{\lambda}(x)}\sum_{j=1}^n\sum_{s\in S}\sum_{s'\in T_j(s)} f_j(s,s',x,j)\alpha_j(s|x)\Psi_j(s,s',x)\beta_{j+1}(s'|x) \\
-Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
-\end{aligned}</script><p>其中$S$是状态集合。这相当于计算了所有可能状态序列的可能，$\alpha, \beta$的值只需要计算一次，存储起来就好。前后向算法的时间复杂度为$O(|S|^2n)$。</p>
-<p>至此，$\lambda$的更新变得可行，模型训练ok。</p>
-<hr>
-<h6 id="序列标注"><a href="#序列标注" class="headerlink" title="序列标注"></a>序列标注</h6><p>序列标注即要在给定模型参数情况下找到输入序列对应的概率最大的标注序列，可以采用维特比算法的思想。定义: <strong>$\delta_j(s|x)$表示序列到位置$j$时，状态为$s$的最大概率</strong>，即</p>
-<script type="math/tex; mode=display">
-\begin{aligned}
-\delta_j(s|x)=\max_{y_1,..,y_{j-1}}p(y_1,...,y_{j-1},y_j=s|x)=\max_{s'\in S}\delta_{j-1}(s')\cdot \Psi_j(s',s,x)
-\end{aligned}</script><p>还需要<strong>数组$\phi_j(s)$记录下$j$位置状态为$s$时$j-1$位置的状态是什么</strong>。<br>算法的步骤如下：</p>
-<hr>
-<ol>
-<li>从开始状态初始$\vdash$化，对所有的状态$s\in S$，令<br> $\delta_1(s|x)=\Psi_1(\vdash,s,x)$.<br> $\phi_1(s)=\vdash$</li>
-<li>递归计算，对每一个$s\in S, 1\le j\le n$<br> $\delta_j(s|x)=\max_{s’\in S}\delta_{j-1}(s’)\cdot \Psi_j(s’,s,x)$<br> $\phi_j(s)=arg\max_{s’\in S}\delta_{j-1}(s’)\cdot \Psi_j(s’,s,x)$</li>
-<li>结束迭代<br> $p_{max}=\max_{s’\in S}\delta_{n}(s’)$<br> $y_n=arg\max_{s’\in S}\delta_n(s’|x)$</li>
-<li>回溯<br> 根据$\phi$数组和$y_n$求出整个$y$序列。</li>
-</ol>
-<hr>
-<h5 id="任意结构CRF"><a href="#任意结构CRF" class="headerlink" title="任意结构CRF"></a>任意结构CRF</h5><blockquote>
-<p>TODO</p>
-</blockquote>
-<p><strong>参考文献</strong><br>[1]. Classical Probabilistic Models and Conditional Random Fields.pdf</p>
-
-        
-        </div>
-        <footer class="article-footer">
-            <div class="share-container">
-
-
-
-</div>
-
-    <a data-url="atlantic8.github.io/2017/08/27/Conditional-Random-Field/" data-id="ckjflh7qt000twophm98exab8" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
+    <a data-url="atlantic8.github.io/2018/12/16/how-does-shazam-work/" data-id="ckkkyv8f200bi6wph77r8isx6" class="article-share-link"><i class="fas fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -2279,6 +2320,25 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
                     <li>
                         
                         <div class="item-thumbnail">
+                            <a href="/2021/01/31/DeepFM/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
+                            <p class="item-title"><a href="/2021/01/31/DeepFM/" class="title">DeepFM</a></p>
+                            <p class="item-date"><time datetime="2021-01-31T09:35:23.000Z" itemprop="datePublished">2021-01-31</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
                             <a href="/2021/01/02/Monotonous-Sequence/" class="thumbnail">
     
     
@@ -2352,25 +2412,6 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2020/09/01/BM25/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Algorithm/">Algorithm</a></p>
-                            <p class="item-title"><a href="/2020/09/01/BM25/" class="title">BM25</a></p>
-                            <p class="item-date"><time datetime="2020-09-01T15:06:49.000Z" itemprop="datePublished">2020-09-01</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -2380,7 +2421,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">51</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">52</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dev/">Dev</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Math/">Math</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OJ/">OJ</a><span class="category-list-count">57</span></li></ul>
         </div>
     </div>
 
@@ -2389,7 +2430,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">35</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -2398,7 +2439,7 @@ Z_{\lambda}(x)&=\beta_0(\vdash|x)=\alpha_{|x|+1}(\dashv|x)
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 15.56px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 10px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
+            <a href="/tags/Backtracking/" style="font-size: 11.11px;">Backtracking</a> <a href="/tags/Binary-Search/" style="font-size: 12.22px;">Binary Search</a> <a href="/tags/Binary-Tree/" style="font-size: 16.67px;">Binary Tree</a> <a href="/tags/Cpp/" style="font-size: 15.56px;">Cpp</a> <a href="/tags/DFS/" style="font-size: 10px;">DFS</a> <a href="/tags/DP/" style="font-size: 16.67px;">DP</a> <a href="/tags/Deep-Learning/" style="font-size: 10px;">Deep Learning</a> <a href="/tags/Divide-Conquer/" style="font-size: 10px;">Divide & Conquer</a> <a href="/tags/Game-Theory/" style="font-size: 10px;">Game Theory</a> <a href="/tags/Geometry/" style="font-size: 10px;">Geometry</a> <a href="/tags/Graph/" style="font-size: 11.11px;">Graph</a> <a href="/tags/Greedy/" style="font-size: 13.33px;">Greedy</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/IR/" style="font-size: 11.11px;">IR</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/LeetCode/" style="font-size: 20px;">LeetCode</a> <a href="/tags/Leetcode/" style="font-size: 11.11px;">Leetcode</a> <a href="/tags/MIR/" style="font-size: 10px;">MIR</a> <a href="/tags/Machine-Learning/" style="font-size: 10px;">Machine Learning</a> <a href="/tags/Math/" style="font-size: 12.22px;">Math</a> <a href="/tags/Matlab/" style="font-size: 10px;">Matlab</a> <a href="/tags/NLP/" style="font-size: 14.44px;">NLP</a> <a href="/tags/Optimization/" style="font-size: 10px;">Optimization</a> <a href="/tags/POJ/" style="font-size: 11.11px;">POJ</a> <a href="/tags/Permutation/" style="font-size: 10px;">Permutation</a> <a href="/tags/STL/" style="font-size: 10px;">STL</a> <a href="/tags/Sliding-window/" style="font-size: 14.44px;">Sliding window</a> <a href="/tags/Sort/" style="font-size: 11.11px;">Sort</a> <a href="/tags/State-Machine/" style="font-size: 10px;">State Machine</a> <a href="/tags/String/" style="font-size: 14.44px;">String</a> <a href="/tags/Tree/" style="font-size: 10px;">Tree</a> <a href="/tags/bit/" style="font-size: 10px;">bit</a> <a href="/tags/deep-learning/" style="font-size: 16.67px;">deep learning</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/machine-learning/" style="font-size: 18.89px;">machine learning</a> <a href="/tags/numpy/" style="font-size: 11.11px;">numpy</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/pandas/" style="font-size: 11.11px;">pandas</a> <a href="/tags/prime/" style="font-size: 10px;">prime</a> <a href="/tags/python/" style="font-size: 17.78px;">python</a> <a href="/tags/random-algorithm/" style="font-size: 12.22px;">random algorithm</a> <a href="/tags/recommendation/" style="font-size: 11.11px;">recommendation</a> <a href="/tags/recommender-system/" style="font-size: 10px;">recommender system</a> <a href="/tags/time-series-data/" style="font-size: 10px;">time_series_data</a> <a href="/tags/visualization/" style="font-size: 10px;">visualization</a> <a href="/tags/web/" style="font-size: 10px;">web</a> <a href="/tags/数据分析/" style="font-size: 10px;">数据分析</a> <a href="/tags/文件/" style="font-size: 10px;">文件</a>
         </div>
     </div>
 
